@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Panel extends Model
+{
+    //
+    protected $table = 'panels' ;
+
+    protected $fillable = ['id','website' , 'expired_date' , 'user_id' , 'dashboard_id'];
+
+    public function branches ()
+    {
+        return $this->hasMany(Branch::class);
+    }
+
+    public function admins ()
+    {
+        return $this->hasMany(Admin::class);
+    }
+
+    public function options ()
+    {
+        return $this->hasMany(Admin::class);
+    }
+        public function user ()
+    {
+        return $this->belongsTo(User::class);
+    }
+}

@@ -1,0 +1,77 @@
+<?php
+
+use App\Models\Branch;
+use App\Models\MenuType;
+use Livewire\Attributes\On;
+use Livewire\Component;
+
+new class extends Component
+{
+    //
+    public $menus , $menuTypes ;
+
+    public $show_menu ;
+
+
+
+ public  $branchesCount ;
+ public function mount()
+{
+    $table_menu = Auth::user()->type == 'admin' ?
+    'menus' : 'customer_menus' ;
+    $this->menuTypes = MenuType::with($table_menu)->get();
+
+    $this->branchesCount = Branch::count();
+
+    $this->show_menu = app('show-menu-all');
+}
+
+};
+?>
+
+<div>
+
+
+@foreach($menuTypes as $menuType)
+    <span class=" font-semibold">
+        {{ $menuType->caption }}
+</sapn>
+
+
+@if(true)
+    @foreach($menuType->menus as $menu)
+    @if($menu->slug == 'branches' || $branchesCount)
+        <flux:sidebar.item
+
+            :href="route($menu->slug.'.index')"
+
+            :current="request()->is('/'.$menu->slug)"
+            wire:navigate
+            icon="{{$menu->icon}}"
+        >
+            {{ $menu->caption }}
+        </flux:sidebar.item>
+        @endif
+    @endforeach
+    @else
+
+      @foreach($menuType->customer_menus as $menu)
+
+        <flux:sidebar.item
+
+            :href="route($menu->slug.'.index')"
+
+            :current="request()->is('/'.$menu->slug)"
+            wire:navigate
+            icon="{{$menu->icon}}"
+        >
+            {{ $menu->caption }}
+        </flux:sidebar.item>
+
+    @endforeach
+ @endif
+@endforeach
+
+</div>
+
+<!-- :href="url('/'.$menu->slug)"  -->
