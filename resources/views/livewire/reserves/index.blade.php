@@ -3,11 +3,12 @@
 
 
     {{-- Filters --}}
-    <div class="mb-6 grid grid-cols-1 gap-1 md:grid-cols-3">
+    <div class="mb-6 grid grid-cols-1 md:px-6 md:gap-6 md:grid-cols-3">
 
         {{-- Branch --}}
         <div class="w-full">
             <flux:select
+
                 label="انتخاب شعبه"
                 wire:model.live="current_branch_id"
                 wire:change="onBranchChange"

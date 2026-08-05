@@ -10,9 +10,9 @@
 
     @foreach($employees as $item_employee)
 
-        <div class="flex flex-col">
+        <div class="flex flex-col mb-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
             <div
-                class="flex flex-col m-1 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                class="flex flex-col m-1 p-3 ">
 
                 <span class="text-gray-900 dark:text-gray-100">نام : {{$item_employee->name}}</span><br />
 
@@ -26,12 +26,13 @@
 
             </div>
         </div>
-        <flux:button wire:click="add_service({{ $item_employee->id }})" wire:loading.attr="disabled"
-            wire:target="add_service({{ $item_employee->id }})">
-            افزودن سرویس
-        </flux:button>
 
-        <div class="text-left">
+
+        <div class="text-left mb-6">
+            <flux:button wire:click="add_service({{ $item_employee->id }})" wire:loading.attr="disabled"
+                         wire:target="add_service({{ $item_employee->id }})">
+                افزودن سرویس
+            </flux:button>
             <flux:modal.trigger name="employees">
                 <flux:button variant="primary" wire:click="show_edit({{$item_employee}})">
 
@@ -40,6 +41,12 @@
 
                 </flux:button>
             </flux:modal.trigger>
+            <flux:button
+                wire:click="toggleStatus({{ $item_employee->id }})"
+                variant="{{ $item_employee->is_active ? 'danger' : 'primary' }}"
+            >
+                {{ $item_employee->is_active ? 'غیرفعال کردن' : 'فعال کردن' }}
+            </flux:button>
         </div>
         <flux:modal :show="$errors->isNotEmpty()" focusable class="max-w-lg" wire:model="showModalAddService">
 

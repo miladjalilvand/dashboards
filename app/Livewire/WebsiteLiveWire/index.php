@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\WebsiteLiveWire;
 
 use App\Models\Branch;
@@ -14,6 +13,12 @@ use Livewire\Component;
 #[Layout('layouts.app')]
 class Index extends Component
 {
+    /*
+    |--------------------------------------------------------------------------
+    | Branch
+    |--------------------------------------------------------------------------
+    */
+
     public $branches = [];
 
     public $branch_selected;
@@ -22,165 +27,853 @@ class Index extends Component
 
     public $branch_categories = [];
 
-    public $employee_service_list_selected = false;
+
+    /*
+    |--------------------------------------------------------------------------
+    | State
+    |--------------------------------------------------------------------------
+    */
 
     public $state = 0;
 
-    public $reserve_data;
+    public $employee_service_list_selected = false;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Employee
+    |--------------------------------------------------------------------------
+    */
 
     public $employee_selected;
 
-    public $select_time_modal = false;
+    public $selected_employee;
 
-    public $working_times;
 
-    public $week_of_day;
+    /*
+    |--------------------------------------------------------------------------
+    | Service
+    |--------------------------------------------------------------------------
+    */
 
-    public $time_of_wtimes;
-
-    public $list_mins = ['00', 15, 30, 45];
+    public $selected_service;
 
     public $total_time;
 
-    public $selected_service ;
 
-    public function select_employee($employee_id , $total_time_service , $service_id)
-    {
+    /*
+    |--------------------------------------------------------------------------
+    | Date
+    |--------------------------------------------------------------------------
+    */
 
-        $this->total_time =(int) $total_time_service;
-        $this->employee_selected = $employee_id;
-        $employee = Employee::find($employee_id);
+    public $reserve_data;
 
-        $this->working_times = json_decode($employee->working_times, true);
-
-        $this->selected_service = Service::find($service_id);
+    public $week_of_day;
 
 
-    }
+    /*
+    |--------------------------------------------------------------------------
+    | Working Time
+    |--------------------------------------------------------------------------
+    */
 
-    public function save_date()
-    {
-        if(Verta::parse($this->reserve_data)->format('y-m-d') >= Verta::today()->format('y-m-d')) {
-            $this->time_of_wtimes = [];
-            $this->week_of_day = (string)Verta::parse($this->reserve_data)->dayOfWeek;
-            $employee = Employee::find($this->employee_selected);
+    public $working_times = [];
 
-            $this->working_times = json_decode($employee->working_times, true)[$this->week_of_day] ?? [];
-            $list_1 = [];
+    public $time_of_wtimes = [];
 
-
-            foreach ($this->working_times as $working_itens_item) {
-                $sh = (int)$working_itens_item['start']['h'];
-                $eh = (int)$working_itens_item['end']['h'];
-
-                $list_created = [];
-                for ($ind = $sh; $sh < $eh; $sh++) {
-                    $list_created[] = $sh;
-                }
-                $list_1 = array_merge($list_1, $list_created); // ← FIX: assign the result
-
-            }
-
-            foreach ($list_1 as $list_item) {
-
-                $this->time_of_wtimes[] = $list_item;
-
-            }
+    public $list_mins = ['00', '15', '30', '45'];
 
 
-            $this->select_time_modal = true;
-        }
-        else {
-            dd('is passed');
-        }
+    /*
+    |--------------------------------------------------------------------------
+    | Time
+    |--------------------------------------------------------------------------
+    */
 
-    }
+    public $selected_time;
 
-    public function submit_time_to_reservetion($input_time)
-    {
+    public $selected_end_time;
 
-
-        $employee = Employee::find($this->employee_selected);
-
-        $input_time_num = (string) $input_time; // مثال: 2300
-        $total_time = $this->total_time; // مثال: 80
-
-        $hour = (int) substr($input_time_num, 0, 2);
-        $minute = (int) substr($input_time_num, 2, 2);
-
-        // تبدیل به دقیقه
-        $totalMinutes = ($hour * 60) + $minute;
-
-        // جمع
-        $totalMinutes += $total_time;
-
-        // عبور از 24 ساعت
-        $totalMinutes %= 1440;
-
-        // تبدیل مجدد
-        $endHour = floor($totalMinutes / 60);
-        $endMinute = $totalMinutes % 60;
-
-        // خروجی HHMM
-        $end_time = sprintf('%02d%02d', $endHour, $endMinute);
+    public $select_time_modal = false;
 
 
-        $reserves_start_check = Reserve::whereBetween('start_time', [$input_time_num ,$endHour.$endMinute ])->
-        orWhereBetween('end_time' ,[$input_time_num ,$endHour.$endMinute ])->
-        where('employee_id' ,$this->employee_selected  )->get();
+    /*
+    |--------------------------------------------------------------------------
+    | Confirmation
+    |--------------------------------------------------------------------------
+    */
 
-        if($reserves_start_check->count() > 0) {
-             //بررسی شود کع پابان هم ک.چیکتر باشد
+    public $confirm_reservation_modal = false;
 
-            dd('is alreay has a reserve');
-        }else{
-          Reserve::create([
-              'total_time' => $total_time ,
-              'discount' => $this->selected_service->discount ,
-              'total_cost' => $this->selected_service->cost,
-              'end_time' =>$end_time,
-              'start_time'  => $input_time,
-              'customer_id' => Auth::user()->id ,
-              'branch_id' => $this->branch_selected->id,
-              'status_id'=>1,//در انتظار بررسی
-              'date' => Verta::parse($this->reserve_data),
-              'employee_id' => $this->employee_selected,
-          ]);
-        }
-    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Messages
+    |--------------------------------------------------------------------------
+    */
+
+    public $error_message = null;
+
+    public $success_message = null;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Mount
+    |--------------------------------------------------------------------------
+    */
 
     public function mount()
     {
-        $this->branches = Auth::user()->panels()->where('dashboard_id' , 1)->first()->
-        branches()
+        $panel = Auth::user()
+            ->panels()
+            ->where('dashboard_id', 1)
+            ->first();
+
+        if (!$panel) {
+            $this->branches = [];
+            return;
+        }
+
+        $this->branches = $panel
+            ->branches()
             ->get();
     }
 
-    public function render()
-    {
-        return view('livewire.branches.index_branches');
-    }
 
-    public function switchState($state)
-    {
-        $this->state = $state;
-    }
+    /*
+    |--------------------------------------------------------------------------
+    | Select Branch
+    |--------------------------------------------------------------------------
+    */
 
     public function select_branch($branchId)
     {
-        $branch = Branch::with(['services.employees', 'categories.services'])
-            ->findOrFail($branchId);
+        $this->clearMessages();
+
+        $branch = Branch::with([
+            'services.employees',
+            'categories.services.employees'
+        ])->findOrFail($branchId);
 
         $this->branch_selected = $branch;
 
         $this->branch_services = $branch->services;
+
         $this->branch_categories = $branch->categories;
 
         $this->state = 1;
+
+        // Reset previous booking
+        $this->resetBooking();
     }
 
-    public function select_to_new_reserve()
+
+    /*
+    |--------------------------------------------------------------------------
+    | Select Employee
+    |--------------------------------------------------------------------------
+    */
+
+    public function select_employee(
+        $employee_id,
+        $total_time_service,
+        $service_id
+    ) {
+        $this->clearMessages();
+
+        $employee = Employee::findOrFail($employee_id);
+
+        $service = Service::findOrFail($service_id);
+
+        $this->employee_selected = $employee->id;
+
+        $this->selected_employee = $employee;
+
+        $this->selected_service = $service;
+
+        $this->total_time = (int) $total_time_service;
+
+        $this->working_times = json_decode(
+            $employee->working_times,
+            true
+        ) ?? [];
+
+        // reset date/time when employee changes
+        $this->reserve_data = null;
+
+        $this->selected_time = null;
+
+        $this->selected_end_time = null;
+
+        $this->time_of_wtimes = [];
+
+        $this->select_time_modal = false;
+
+        $this->confirm_reservation_modal = false;
+
+        $this->employee_service_list_selected = true;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Save Date
+    |--------------------------------------------------------------------------
+    */
+
+    public function save_date()
     {
-        // بعداً
+        $this->clearMessages();
+
+        if (!$this->employee_selected) {
+            $this->error_message = 'ابتدا یک کارمند انتخاب کنید.';
+            return;
+        }
+
+        if (!$this->selected_service) {
+            $this->error_message = 'ابتدا یک سرویس انتخاب کنید.';
+            return;
+        }
+
+        if (!$this->reserve_data) {
+            $this->error_message = 'لطفاً تاریخ را انتخاب کنید.';
+            return;
+        }
+
+        try {
+            $selectedDate = Verta::parse($this->reserve_data);
+        } catch (\Throwable $e) {
+            $this->error_message = 'تاریخ وارد شده صحیح نیست.';
+            return;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Prevent Past Date
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $selectedDate->format('Y-m-d') <
+            Verta::today()->format('Y-m-d')
+        ) {
+            $this->error_message =
+                'امکان انتخاب تاریخ گذشته وجود ندارد.';
+
+            return;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Day Of Week
+        |--------------------------------------------------------------------------
+        */
+
+        $this->week_of_day = (string) $selectedDate->dayOfWeek;
+
+
+        $employee = Employee::findOrFail(
+            $this->employee_selected
+        );
+
+
+        $employeeWorkingTimes = json_decode(
+            $employee->working_times,
+            true
+        ) ?? [];
+
+
+        $this->working_times =
+            $employeeWorkingTimes[$this->week_of_day] ?? [];
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Employee Is Off
+        |--------------------------------------------------------------------------
+        */
+
+        if (empty($this->working_times)) {
+
+            $this->error_message =
+                'این کارمند در این روز کاری ندارد.';
+
+            return;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Generate Available Time Slots
+        |--------------------------------------------------------------------------
+        */
+
+        $this->time_of_wtimes = [];
+
+
+        foreach ($this->working_times as $workingTime) {
+
+            $startHour =
+                (int) ($workingTime['start']['h'] ?? 0);
+
+            $startMinute =
+                (int) ($workingTime['start']['m'] ?? 0);
+
+            $endHour =
+                (int) ($workingTime['end']['h'] ?? 0);
+
+            $endMinute =
+                (int) ($workingTime['end']['m'] ?? 0);
+
+
+            $workingStart =
+                ($startHour * 60) + $startMinute;
+
+            $workingEnd =
+                ($endHour * 60) + $endMinute;
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Every 15 Minutes
+            |--------------------------------------------------------------------------
+            */
+
+            for (
+                $minute = $workingStart;
+                $minute < $workingEnd;
+                $minute += 15
+            ) {
+
+                $slotEnd =
+                    $minute + $this->total_time;
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Service Must Finish Before Working Time Ends
+                |--------------------------------------------------------------------------
+                */
+
+                if ($slotEnd > $workingEnd) {
+                    continue;
+                }
+
+
+                $startTime =
+                    $this->minutesToTime($minute);
+
+                $endTime =
+                    $this->minutesToTime($slotEnd);
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Check Existing Reserve
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    $this->hasReservationConflict(
+                        $startTime,
+                        $endTime
+                    )
+                ) {
+                    continue;
+                }
+
+
+                $this->time_of_wtimes[] = [
+                    'start' => $startTime,
+                    'end' => $endTime,
+                ];
+            }
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | No Available Time
+        |--------------------------------------------------------------------------
+        */
+
+        if (empty($this->time_of_wtimes)) {
+
+            $this->error_message =
+                'برای این تاریخ هیچ ساعت آزادی وجود ندارد.';
+
+            return;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Open Time Modal
+        |--------------------------------------------------------------------------
+        */
+
+        $this->select_time_modal = true;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Select Time
+    |--------------------------------------------------------------------------
+    */
+
+    public function submit_time_to_reservetion($startTime)
+    {
+        $this->clearMessages();
+
+        if (!$this->selected_service) {
+            $this->error_message = 'سرویس انتخاب نشده است.';
+            return;
+        }
+
+        if (!$this->employee_selected) {
+            $this->error_message = 'کارمند انتخاب نشده است.';
+            return;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Normalize Time
+        |--------------------------------------------------------------------------
+        */
+
+        $startTime = str_pad(
+            (string) $startTime,
+            4,
+            '0',
+            STR_PAD_LEFT
+        );
+
+
+        $startMinutes =
+            $this->timeToMinutes($startTime);
+
+
+        $endMinutes =
+            $startMinutes + (int) $this->total_time;
+
+
+        $endTime =
+            $this->minutesToTime($endMinutes);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Check Conflict Again
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $this->hasReservationConflict(
+                $startTime,
+                $endTime
+            )
+        ) {
+
+            $this->error_message =
+                'این ساعت قبلاً رزرو شده است. لطفاً ساعت دیگری انتخاب کنید.';
+
+            // refresh available times
+            $this->select_time_modal = false;
+
+            return;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Save Selected Time
+        |--------------------------------------------------------------------------
+        */
+
+        $this->selected_time = $startTime;
+
+        $this->selected_end_time = $endTime;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Close Time Modal
+        |--------------------------------------------------------------------------
+        */
+
+        $this->select_time_modal = false;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Open Confirmation Modal
+        |--------------------------------------------------------------------------
+        */
+
+        $this->confirm_reservation_modal = true;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Confirm Reservation
+    |--------------------------------------------------------------------------
+    */
+
+    public function confirmReservation()
+    {
+        $this->clearMessages();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Validate Data
+        |--------------------------------------------------------------------------
+        */
+
+        if (!$this->branch_selected) {
+            $this->error_message = 'شعبه انتخاب نشده است.';
+            return;
+        }
+
+        if (!$this->selected_service) {
+            $this->error_message = 'سرویس انتخاب نشده است.';
+            return;
+        }
+
+        if (!$this->selected_employee) {
+            $this->error_message = 'کارمند انتخاب نشده است.';
+            return;
+        }
+
+        if (!$this->reserve_data) {
+            $this->error_message = 'تاریخ انتخاب نشده است.';
+            return;
+        }
+
+        if (!$this->selected_time) {
+            $this->error_message = 'ساعت انتخاب نشده است.';
+            return;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Calculate End Time Again
+        |--------------------------------------------------------------------------
+        */
+
+        $startMinutes =
+            $this->timeToMinutes(
+                $this->selected_time
+            );
+
+
+        $endMinutes =
+            $startMinutes + (int) $this->total_time;
+
+
+        $endTime =
+            $this->minutesToTime($endMinutes);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Final Conflict Check
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $this->hasReservationConflict(
+                $this->selected_time,
+                $endTime
+            )
+        ) {
+
+            $this->confirm_reservation_modal = false;
+
+            $this->error_message =
+                'متأسفانه این ساعت همین الان توسط شخص دیگری رزرو شده است. لطفاً ساعت دیگری انتخاب کنید.';
+
+            return;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Date
+        |--------------------------------------------------------------------------
+        */
+
+        try {
+
+            $date = Verta::parse(
+                $this->reserve_data
+            )->format('Y-m-d');
+
+        } catch (\Throwable $e) {
+
+            $this->error_message =
+                'تاریخ انتخاب شده صحیح نیست.';
+
+            return;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Create Reserve
+        |--------------------------------------------------------------------------
+        */
+
+        Reserve::create([
+
+            'total_time' =>
+                $this->total_time,
+
+            'discount' =>
+                $this->selected_service->discount ?? 0,
+
+            'total_cost' =>
+                $this->selected_service->cost,
+
+            'end_time' =>
+                $endTime,
+
+            'start_time' =>
+                $this->selected_time,
+
+            'customer_id' =>
+                Auth::id(),
+
+            'branch_id' =>
+                $this->branch_selected->id,
+
+            'status_id' =>
+                1,
+
+            'date' =>
+                $date,
+
+            'employee_id' =>
+                $this->employee_selected,
+        ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Close Confirmation
+        |--------------------------------------------------------------------------
+        */
+
+        $this->confirm_reservation_modal = false;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Success
+        |--------------------------------------------------------------------------
+        */
+
+        $this->success_message =
+            'نوبت شما با موفقیت ثبت شد.';
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Reset Date & Time
+        |--------------------------------------------------------------------------
+        */
+
+        $this->reserve_data = null;
+
+        $this->selected_time = null;
+
+        $this->selected_end_time = null;
+
+        $this->time_of_wtimes = [];
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Reservation Conflict
+    |--------------------------------------------------------------------------
+    */
+
+    private function hasReservationConflict(
+        string $startTime,
+        string $endTime
+    ): bool {
+
+        if (!$this->employee_selected || !$this->reserve_data) {
+            return false;
+        }
+
+
+        try {
+
+            $date = Verta::parse(
+                $this->reserve_data
+            )->format('Y-m-d');
+
+        } catch (\Throwable $e) {
+
+            return false;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Overlap:
+        |
+        | existing_start < new_end
+        | AND
+        | existing_end > new_start
+        |--------------------------------------------------------------------------
+        */
+
+        return Reserve::query()
+            ->where('employee_id', $this->employee_selected)
+            ->where('date', $date)
+            ->where(function ($query) use ($startTime, $endTime) {
+
+                $query
+                    ->where('start_time', '<', $endTime)
+                    ->where('end_time', '>', $startTime);
+            })
+            ->exists();
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Time -> Minutes
+    |--------------------------------------------------------------------------
+    */
+
+    private function timeToMinutes(string $time): int
+    {
+        $time = str_pad(
+            $time,
+            4,
+            '0',
+            STR_PAD_LEFT
+        );
+
+        $hour =
+            (int) substr($time, 0, 2);
+
+        $minute =
+            (int) substr($time, 2, 2);
+
+        return ($hour * 60) + $minute;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Minutes -> HHMM
+    |--------------------------------------------------------------------------
+    */
+
+    private function minutesToTime(int $minutes): string
+    {
+        $minutes %= 1440;
+
+        $hour =
+            intdiv($minutes, 60);
+
+        $minute =
+            $minutes % 60;
+
+        return sprintf(
+            '%02d%02d',
+            $hour,
+            $minute
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Reset Booking
+    |--------------------------------------------------------------------------
+    */
+
+    private function resetBooking()
+    {
+        $this->employee_selected = null;
+
+        $this->selected_employee = null;
+
+        $this->selected_service = null;
+
+        $this->reserve_data = null;
+
+        $this->selected_time = null;
+
+        $this->selected_end_time = null;
+
+        $this->working_times = [];
+
+        $this->time_of_wtimes = [];
+
+        $this->select_time_modal = false;
+
+        $this->confirm_reservation_modal = false;
+
+        $this->employee_service_list_selected = false;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Clear Messages
+    |--------------------------------------------------------------------------
+    */
+
+    private function clearMessages()
+    {
+        $this->error_message = null;
+
+        $this->success_message = null;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Switch State
+    |--------------------------------------------------------------------------
+    */
+
+    public function switchState($state)
+    {
+        $this->clearMessages();
+
+        $this->state = $state;
+
+        if ($state === 0) {
+            $this->resetBooking();
+        }
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Render
+    |--------------------------------------------------------------------------
+    */
+
+    public function render()
+    {
+        return view(
+            'livewire.branches.index_branches'
+        );
     }
 }

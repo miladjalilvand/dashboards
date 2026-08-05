@@ -1,3 +1,4 @@
+
 <x-layouts::auth>
     <div class="flex flex-col gap-6">
         <div
@@ -25,15 +26,15 @@
         >
             <div x-show="!showRecoveryInput">
                 <x-auth-header
-                    :title="__('Authentication Code')"
-                    :description="__('Enter the authentication code provided by your authenticator application.')"
+                    title="کد احراز هویت"
+                    description="کد احراز هویت ارائه‌شده توسط برنامه احراز هویت خود را وارد کنید."
                 />
             </div>
 
             <div x-show="showRecoveryInput">
                 <x-auth-header
-                    :title="__('Recovery Code')"
-                    :description="__('Please confirm access to your account by entering one of your emergency recovery codes.')"
+                    title="کد بازیابی"
+                    description="لطفاً با وارد کردن یکی از کدهای بازیابی اضطراری، دسترسی به حساب کاربری خود را تأیید کنید."
                 />
             </div>
 
@@ -47,10 +48,10 @@
                                 x-model="code"
                                 length="6"
                                 name="code"
-                                label="OTP Code"
+                                label="کد یک‌بار مصرف"
                                 label:sr-only
                                 class="mx-auto"
-                             />
+                            />
                         </div>
                     </div>
 
@@ -63,13 +64,14 @@
                                 x-bind:required="showRecoveryInput"
                                 autocomplete="one-time-code"
                                 x-model="recovery_code"
+                                placeholder="کد بازیابی را وارد کنید"
                             />
                         </div>
 
                         @error('recovery_code')
-                            <flux:text color="red">
-                                {{ $message }}
-                            </flux:text>
+                        <flux:text color="red">
+                            {{ $message }}
+                        </flux:text>
                         @enderror
                     </div>
 
@@ -78,15 +80,27 @@
                         type="submit"
                         class="w-full"
                     >
-                        {{ __('Continue') }}
+                        ادامه
                     </flux:button>
                 </div>
 
                 <div class="mt-5 space-x-0.5 text-sm leading-5 text-center">
-                    <span class="opacity-50">{{ __('or you can') }}</span>
+                    <span class="opacity-50">یا می‌توانید</span>
+
                     <div class="inline font-medium underline cursor-pointer opacity-80">
-                        <span x-show="!showRecoveryInput" @click="toggleInput()">{{ __('login using a recovery code') }}</span>
-                        <span x-show="showRecoveryInput" @click="toggleInput()">{{ __('login using an authentication code') }}</span>
+                        <span
+                            x-show="!showRecoveryInput"
+                            @click="toggleInput()"
+                        >
+                            ورود با استفاده از کد بازیابی
+                        </span>
+
+                        <span
+                            x-show="showRecoveryInput"
+                            @click="toggleInput()"
+                        >
+                            ورود با استفاده از کد احراز هویت
+                        </span>
                     </div>
                 </div>
             </form>

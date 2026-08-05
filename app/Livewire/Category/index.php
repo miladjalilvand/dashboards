@@ -13,7 +13,7 @@ use Livewire\Component;
 
  class Index extends Component
 {
-    
+
   public $categories;
     public $current_branch;
     public $current_category;
@@ -21,7 +21,13 @@ use Livewire\Component;
     public $edit_mode = false;
     public $isopen = false;
 
+    public function refresh(){
+        //   dd('refresh called');
 
+        $this->current_branch = current_branch();
+
+        $this->loadCategories();
+    }
     public function mount()
     {
         // فرض می‌کنیم branch_switcher مقدار current_branch را set می‌کند
@@ -29,7 +35,7 @@ use Livewire\Component;
 
         $this->loadCategories();
 
-    } 
+    }
 
         public function open_modal()
     {
@@ -37,7 +43,7 @@ use Livewire\Component;
 
       $this->isopen = true;
 
-    } 
+    }
     #[On('branch-switched')]public function loadBranches()
     {
         $this->current_branch = current_branch();
@@ -48,16 +54,48 @@ use Livewire\Component;
 
        public function loadCategories()
     {
-      
+
         $this->categories = $this->current_branch->categories()->get();
             // dd($this->current_branch->categories);
             $this->dispatch('close-modal', ['name' => 'categories']);
 
 
     }
+    protected function rules(): array
+    {
+        return [
 
+
+            'caption' => ['required', 'string', 'min:2', 'max:255'],
+
+
+
+        ];
+    }
+
+    public function toggleStatus($category_id)
+    {
+        $category = Category::findOrFail($category_id);
+
+        $category->update([
+            'is_active' => ! $category->is_active,
+        ]);
+
+        $this->refresh();
+    }
+    protected function messages(): array
+    {
+        return [
+
+            'caption.required' => 'عنوان  الزامی است.',
+            'caption.min' => 'عنوان باید حداقل ۲ کاراکتر باشد.',
+
+
+        ];
+    }
 public function store()
     {
+        $this->validate();
         $data = [
             'branch_id' => $this->current_branch->id,
             'caption'   => $this->caption,
@@ -70,7 +108,7 @@ public function store()
         }
 
         // پاک کردن فرم و بستن مودال
-   
+
 
 
         // بستن مودال به‌صورت Flux event
@@ -79,7 +117,7 @@ public function store()
         $this->loadCategories();
         Flux::modal('categories')->close();  $this->isopen = false;
         $this->edit_mode = false;
-           
+
 
 
     }
@@ -106,5 +144,5 @@ public function store()
 
 
 
-    
+
 };

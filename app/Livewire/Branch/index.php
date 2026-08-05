@@ -60,9 +60,59 @@ use Livewire\Component;
 
     }
   }
-
-    public function store()
+    protected function rules(): array
     {
+        return [
+
+
+            'caption' => ['required', 'string', 'min:2', 'max:255'],
+
+            'phone' => ['nullable', 'string', 'max:20'],
+
+            'mobile' => [
+                'required',
+                'string',
+                'regex:/^09\d{9}$/',
+            ],
+
+            'address' => ['required', 'string', 'max:500'],
+
+            'location' => ['nullable', 'string', 'max:255'],
+
+            'working_times' => ['required', 'string'],
+
+
+        ];
+    }
+    public function toggleStatus($branchId)
+    {
+        $branch = Branch::findOrFail($branchId);
+
+        $branch->update([
+            'is_active' => ! $branch->is_active,
+        ]);
+
+        $this->refresh();
+    }
+    protected function messages(): array
+    {
+        return [
+
+            'caption.required' => 'عنوان شعبه الزامی است.',
+            'caption.min' => 'عنوان باید حداقل ۲ کاراکتر باشد.',
+
+            'mobile.required' => 'شماره موبایل الزامی است.',
+            'mobile.regex' => 'شماره موبایل معتبر نیست.',
+
+            'address.required' => 'آدرس الزامی است.',
+
+            'working_times.required' => 'ساعات کاری را وارد کنید.',
+
+
+        ];
+    }
+    public function store()
+    { $this->validate();
         $user = Auth::user();
 
        if(!$this->edit_mode){

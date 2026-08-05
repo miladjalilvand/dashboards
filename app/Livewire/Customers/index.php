@@ -17,6 +17,7 @@ use Livewire\Component;
 
     public $branch_customers ;
 
+    public $current_branch_id;
 
     // public $employee_service_list_selected ;
     // public $branch_services ;
@@ -29,17 +30,23 @@ use Livewire\Component;
 
     public function mount(){
         $this->branches = Auth::user()->panels()->where('dashboard_id' , 1)->first()->branches;
+        $this->branch_selected = $this->branches->first();
+
+        $this->branch_customers =$this->branches->first()->customers;
+
     }
 
     public function render(){
         return view("livewire.customers.index");
     }
 
-        public function onBranchChange()
-{
+    public function onBranchChange()
+    {
+        $this->branch_selected = Branch::find($this->current_branch_id);
+        $this->branch_customers =$this->branch_selected->customers;
 
-
-}
+        dd($this->current_branch_id);
+    }
     // public function switchState($new_state){
     //     $this->state = $new_state;
     // }

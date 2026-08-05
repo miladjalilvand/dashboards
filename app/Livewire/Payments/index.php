@@ -14,11 +14,16 @@ use Livewire\Component;
 {
     public $branches;
     public $branch_selected ;
+    public $current_branch_id;
 
     public $branch_payments ;
 
     public function mount(){
         $this->branches = Auth::user()->panels()->where('dashboard_id' , 1)->first()->branches;
+        $this->branch_selected = $this->branches->first();
+//
+        $this->branch_payments =$this->branch_selected->payments;
+
     }
 
     public function render(){
@@ -30,8 +35,10 @@ use Livewire\Component;
 
     public function onBranchChange()
 {
+$this->branch_selected = Branch::find($this->current_branch_id);
+    $this->branch_payments =$this->branch_selected->payments;
 
-
+dd($this->current_branch_id);
 }
 
 

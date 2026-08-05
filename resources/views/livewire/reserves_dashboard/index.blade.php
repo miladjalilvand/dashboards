@@ -1,7 +1,7 @@
 <div class="w-full overflow-hidden  ">
     <div
         class="rounded-2xl border border-gray-200
-         dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm p-4 w-[300px]">
+         dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm p-4 w-full">
 
         <flux:select
             label="انتخاب شعبه"
@@ -26,19 +26,10 @@
         class="
         shadow-lg p-3 sm:p-5 ">
 
-        <div class="  h-[120px] flex items-center gap-2 sm:gap-3 overflow-x-auto scrollbar-hide">
+        <div class="  h-[120px] flex items-center gap-2 sm:gap-3 overflow-x-auto scrollbar-hide w-full">
 
             {{-- دکمه قبلی --}}
-            <flux:button
-                wire:click="change_list_days('next7')"
-                class="min-w-[42px] h-[42px] rounded-full
-                bg-gray-100 dark:bg-gray-800
-                text-gray-700 dark:text-gray-200
-                hover:bg-gray-200 dark:hover:bg-gray-700
-                transition-all duration-200 shadow-sm"
-            >
-                <
-            </flux:button>
+
 
             {{-- لیست روزها --}}
             @foreach ($selected_days as $day)
@@ -92,128 +83,45 @@
             @endforeach
 
             {{-- دکمه بعدی --}}
+
+
+        </div>
+        <div class="flex w-full justify-center">
+
+            <flux:button
+                wire:click="change_list_days('next7')"
+                class="min-w-[42px] h-[42px]
+               rounded-s-full rounded-e-none
+               bg-gray-100 dark:bg-gray-800
+               text-gray-700 dark:text-gray-200
+               hover:bg-gray-200 dark:hover:bg-gray-700
+               shadow-none"
+            >
+                <
+            </flux:button>
+
             <flux:button
                 wire:click="change_list_days('past7')"
-                class="min-w-[42px] h-[42px] rounded-full
-                bg-gray-100 dark:bg-gray-800
-                text-gray-700 dark:text-gray-200
-                hover:bg-gray-200 dark:hover:bg-gray-700
-                transition-all duration-200 shadow-sm"
+                class="-ms-px min-w-[42px] h-[42px]
+               rounded-e-full rounded-s-none
+               bg-gray-100 dark:bg-gray-800
+               text-gray-700 dark:text-gray-200
+               hover:bg-gray-200 dark:hover:bg-gray-700
+               shadow-none"
             >
                 >
             </flux:button>
 
         </div>
     </div>
-    <div class="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow">
-        <flux:table>
+    <div class="mt-5 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900"> <div class="overflow-x-auto"> <flux:table> {{-- Header --}} <flux:table.columns> <flux:table.column> # </flux:table.column> <flux:table.column> شعبه </flux:table.column> <flux:table.column> کارمند </flux:table.column> <flux:table.column> مشتری </flux:table.column> <flux:table.column> تاریخ </flux:table.column> <flux:table.column> شروع </flux:table.column> <flux:table.column> پایان </flux:table.column> <flux:table.column> مدت </flux:table.column> <flux:table.column> مبلغ </flux:table.column> <flux:table.column> وضعیت </flux:table.column> </flux:table.columns> {{-- Rows --}} <flux:table.rows> @forelse($reserves as $reserve) <flux:table.row wire:key="reserve-{{ $reserve->id }}" wire:click="showReserve({{ $reserve->id }})" class="cursor-pointer transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-800/60" > {{-- # --}} <flux:table.cell> <span class="text-sm text-gray-500 dark:text-gray-400"> {{ $loop->iteration }} </span> </flux:table.cell> {{-- Branch --}} <flux:table.cell> <span class="font-medium text-gray-800 dark:text-gray-200"> {{ $reserve->branch->caption }} </span> </flux:table.cell> {{-- Employee --}} <flux:table.cell> <span class="text-gray-700 dark:text-gray-300"> {{ $reserve->employee->name }} </span> </flux:table.cell> {{-- Customer --}} <flux:table.cell> <span class="text-gray-700 dark:text-gray-300"> {{ $reserve->customer?->name ?? '---' }} </span> </flux:table.cell> {{-- Date --}} <flux:table.cell> <span class="whitespace-nowrap text-gray-700 dark:text-gray-300"> {{ $reserve->date }} </span> </flux:table.cell> {{-- Start --}} <flux:table.cell> <span class="font-medium text-gray-800 dark:text-gray-200">
+                                                        {{ substr( $reserve->start_time, 0, 2) . ':' . substr( $reserve->start_time, 2) }}
+ </span>
+                        </flux:table.cell> {{-- End --}} <flux:table.cell> <span class="font-medium text-gray-800 dark:text-gray-200">
+                                                        {{ substr( $reserve->end_time, 0, 2) . ':' . substr( $reserve->end_time, 2) }}
 
-            <flux:table.columns>
-                <flux:table.column>#</flux:table.column>
-                <flux:table.column>شعبه</flux:table.column>
-                <flux:table.column>کارمند</flux:table.column>
-                <flux:table.column>مشتری</flux:table.column>
-                <flux:table.column>تاریخ</flux:table.column>
-                <flux:table.column>شروع</flux:table.column>
-                <flux:table.column>پایان</flux:table.column>
-                <flux:table.column>مدت</flux:table.column>
-                <flux:table.column>مبلغ</flux:table.column>
-                <flux:table.column>وضعیت</flux:table.column>
-            </flux:table.columns>
-
-            <flux:table.rows>
-
-                @forelse($reserves as $reserve)
-
-                    <flux:table.row
-                        wire:key="reserve-{{ $reserve->id }}"
-                        wire:click="showReserve({{ $reserve->id }})"
-                        class="cursor-pointer"
-                    >
-
-                        <flux:table.cell>
-                            {{ $loop->iteration }}
-                        </flux:table.cell>
-
-                        <flux:table.cell>
-                            {{ $reserve->branch->caption }}
-                        </flux:table.cell>
-
-                        <flux:table.cell>
-                            {{ $reserve->employee->name }}
-                        </flux:table.cell>
-
-                        <flux:table.cell>
-                            {{ $reserve->customer?->name }}
-                        </flux:table.cell>
-
-                        <flux:table.cell>
-                            {{ $reserve->date }}
-                        </flux:table.cell>
-
-                        <flux:table.cell>
-                            {{ $reserve->start_time }}
-                        </flux:table.cell>
-
-                        <flux:table.cell>
-                            {{ $reserve->end_time }}
-                        </flux:table.cell>
-
-                        <flux:table.cell>
-                            {{ $reserve->total_time }} دقیقه
-                        </flux:table.cell>
-
-                        <flux:table.cell>
-                            {{ number_format($reserve->total_cost) }}
-                        </flux:table.cell>
-
-                        <flux:table.cell>
-
-                            @switch($reserve->status_id)
-
-                                @case(1)
-                                    <flux:badge color="amber">
-                                        در انتظار
-                                    </flux:badge>
-                                    @break
-
-                                @case(2)
-                                    <flux:badge color="green">
-                                        بررسی شده
-                                    </flux:badge>
-                                    @break
-
-                                @case(3)
-                                    <flux:badge color="red">
-                                        لغو شده
-                                    </flux:badge>
-                                    @break
-
-                                @default
-                                    <flux:badge>
-                                        {{ $reserve->status->caption }}
-                                    </flux:badge>
-
-                            @endswitch
-
-                        </flux:table.cell>
-
-                    </flux:table.row>
-
-                @empty
-
-                    <flux:table.row>
-                        <flux:table.cell colspan="10" class="text-center py-10">
-                            اطلاعاتی وجود ندارد.
-                        </flux:table.cell>
-                    </flux:table.row>
-
-                @endforelse
-
-            </flux:table.rows>
-
-        </flux:table>
-    </div><flux:modal name="reserve-details" class="w-full max-w-2xl">
+                            </span> </flux:table.cell> {{-- Duration --}} <flux:table.cell> <span class="whitespace-nowrap text-gray-700 dark:text-gray-300"> {{ $reserve->total_time }} <span class="text-xs text-gray-500 dark:text-gray-400"> دقیقه </span> </span> </flux:table.cell> {{-- Cost --}} <flux:table.cell> <span class="whitespace-nowrap font-semibold text-gray-900 dark:text-white"> {{ number_format($reserve->total_cost) }} </span> </flux:table.cell> {{-- Status --}} <flux:table.cell> @switch($reserve->status_id) @case(1) <flux:badge color="amber"> در انتظار </flux:badge> @break @case(2) <flux:badge color="green"> بررسی شده </flux:badge> @break @case(3) <flux:badge color="red"> لغو شده </flux:badge> @break @default <flux:badge> {{ $reserve->status->caption }} </flux:badge> @endswitch </flux:table.cell> </flux:table.row> @empty <flux:table.row> <flux:table.cell colspan="10" class="py-12 text-center" > <div class="flex flex-col items-center justify-center gap-2"> <span class="text-sm font-medium text-gray-600 dark:text-gray-300"> اطلاعاتی وجود ندارد. </span> <span class="text-xs text-gray-400 dark:text-gray-500"> برای این تاریخ رزروی ثبت نشده است. </span> </div> </flux:table.cell> </flux:table.row> @endforelse </flux:table.rows> </flux:table> </div> </div>
+    <flux:modal name="reserve-details" class="w-full max-w-2xl">
 
         @if($selectedReserve)
 
@@ -247,12 +155,15 @@
 
                     <div>
                         <span class="font-semibold">شروع:</span>
-                        {{ $selectedReserve->start_time }}
+
+                        {{ substr( $selectedReserve->start_time, 0, 2) . ':' . substr( $selectedReserve->start_time, 2) }}
+
                     </div>
 
                     <div>
                         <span class="font-semibold">پایان:</span>
-                        {{ $selectedReserve->end_time }}
+                        {{ substr($selectedReserve->end_time, 0, 2) . ':' . substr($selectedReserve->end_time, 2) }}
+
                     </div>
 
                     <div>

@@ -85,7 +85,7 @@ use Illuminate\Support\Carbon;
 
         $list_days=[];
 
-        for($i = 7 ; $i > 0 ;  $i--){
+        for($i = 8 ; $i > 0 ;  $i--){
             $list_days[]=$startdate->addDays($i);
         }
 

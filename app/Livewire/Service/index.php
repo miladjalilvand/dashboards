@@ -9,9 +9,9 @@ use Livewire\Component;
 
 #[Layout('layouts.app')]
 
- class Index extends Component
+class Index extends Component
 {
-    public $services ; 
+    public $services ;
     public $categories;
 
     public $description;
@@ -29,29 +29,43 @@ use Livewire\Component;
     public $edit_mode =false;
     public $current_service ;
 
-        public $isopen = false;
-    
-    #[On(['branch-switched'])]
-    public function refresh(){
- $branch = current_branch()->fresh(); // این لازم است
+    public $isopen = false;
 
-    $this->services = $branch->services()->orderBy('id', 'desc')->get();
-    $this->categories = $branch->categories()->get();
-    $this->branch_id = $branch->id;
-
-     
-    
+    protected function rules()
+    {
+        return [
+            'caption' => ['required', 'string', 'max:255'],
+            'category_id' => ['required', 'exists:categories,id'],
+            'time' => ['required', 'integer', 'min:1', 'max:999'],
+            'cost' => ['required', 'integer', 'min:0', 'max:999999999'],
+            'description' => ['nullable', 'string', 'max:1000'],
+        ];
     }
 
-            public function open_modal()
+    #[On(['branch-switched'])]
+    public function refresh(){
+        $branch = current_branch()->fresh(); // این لازم است
+
+        $this->services = $branch->services()->orderBy('id', 'desc')->get();
+        $this->categories = $branch->categories()->get();
+        $this->branch_id = $branch->id;
+
+
+
+    }
+
+    public function open_modal()
     {
-        
-              $this->edit_mode = false;
 
+        $this->edit_mode = false;
+        if(!$this->edit_mode){
+         $this->reset(['description','cost','time','caption','category_id']);
 
-      $this->isopen = true;
+        }
 
-    } 
+        $this->isopen = true;
+
+    }
     public function mount(){
         $this->services = current_branch()->services()->get();
         $this->categories = current_branch()->categories()->get();
@@ -64,57 +78,70 @@ use Livewire\Component;
         return view("livewire.services.index");
     }
 
-    public function store(){
-        if(!$this->edit_mode){
-        Service::create([
-        'description' =>$this->description,
-        'cost' =>$this->cost, 
-        'time' =>$this->time ,
-        'caption' =>$this->caption,
-        'category_id'=>$this->category_id ,
-        'branch_id' =>$this->branch_id,    
+    public function toggleStatus($service_id)
+    {
+        $service = Service::findOrFail($service_id);
+
+        $service->update([
+            'is_active' => ! $service->is_active,
         ]);
 
- 
-    }else{
-        $this->current_service->update([
-        'description' =>$this->description,
-        'cost' =>$this->cost, 
-        'time' =>$this->time ,
-        'caption' =>$this->caption,
-        'category_id'=>$this->category_id ,
-        'branch_id' =>$this->branch_id,    
-        ]);
-
+//        $this->refresh();
     }
-    
-    $branch = current_branch()->fresh(); // این لازم است
 
-            $this->services = $branch->services()->orderBy('id', 'desc')->get();
-    $this->categories = $branch->categories()->get();
-    $this->branch_id = $branch->id;
-                Flux::modal('services')->close();  $this->isopen = false;
+    public function store(){
+        $this->validate();
+        if(!$this->edit_mode){
+            Service::create([
+                'description' =>$this->description,
+                'cost' => filled($this->cost) ? $this->cost : 0,
+                'time' => filled($this->time) ? $this->time : 0,
+                'caption' =>$this->caption,
+                'category_id'=>$this->category_id ,
+                'branch_id' =>$this->branch_id,
+            ]);
+
+
+        }else{
+            $this->current_service->update([
+                'description' =>$this->description,
+                'cost' => filled($this->cost) ? $this->cost : 0,
+                'time' => filled($this->time) ? $this->time : 0,
+                'caption' =>$this->caption,
+                'category_id'=>$this->category_id ,
+                'branch_id' =>$this->branch_id,
+            ]);
+
+        }
+
+        $branch = current_branch()->fresh(); // این لازم است
+
+        $this->services = $branch->services()->orderBy('id', 'desc')->get();
+        $this->categories = $branch->categories()->get();
+        $this->branch_id = $branch->id;
+        Flux::modal('services')->close();  $this->isopen = false;
+
 
 
         // $this->dispatch('new-service');
     }
 
-        public function show_edit($service){
-      $this->edit_mode = true ;
+    public function show_edit($service){
+        $this->edit_mode = true ;
 
 // dd($branch);
 
-      $this->current_service = Service::find($service['id']);
-      $this->caption= $service['caption'];
-      $this->time = $service['time'];
-      $this->cost = $service['cost'];
-      $this->description = $service['description'];
-      $this->category_id = $service['category_id'];
+        $this->current_service = Service::find($service['id']);
+        $this->caption= $service['caption'];
+        $this->time = $service['time'];
+        $this->cost = $service['cost'];
+        $this->description = $service['description'];
+        $this->category_id = $service['category_id'];
 
-    
+
 
     }
-    
+
 
 
 };

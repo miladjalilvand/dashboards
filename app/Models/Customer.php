@@ -12,4 +12,10 @@ class Customer extends Model
         'user_id',
         'branch_id'
     ];
+
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

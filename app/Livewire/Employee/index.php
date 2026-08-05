@@ -103,7 +103,43 @@ use Livewire\Component;
       $this->isopen = true;
 
     }
+
+    protected function rules(): array
+    {
+        return [
+
+
+            'caption' => ['required', 'string', 'min:2', 'max:255'],
+            'name' => ['required', 'string', 'min:2', 'max:255'],
+
+
+
+        ];
+    }
+    protected function messages(): array
+    {
+        return [
+
+            'caption.required' => 'عنوان  الزامی است.',
+            'caption.min' => 'عنوان باید حداقل ۲ کاراکتر باشد.',
+            'name.required' => 'نام  الزامی است.',
+            'name.min' => 'نام  باید حداقل ۲ کاراکتر باشد.',
+
+
+        ];
+    }
+    public function toggleStatus($employee_id)
+    {
+        $employee = Employee::findOrFail($employee_id);
+
+        $employee->update([
+            'is_active' => ! $employee->is_active,
+        ]);
+
+//        $this->refresh();
+    }
     public function store(){
+            $this->validate();
         $branch_id = current_branch()->id;
 
         if(!$this->edit_mode){
