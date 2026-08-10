@@ -1,6 +1,269 @@
 
-<div class="min-h-screen pb-24">
+<div class="min-h-screen pb-24"
+dir="rtl"
+>
 
+    <div class="flex items-center justify-between">
+
+        {{-- ========================================================= --}}
+        {{-- Customer Authentication --}}
+        {{-- ========================================================= --}}
+
+        @if (!$logged)
+
+            <flux:button
+                variant="primary"
+                icon="arrow-right-end-on-rectangle"
+                wire:click="openLoginModal"
+            >
+                ورود / ثبت‌نام
+            </flux:button>
+
+        @else
+
+            <div class="flex items-center gap-3">
+
+                {{-- User Info --}}
+                <div class="flex items-center gap-3">
+
+                    {{-- Avatar --}}
+                    <div
+                        class="flex items-center justify-center w-10 h-10 rounded-full
+                           bg-zinc-100 dark:bg-zinc-800
+                           text-sm font-semibold"
+                    >
+                        @php
+                            $customerUser = \App\Models\CustomerUser::find($user_logged_id);
+                        @endphp
+
+                        {{ $customerUser ? mb_substr($customerUser->name, 0, 1) : '' }}
+                    </div>
+
+                    {{-- Name --}}
+                    <div class="flex flex-col">
+
+                    <span class="text-xs text-zinc-500 dark:text-zinc-400">
+                        خوش آمدید
+                    </span>
+
+                        <span class="text-sm font-semibold text-zinc-800 dark:text-zinc-100">
+                        {{ $customerUser?->name }}
+                    </span>
+
+                    </div>
+
+                </div>
+
+                {{-- Logout --}}
+                <flux:button
+                    variant="ghost"
+                    icon="arrow-left-start-on-rectangle"
+                    wire:click="logout"
+                >
+                    خروج
+                </flux:button>
+
+            </div>
+
+        @endif
+
+    </div>
+
+
+    {{-- ============================================================= --}}
+    {{-- Authentication Modal --}}
+    {{-- ============================================================= --}}
+
+    <flux:modal
+        name="customer-auth"
+        class="w-full max-w-md"
+    >
+
+        <div class="space-y-6">
+
+            {{-- ===================================================== --}}
+            {{-- Mobile --}}
+            {{-- ===================================================== --}}
+
+            @if (!$showRegisterForm)
+
+                <div
+                    wire:key="customer-mobile-login"
+                    class="space-y-6"
+                >
+
+                    {{-- Header --}}
+                    <div class="text-center">
+
+                        <div
+                            class="flex items-center justify-center w-12 h-12 mx-auto mb-4
+                               rounded-full
+                               bg-zinc-100 dark:bg-zinc-800"
+                        >
+                            <flux:icon.device-phone-mobile
+                                class="w-6 h-6"
+                            />
+                        </div>
+
+                        <flux:heading size="lg">
+                            ورود به حساب کاربری
+                        </flux:heading>
+
+                        <flux:text class="mt-2">
+                            برای ورود یا ثبت‌نام، شماره موبایل خود را وارد کنید.
+                        </flux:text>
+
+                    </div>
+
+
+                    {{-- Form --}}
+                    <form
+                        wire:submit="checkMobile"
+                        class="space-y-5"
+                    >
+
+                        <flux:input
+                            wire:model="input_mobile_number"
+                            label="شماره موبایل"
+                            type="tel"
+                            inputmode="numeric"
+                            dir="ltr"
+                            placeholder="09123456789"
+                            required
+                            autofocus
+                            autocomplete="tel"
+                        />
+
+                        @error('input_mobile_number')
+                        <flux:text
+                            color="red"
+                            class="text-sm"
+                        >
+                            {{ $message }}
+                        </flux:text>
+                        @enderror
+
+
+                        <flux:button
+                            type="submit"
+                            variant="primary"
+                            class="w-full"
+                            wire:loading.attr="disabled"
+                        >
+                        <span wire:loading.remove>
+                            ادامه
+                        </span>
+
+                            <span wire:loading>
+                            در حال بررسی...
+                        </span>
+                        </flux:button>
+
+                    </form>
+
+                </div>
+
+            @else
+
+                {{-- ================================================= --}}
+                {{-- Register --}}
+                {{-- ================================================= --}}
+
+                <div
+                    wire:key="customer-register"
+                    class="space-y-6"
+                >
+
+                    {{-- Header --}}
+                    <div class="text-center">
+
+                        <div
+                            class="flex items-center justify-center w-12 h-12 mx-auto mb-4
+                               rounded-full
+                               bg-zinc-100 dark:bg-zinc-800"
+                        >
+                            <flux:icon.user-plus
+                                class="w-6 h-6"
+                            />
+                        </div>
+
+                        <flux:heading size="lg">
+                            ایجاد حساب کاربری
+                        </flux:heading>
+
+                        <flux:text class="mt-2">
+                            این شماره موبایل ثبت نشده است.
+                            برای ایجاد حساب، نام خود را وارد کنید.
+                        </flux:text>
+
+                    </div>
+
+
+                    {{-- Register Form --}}
+                    <form
+                        wire:submit="submitRegister"
+                        class="space-y-5"
+                    >
+
+                        {{-- Name --}}
+                        <flux:input
+                            wire:model="input_name"
+                            label="نام و نام خانوادگی"
+                            type="text"
+                            placeholder="مثلاً میلاد جلیلیوند"
+                            required
+                            autofocus
+                            autocomplete="name"
+                        />
+
+                        {{-- Mobile --}}
+                        <flux:input
+                            wire:model="input_mobile_number"
+                            label="شماره موبایل"
+                            type="tel"
+                            dir="ltr"
+                            readonly
+                        />
+
+
+                        {{-- Buttons --}}
+                        <div class="flex gap-3 pt-2">
+
+                            <flux:button
+                                type="button"
+                                variant="ghost"
+                                wire:click="backToMobile"
+                                class="flex-1"
+                            >
+                                بازگشت
+                            </flux:button>
+
+                            <flux:button
+                                type="submit"
+                                variant="primary"
+                                wire:loading.attr="disabled"
+                                class="flex-1"
+                            >
+                            <span wire:loading.remove>
+                                ثبت نام
+                            </span>
+
+                                <span wire:loading>
+                                در حال ثبت...
+                            </span>
+                            </flux:button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            @endif
+
+        </div>
+
+    </flux:modal>
     {{-- =========================================================
          MESSAGES
     ========================================================== --}}
@@ -330,6 +593,136 @@
 
             </div>
 
+@if($current_customer_id)
+            <flux:table>
+
+                <flux:table.columns>
+
+                    <flux:table.column>#</flux:table.column>
+                    <flux:table.column>شعبه</flux:table.column>
+                    <flux:table.column>کارمند</flux:table.column>
+                    <flux:table.column>مشتری</flux:table.column>
+                    <flux:table.column>تاریخ</flux:table.column>
+                    <flux:table.column>شروع</flux:table.column>
+                    <flux:table.column>پایان</flux:table.column>
+                    <flux:table.column>مدت</flux:table.column>
+                    <flux:table.column>مبلغ</flux:table.column>
+                    <flux:table.column>وضعیت</flux:table.column>
+
+                </flux:table.columns>
+
+
+                <flux:table.rows>
+
+                    @forelse($customer_reserves ?? [] as $reserve)
+
+                        <flux:table.row
+                            wire:key="reserve-{{ $reserve->id }}"
+{{--                            wire:click="showReserve({{ $reserve->id }})"--}}
+                            class="cursor-pointer transition-colors
+                               hover:bg-gray-50
+                               dark:hover:bg-gray-800/70"
+                        >
+
+                            <flux:table.cell>
+                                {{ $loop->iteration }}
+                            </flux:table.cell>
+
+                            <flux:table.cell>
+                                {{ $reserve->branch->caption }}
+                            </flux:table.cell>
+
+                            <flux:table.cell>
+                                {{ $reserve->employee->name }}
+                            </flux:table.cell>
+
+                            <flux:table.cell>
+                                {{ $reserve->customer?->user->name }}
+                            </flux:table.cell>
+
+                            <flux:table.cell>
+                                {{ \Hekmatinasser\Verta\Verta::instance($reserve->date)->format('Y/m/d') }}
+                            </flux:table.cell>
+
+                            <flux:table.cell>
+                                {{ substr($reserve->start_time, 0, 2) . ':' . substr($reserve->start_time, 2) }}
+                            </flux:table.cell>
+
+                            <flux:table.cell>
+                                {{ substr($reserve->end_time, 0, 2) . ':' . substr($reserve->end_time, 2) }}
+
+
+                            </flux:table.cell>
+
+                            <flux:table.cell>
+                                {{ $reserve->total_time }} دقیقه
+                            </flux:table.cell>
+
+                            <flux:table.cell>
+                                {{ number_format($reserve->total_cost) }}
+                            </flux:table.cell>
+
+                            <flux:table.cell>
+
+                                @switch($reserve->status_id)
+
+                                    @case(1)
+
+                                        <flux:badge color="amber">
+                                            در انتظار
+                                        </flux:badge>
+
+                                        @break
+
+                                    @case(2)
+
+                                        <flux:badge color="green">
+                                            بررسی شده
+                                        </flux:badge>
+
+                                        @break
+
+                                    @case(3)
+
+                                        <flux:badge color="red">
+                                            لغو شده
+                                        </flux:badge>
+
+                                        @break
+
+                                    @default
+
+                                        <flux:badge>
+                                            {{ $reserve->status->caption }}
+                                        </flux:badge>
+
+                                @endswitch
+
+                            </flux:table.cell>
+
+                        </flux:table.row>
+
+                    @empty
+
+                        <flux:table.row>
+
+                            <flux:table.cell
+                                colspan="10"
+                                class="py-10 text-center text-gray-500
+                                   dark:text-gray-400"
+                            >
+                                اطلاعاتی وجود ندارد.
+                            </flux:table.cell>
+
+                        </flux:table.row>
+
+                    @endforelse
+
+                </flux:table.rows>
+
+            </flux:table>
+
+@endif
         </div>
 
     @endif
@@ -1076,22 +1469,7 @@
                         تومان
 
                     </span>
-                    <flux:select
-                        label="انتخاب مشتری"
-                        wire:model="current_customer"
-                        :error="$errors->first('current_customer')"
-                        wire:change="onCustomerChange"
-                    >
-                        @forelse($customers ?? [] as $customer)
-                            <flux:select.option value="{{ $customer->id }}">
-                                {{ $customer->user->name }}
-                            </flux:select.option>
-                        @empty
-                            <flux:select.option disabled value="">
-                                هیچ نشتری یافت نشد
-                            </flux:select.option>
-                        @endforelse
-                    </flux:select>
+
                 </div>
 
             </div>

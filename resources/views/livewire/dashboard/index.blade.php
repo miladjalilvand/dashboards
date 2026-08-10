@@ -210,7 +210,7 @@
                     </flux:modal.trigger>
 
 
-                    @if($this->is_paid($dashboard['id']))
+                    @if($this->user->getDashboardPanel($dashboard['id']))
 
                         <a
                             href="{{ route('reserves_dashboard.index') }}"
@@ -241,6 +241,17 @@
 
                         </a>
 
+<div>
+    <p class="
+                            mt-1
+                            text-xs
+                            text-zinc-400
+                            dark:text-zinc-500
+                        ">
+        تاریخ انقضا:
+        {{ verta($this->user->getDashboardPanel($dashboard['id'])->expired_date)->format('Y/m/d') }}    </p>
+
+</div>
                     @endif
 
                 </div>

@@ -1,16 +1,22 @@
 <?php
-namespace App\Livewire\WebsiteLiveWire;
+namespace App\Livewire\SubWeb;
 
 use App\Models\Branch;
+use App\Models\Customer;
+use App\Models\CustomerUser;
 use App\Models\Employee;
+use App\Models\Panel;
 use App\Models\Reserve;
 use App\Models\Service;
+use App\Models\User;
+use Flux\Flux;
 use Hekmatinasser\Verta\Facades\Verta;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
-#[Layout('layouts.app')]
+#[Layout('layouts.blank')]
 class Index extends Component
 {
     /*
@@ -19,6 +25,9 @@ class Index extends Component
     |--------------------------------------------------------------------------
     */
 
+    public $customer_reserves ;
+
+
     public $branches = [];
 
     public $branch_selected;
@@ -26,6 +35,9 @@ class Index extends Component
     public $branch_services = [];
 
     public $branch_categories = [];
+
+
+    public $website;
 
 
     /*
@@ -71,7 +83,8 @@ class Index extends Component
 
     public $week_of_day;
 
-    public $current_customer;
+    public $current_customer_id = null;
+    public $user_logged_id = null;
 
 
     /*
@@ -127,24 +140,373 @@ class Index extends Component
     |--------------------------------------------------------------------------
     */
 
-    public function mount()
-    {
-        $panel = Auth::user()
-            ->panels()
-            ->where('dashboard_id', 1)
-            ->first();
+    public $input_name = '';
+    public $input_mobile_number = '';
+    public $input_email = '';
+    public $input_password = '';
+    public $input_password_confirmation = '';
 
-        if (!$panel) {
-            $this->branches = [];
+    public $logged = false;
+
+
+    public $panel;
+
+    // وضعیت فرم
+    public $showRegisterForm = false;
+
+    public function backToMobile()
+    {
+        $this->showRegisterForm = false;
+
+        $this->reset([
+            'input_name',
+            'input_email',
+            'input_password',
+            'input_password_confirmation',
+        ]);
+
+        $this->resetValidation();
+    }
+    public function openLoginModal()
+    {
+        $this->reset([
+            'input_name',
+            'input_mobile_number',
+            'input_email',
+            'input_password',
+            'input_password_confirmation',
+        ]);
+
+        $this->showRegisterForm = false;
+
+        $this->resetValidation();
+
+        Flux::modal('customer-auth')->show();
+    }
+
+    /**
+     * بررسی شماره موبایل
+     */
+    public function checkMobile()
+    {
+        $this->validate([
+            'input_mobile_number' => [
+                'required',
+                'string',
+                'regex:/^09[0-9]{9}$/',
+            ],
+        ], [
+            'input_mobile_number.required' => 'شماره موبایل را وارد کنید.',
+            'input_mobile_number.regex' => 'شماره موبایل معتبر نیست.',
+        ]);
+
+        $user = CustomerUser::where(
+            'mobile',
+            $this->input_mobile_number
+        )->first();
+
+        /*
+        |--------------------------------------------------------------------------
+        | کاربر وجود دارد
+        |--------------------------------------------------------------------------
+        */
+
+        if ($user) {
+
+            $customer = Customer::where('user_id', $user->id)
+                ->where('panel_id', $this->panel->id)
+                ->first();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Customer برای این پنل وجود ندارد
+            |--------------------------------------------------------------------------
+            */
+
+            if (!$customer) {
+
+                $branch = $this->branches->first();
+
+                if (!$branch) {
+                    $this->addError(
+                        'input_mobile_number',
+                        'برای این مجموعه هیچ شعبه‌ای ثبت نشده است.'
+                    );
+
+                    return;
+                }
+
+                $customer = Customer::create([
+                    'user_id' => $user->id,
+                    'branch_id' => $branch->id,
+                    'panel_id' => $this->panel->id,
+                ]);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Login داخلی
+            |--------------------------------------------------------------------------
+            */
+
+            $this->user_logged_id = $user->id;
+            $this->current_customer_id = $customer->id;
+
+            $this->logged = true;
+            $this->showRegisterForm = false;
+
+            /*
+            |--------------------------------------------------------------------------
+            | ذخیره در Session
+            |--------------------------------------------------------------------------
+            */
+
+            session()->put('customer_id', $customer->id);
+
+            $this->loadCustomerReserves();
+
+            Flux::modal('customer-auth')->close();
+
+            $this->reset([
+                'input_mobile_number',
+            ]);
+
             return;
         }
 
-        $this->branches = $panel
-            ->branches()
+        /*
+        |--------------------------------------------------------------------------
+        | کاربر وجود ندارد
+        |--------------------------------------------------------------------------
+        */
+
+        $this->showRegisterForm = true;
+    }
+    public function submitRegister()
+    {
+        $validated = $this->validate([
+            'input_name' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'input_mobile_number' => [
+                'required',
+                'string',
+                'regex:/^09[0-9]{9}$/',
+                'unique:customer_users,mobile',
+            ],
+        ], [
+            'input_name.required' => 'نام و نام خانوادگی را وارد کنید.',
+
+            'input_mobile_number.required' => 'شماره موبایل را وارد کنید.',
+            'input_mobile_number.regex' => 'شماره موبایل معتبر نیست.',
+            'input_mobile_number.unique' => 'این شماره موبایل قبلاً ثبت شده است.',
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Create Customer User
+        |--------------------------------------------------------------------------
+        */
+
+        $user = CustomerUser::create([
+            'name' => $validated['input_name'],
+            'mobile' => $validated['input_mobile_number'],
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Branch
+        |--------------------------------------------------------------------------
+        */
+
+        $branch = $this->branches->first();
+
+        if (!$branch) {
+            $user->delete();
+
+            $this->addError(
+                'input_mobile_number',
+                'برای این مجموعه هیچ شعبه‌ای ثبت نشده است.'
+            );
+
+            return;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Create Customer
+        |--------------------------------------------------------------------------
+        */
+
+        $customer = Customer::create([
+            'user_id' => $user->id,
+            'branch_id' => $branch->id,
+            'panel_id' => $this->panel->id,
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Login داخلی
+        |--------------------------------------------------------------------------
+        */
+
+        $this->user_logged_id = $user->id;
+        $this->current_customer_id = $customer->id;
+
+        $this->logged = true;
+        $this->showRegisterForm = false;
+
+        $this->customer_reserves = $customer
+            ->reserves()
             ->get();
+
+        Flux::modal('customer-auth')->close();
+
+        $this->reset([
+            'input_name',
+            'input_mobile_number',
+        ]);
+
+        session()->put('customer_id', $customer->id);
     }
 
+    /**
+     * خروج
+     */
+    public function logout(): void
+    {
+        $this->logged = false;
 
+        $this->user_logged_id = null;
+        $this->current_customer_id = null;
+
+        $this->customer_reserves = [];
+
+        $this->showRegisterForm = false;
+
+        $this->reset([
+            'input_name',
+            'input_mobile_number',
+        ]);
+
+        session()->forget('customer_id');
+    }
+//    public function mount($website)
+//    {
+//
+//
+//        if ($this->current_customer_id) {
+//            $this->logged = true;
+//            $this->user_logged_id = Customer::find($this->current_customer_id)->user->id;
+//            $this->customer_reserves = Customer::find($this->current_customer_id)->reserves()->get();
+//        }
+//        $this->website = $website;
+////dd($website);
+//        $panel = Panel::where('website', $this->website)->first();
+//
+//
+//
+//        $this->panel = $panel;
+//        if (!$panel) {
+//            $this->branches = [];
+//            return;
+//        }
+//
+//        $this->branches = $panel
+//            ->branches()
+//            ->get();
+//
+////        if (Auth::check()) {
+////            $this->current_customer_id = Auth::user()->customer->id;
+//
+////            $customer = Customer::find($this->current_customer_id);
+//
+//
+//
+////        }
+//    }
+
+    public function mount($website)
+    {
+        $this->website = $website;
+
+        $this->panel = Panel::where(
+            'website',
+            $this->website
+        )->first();
+
+        if (!$this->panel) {
+            $this->branches = [];
+
+            return;
+        }
+
+        $this->branches = $this->panel
+            ->branches()
+            ->get();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Customer Session
+        |--------------------------------------------------------------------------
+        */
+
+        $this->current_customer_id = session('customer_id');
+
+        if ($this->current_customer_id) {
+
+            $customer = Customer::find(
+                $this->current_customer_id
+            );
+
+            if ($customer) {
+
+                $this->logged = true;
+
+                $this->user_logged_id = $customer->user_id;
+
+                $this->loadCustomerReserves();
+
+            } else {
+
+                session()->forget('customer_id');
+
+                $this->current_customer_id = null;
+            }
+        }
+    }
+    private function loadCustomerReserves(): void
+    {
+        $customerId = session('customer_id');
+
+        if (!$customerId) {
+            $this->current_customer_id = null;
+            $this->customer_reserves = [];
+            return;
+        }
+
+        $customer = Customer::with('reserves')->find($customerId);
+
+        if (!$customer) {
+            session()->forget('customer_id');
+
+            $this->current_customer_id = null;
+            $this->user_logged_id = null;
+            $this->logged = false;
+            $this->customer_reserves = [];
+
+            return;
+        }
+
+        $this->current_customer_id = $customer->id;
+        $this->user_logged_id = $customer->user_id;
+        $this->logged = true;
+
+        $this->customer_reserves = $customer->reserves;
+    }
     /*
     |--------------------------------------------------------------------------
     | Select Branch
@@ -165,13 +527,14 @@ class Index extends Component
         ])->findOrFail($branchId);
 
         $this->branch_selected = $branch;
-        $this->customers =$this->branch_selected->customers ;
+//        $this->customers =$this->branch_selected->customers ;
 
         $this->branch_services = $branch->services;
 
         $this->branch_categories = $branch->categories;
 
         $this->state = 1;
+
 
         // Reset previous booking
         $this->resetBooking();
@@ -502,7 +865,6 @@ class Index extends Component
         | Save Selected Time
         |--------------------------------------------------------------------------
         */
-
         $this->selected_time = $startTime;
 
         $this->selected_end_time = $endTime;
@@ -635,6 +997,39 @@ class Index extends Component
         | Create Reserve
         |--------------------------------------------------------------------------
         */
+//        dd([
+//
+//            'total_time' =>
+//                $this->total_time,
+//
+//            'discount' =>
+//                $this->selected_service->discount ?? 0,
+//
+//            'total_cost' =>
+//                $this->selected_service->cost,
+//
+//            'end_time' =>
+//                $endTime,
+//
+//            'start_time' =>
+//                $this->selected_time,
+//
+//            'customer_id' =>
+//                $this->current_customer??$this->customers->first()->id,
+//
+//            'branch_id' =>
+//                $this->branch_selected->id,
+//
+//            'status_id' =>
+//                1,
+//
+//            'date' =>
+//                $date,
+//
+//            'employee_id' =>
+//                $this->employee_selected,
+//        ]);
+
 
         Reserve::create([
 
@@ -654,7 +1049,7 @@ class Index extends Component
                 $this->selected_time,
 
             'customer_id' =>
-                $this->current_customer??$this->customers->first()->id,
+                $this->current_customer_id,
 
             'branch_id' =>
                 $this->branch_selected->id,
@@ -702,6 +1097,30 @@ class Index extends Component
         $this->selected_end_time = null;
 
         $this->time_of_wtimes = [];
+
+        $this->state= 0 ;
+
+
+        $customer = Customer::find(
+            $this->current_customer_id
+        );
+
+        if ($customer) {
+
+            $this->logged = true;
+
+            $this->user_logged_id = $customer->user_id;
+
+            $this->loadCustomerReserves();
+
+        } else {
+
+            session()->forget('customer_id');
+
+            $this->current_customer_id = null;
+        }
+        $this->resetBooking() ;
+
     }
 
 
@@ -715,46 +1134,39 @@ class Index extends Component
         string $startTime,
         string $endTime
     ): bool {
-
         if (!$this->employee_selected || !$this->reserve_data) {
             return false;
         }
 
-
         try {
-
             $date = Verta::parse(
                 $this->reserve_data
             )->format('Y-m-d');
 
         } catch (\Throwable $e) {
-
             return false;
         }
 
-
         /*
         |--------------------------------------------------------------------------
-        | Overlap:
+        | Overlap
+        |--------------------------------------------------------------------------
         |
         | existing_start < new_end
         | AND
         | existing_end > new_start
-        |--------------------------------------------------------------------------
+        |
         */
-
+        $date = Verta::parse($this->reserve_data)
+            ->datetime()
+            ->format('Y-m-d');
         return Reserve::query()
             ->where('employee_id', $this->employee_selected)
             ->where('date', $date)
-            ->where(function ($query) use ($startTime, $endTime) {
-
-                $query
-                    ->where('start_time', '<', $endTime)
-                    ->where('end_time', '>', $startTime);
-            })
+            ->where('start_time', '<=', $endTime)
+            ->where('end_time', '>=', $startTime)
             ->exists();
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -878,7 +1290,7 @@ class Index extends Component
     public function render()
     {
         return view(
-            'livewire.branches.index_branches'
+            'livewire.subweb.index_branches'
         );
     }
 }

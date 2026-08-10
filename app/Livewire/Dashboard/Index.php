@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Dashboard;
 
+use App\Models\Admin;
 use App\Models\Dashboard;
+use App\Models\Panel;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -15,6 +17,9 @@ class Index extends Component
     public $selected_dashboard = null;
 
     public $subscription_months = 1;
+
+
+    public $user;
 
 
     /*
@@ -94,17 +99,54 @@ class Index extends Component
         |--------------------------------------------------------------------------
         */
 
-        dd([
-            'dashboard_id' => $this->selected_dashboard['id'],
 
-            'dashboard' => $this->selected_dashboard['caption'],
 
-            'months' => $months,
+//        dd([
+//            'dashboard_id' => $this->selected_dashboard['id'],
+//
+//            'dashboard' => $this->selected_dashboard['caption'],
+//
+//            'months' => $months,
+//
+//            'monthly_price' => $monthlyPrice,
+//
+//            'total_price' => $totalPrice,
+//        ]);
 
-            'monthly_price' => $monthlyPrice,
 
-            'total_price' => $totalPrice,
-        ]);
+        $panel = Panel::where('user_id', Auth::id())
+            ->where('dashboard_id', $this->selected_dashboard['id'])
+            ->first();
+
+        if ($panel) {
+
+            // پنل از قبل وجود دارد
+            $panel->expired_date = now()->addMonth($months);
+            $panel->save();
+
+        } else {
+
+            // پنل وجود ندارد
+            $panel = Panel::create([
+                'user_id' => Auth::id(),
+                'website' => '',
+                'expired_date' => now()->addMonth($months),
+                'dashboard_id' => $this->selected_dashboard['id'],
+            ]);
+            Admin::create([
+                'role_id' => 1,
+                'panel_id' =>  $panel->id ,
+                'user_id' => Auth::id(),
+                'password' => '1234'
+            ]);
+        }
+
+        $panel->website = 'web' . $panel->id;
+        $panel->save();
+        $this->render();
+//        $this->dispatch('$refresh');
+//        $this->js('window.location.reload()');
+
     }
 
 
@@ -116,6 +158,8 @@ class Index extends Component
 
     public function mount()
     {
+
+        $this->user = Auth::user();
         $this->dashboards_list = Dashboard::all();
 
         $this->panels_user = Auth::user()

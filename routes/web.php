@@ -23,7 +23,8 @@ use App\Livewire\Payments\Index as payments_index;
 
 
 use App\Livewire\WebsiteLiveWire\Index as website_index;
-use App\Livewire\SiteLiveWire\Index as site;
+//use App\Livewire\SiteLiveWire\Index as site;
+use App\Livewire\SubWeb\Index as site;
 
 
 use Illuminate\Support\Facades\Route;
@@ -116,9 +117,10 @@ Route::view('dashboard-1', view: 'dashboard')
     //auth middleware for customers
 
 Route::get('new-reserve' , website_index::class)->name('new-reserve.index');
-Route::domain('{panel}.abc.test')->group(function () {
-    Route::get('/', Site::class);
+Route::domain('{website}.abc.test')->group(function () {
+    Route::get('/12', Site::class);
 });
+
 Route::get('customers' , customers_index::class)->name('customers.index');
 Route::get('payments' , payments_index::class)->name('payments.index');
 

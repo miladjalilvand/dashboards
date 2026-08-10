@@ -14,7 +14,8 @@ class Branch extends Model
         'mobile',
         'address',
         'location',
-        'working_times','panel_id' , 'is_active'
+        'working_times','panel_id' , 'is_active' ,
+
     ];
 
     public function services (){

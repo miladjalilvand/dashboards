@@ -8,7 +8,7 @@ class Admin extends Model
 {
     //
     protected $table = 'admins';
-    protected $filleble = [ 
+    protected $fillable  = [
     'user_id',
     'panel_id',
     'role_id',
@@ -18,7 +18,7 @@ class Admin extends Model
         'password',
     ];
 
-    public function panel () 
+    public function panel ()
     {
         return $this->belongsTo(Panel::class);
     }

@@ -136,11 +136,11 @@
                         </flux:table.cell>
 
                         <flux:table.cell>
-                            {{ $reserve->customer?->name }}
+                            {{ $reserve->customer?->user->name }}
                         </flux:table.cell>
 
                         <flux:table.cell>
-                            {{ $reserve->date }}
+                            {{ \Hekmatinasser\Verta\Verta::instance($reserve->date)->format('Y/m/d') }}
                         </flux:table.cell>
 
                         <flux:table.cell>
@@ -284,7 +284,7 @@
                         </span>
 
                         <span class="text-gray-900 dark:text-white">
-                            {{ $selectedReserve->customer?->name ?? '---' }}
+                            {{ $selectedReserve->customer?->user->name ?? '---' }}
                         </span>
 
                     </div>
@@ -298,7 +298,7 @@
                         </span>
 
                         <span class="text-gray-900 dark:text-white">
-                            {{ $selectedReserve->date }}
+                           {{ \Hekmatinasser\Verta\Verta::instance($reserve->date)->format('Y/m/d') }}
                         </span>
 
                     </div>

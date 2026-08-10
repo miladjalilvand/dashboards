@@ -82,9 +82,23 @@ class User extends Authenticatable
         return $this->hasMany(Panel::class);
     }
 
+
+    public function getDashboardPanel($dashboard_id)
+    {
+        return $this->panels()
+            ->where('dashboard_id', $dashboard_id)
+            ->first();
+    }
+
     public function role()
     {
         return $this->belongsTo(Role::class);
 
     }
+
+//    public function customer()
+//    {
+//        return $this->hasOne(Customer::class);
+//
+//    }
 }
