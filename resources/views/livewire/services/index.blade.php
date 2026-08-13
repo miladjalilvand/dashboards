@@ -78,6 +78,14 @@
         wire:model="cost"
         :error="$errors->first('cost')"
     />
+    <flux:input
+        label="مبلغ برای ثبت نوبت"
+
+        placeholder="مبلغ را وارد کنید"
+        type="number"
+        wire:model="reserve_price"
+        :error="$errors->first('reserve_price')"
+    />
 
     {{-- فیلد address --}}
     <flux:input
@@ -121,6 +129,9 @@
             </span><br/>
              <span class="text-gray-700 dark:text-gray-300">
               مبلغ:  {{$service->cost}}
+            </span><br/>
+<span class="text-gray-700 dark:text-gray-300">
+              مبلغ برای ثبت نوبت:  {{$service->reserve_price == 0 ? "رایگان" : $reserve->reserve_price}}
             </span><br/>
 
              <span class="text-gray-600 dark:text-gray-400">

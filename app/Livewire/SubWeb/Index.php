@@ -238,7 +238,7 @@ class Index extends Component
 
                 $customer = Customer::create([
                     'user_id' => $user->id,
-                    'branch_id' => $branch->id,
+//                    'branch_id' => $branch->id,
                     'panel_id' => $this->panel->id,
                 ]);
             }
@@ -343,7 +343,7 @@ class Index extends Component
 
         $customer = Customer::create([
             'user_id' => $user->id,
-            'branch_id' => $branch->id,
+//            'branch_id' => $branch->id,
             'panel_id' => $this->panel->id,
         ]);
 

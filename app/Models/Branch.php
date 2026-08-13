@@ -15,6 +15,7 @@ class Branch extends Model
         'address',
         'location',
         'working_times','panel_id' , 'is_active' ,
+        'bank_key'
 
     ];
 
@@ -32,9 +33,6 @@ class Branch extends Model
         return $this->hasMany(\App\Models\Reserve::class);
     }
 
-    public function customers (){
-        return $this->hasMany(\App\Models\Customer::class);
-    }
 
     public function payments (){
         return $this->hasMany(Payment::class);

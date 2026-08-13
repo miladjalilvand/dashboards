@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('reserves', function (Blueprint $table) {
+        Schema::table('branches', function (Blueprint $table) {
             //
-            $table->foreignId('employee_id');
+
+            $table->string('bank_key')->nullable();
         });
     }
 
@@ -22,11 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('reserves', function (Blueprint $table) {
+        Schema::table('panels', function (Blueprint $table) {
             //
-            $table->foreignId('employee_id');
-
-
         });
     }
 };

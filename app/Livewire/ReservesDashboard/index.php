@@ -80,7 +80,8 @@ use Illuminate\Support\Carbon;
     public function show_days ($startdate=null) {
 
         if($startdate == null){
-            $startdate = now();
+            $startdate = now()->addDays(-1);
+
         }
 
         $list_days=[];
@@ -98,7 +99,7 @@ use Illuminate\Support\Carbon;
 
         $this->selected_date = $date;
 
-        $this->reserves = $this->current_branch->reserves()->where('date' , verta($this->selected_date)->format('Y-m-d'))->get();
+        $this->reserves = $this->current_branch->reserves()->where('date' , $this->selected_date)->get();
 
 
     }
@@ -143,9 +144,10 @@ use Illuminate\Support\Carbon;
         $this->branches = Branch::all();
         $this->current_branch_id = current_branch()->id;
         $this->current_branch = current_branch();
-        $this->select_date($this->selected_days[6]);
+//        dd($this->selected_days);
+        $this->select_date(now()->format('Y-m-d'));
 
-        // $this->reserves = current_branch()->reserves();
+//         $this->reserves = current_branch()->reserves();
 
     }
     public function render()

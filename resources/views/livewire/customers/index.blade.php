@@ -38,7 +38,7 @@
         {{-- لیست مشتری‌های شعبه --}}
         <div class="space-y-2 p-3">
 
-            @foreach($branch_customers as $customer)
+            @foreach($branch_customers ??[] as $customer)
                 <div class="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-900">
 
                 <span class="font-medium text-gray-800 dark:text-gray-200">

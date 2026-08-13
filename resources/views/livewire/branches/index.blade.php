@@ -76,6 +76,13 @@
     wire:model="working_times"
     :error="$errors->first('working_times')"
 />
+                       <flux:input
+    label=" کلید درگاه پرداخت "
+    placeholder="xxxxx"
+    type="text" {{-- یا type="textarea" اگر کامپوننت flux:input از آن پشتیبانی کند --}}
+    wire:model="bank_key"
+    :error="$errors->first('bank_key')"
+/>
 
 {{-- دکمه ارسال --}}
 
@@ -133,6 +140,11 @@
                 <div>
             <span class="text-gray-600 dark:text-gray-400">
                 موقعیت مکانی : {{$branch->location}}
+            </span>
+        </div>
+<div>
+            <span class="text-gray-600 dark:text-gray-400">
+                درگاه بانکی : {{$branch->bank_key ?? 'xxxx'}}
             </span>
         </div>
                 <div class="text-left mt-2">

@@ -9,13 +9,14 @@ class Service extends Model
     protected $table = 'services';
     protected $fillable = [
         'description',
-        'cost', 
-        'discount', 
+        'cost',
+        'discount',
         'time',
         'caption',
         'category_id',
         'branch_id',
-        'is_active'
+        'is_active',
+        'reserve_price',
     ];
 
     public function category()
@@ -30,7 +31,7 @@ class Service extends Model
                     ->withPivot('is_active')
                     ->withTimestamps();
     }
-    
+
     // Optional: Get only active employees for this service
     public function activeEmployees()
     {

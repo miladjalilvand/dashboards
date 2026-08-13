@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Payment extends Model
 {
     //
-    protected $table ='payments'; 
-    protected $fillable = [ 
+    protected $table ='payments';
+    protected $fillable = [
         'reff',
         'branch_id',
-        'user_id' , 
+        'customer_user_id' ,
         'amount'
     ];
 }

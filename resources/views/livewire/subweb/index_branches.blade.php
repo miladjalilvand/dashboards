@@ -904,6 +904,22 @@ dir="rtl"
                                                     </div>
 
                                                 </div>
+<div class="
+                                                    rounded-xl
+                                                    bg-gray-50
+                                                    dark:bg-gray-700/50
+                                                    p-3
+                                                ">
+
+                                                    <div class="text-xs text-gray-400">
+                                                         مبلغ برای ثبت نوبت
+                                                    </div>
+
+                                                    <div class="font-semibold mt-1">
+                                                        {{ number_format($service->reserve_price) }}
+                                                    </div>
+
+                                                </div>
 
                                             </div>
 
@@ -1242,7 +1258,7 @@ dir="rtl"
                     text-3xl
                 ">
 
-                    📅
+<!--                    📅-->
 
                 </div>
 
@@ -1470,6 +1486,31 @@ dir="rtl"
 
                     </span>
 
+                </div>  <div class="
+                    flex
+                    justify-between
+                    gap-4
+                    px-4
+                    py-3
+                    bg-gray-50
+                    dark:bg-gray-800
+                ">
+
+                    <span class="text-sm text-gray-500">
+                        مبلغ
+                    </span>
+
+                    <span class="
+                        font-bold
+                        text-gray-900
+                        dark:text-white
+                    ">
+
+                        {{ $selected_service?->reserve_price ? number_format($selected_service?->reserve_price  ?? 0) : "رایگان"}}
+
+                        {{                      $selected_service?->reserve_price ?   "تومان" : ""}}
+                    </span>
+
                 </div>
 
             </div>
@@ -1500,11 +1541,12 @@ dir="rtl"
                 </button>
 
 
-                <button
-                    type="button"
-                    wire:click="confirmReservation"
-                    wire:loading.attr="disabled"
-                    class="
+                @if($selected_service?->reserve_price == 0)
+                    <button
+                        type="button"
+                        wire:click="confirmReservation"
+                        wire:loading.attr="disabled"
+                        class="
                         flex-1
                         px-4
                         py-3
@@ -1520,11 +1562,38 @@ dir="rtl"
                         ✓ تأیید و ثبت
                     </span>
 
-                    <span wire:loading wire:target="confirmReservation">
+                        <span wire:loading wire:target="confirmReservation">
                         در حال ثبت...
                     </span>
 
-                </button>
+                    </button>
+                    @else
+                    <button
+                        type="button"
+                        wire:click="confirmReservation"
+                        wire:loading.attr="disabled"
+                        class="
+                        flex-1
+                        px-4
+                        py-3
+                        rounded-xl
+                        bg-blue-600
+                        hover:bg-blue-700
+                        text-white
+                        font-semibold
+                        disabled:opacity-50
+                    ">
+
+                    <span wire:loading.remove wire:target="confirmReservation">
+                       پرداخت
+                    </span>
+
+                        <span wire:loading wire:target="confirmReservation">
+                        در حال ثبت...
+                    </span>
+
+                    </button>
+                @endif
 
             </div>
 

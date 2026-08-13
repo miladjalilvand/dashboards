@@ -127,9 +127,9 @@ class Index extends Component
         });
 
         // Refresh customers
-        $this->branch_selected = Branch::find($this->current_branch_id);
-
-        $this->branch_customers = $this->branch_selected->customers;
+//        $this->branch_selected = Branch::find($this->current_branch_id);
+//
+        $this->branch_customers = Auth::user()->panels('dashboard_id' , 1)->first()->customers;
 
         // Close modal
         Flux::modal('create-customer')->close();

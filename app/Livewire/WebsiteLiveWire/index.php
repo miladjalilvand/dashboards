@@ -164,8 +164,10 @@ class Index extends Component
             'categories.services.employees'
         ])->findOrFail($branchId);
 
+        $user = Auth::user();
+
         $this->branch_selected = $branch;
-        $this->customers =$this->branch_selected->customers ;
+        $this->customers =$user->panels()->where('dashboard_id' , 1)->first()->customers; ;
 
         $this->branch_services = $branch->services;
 

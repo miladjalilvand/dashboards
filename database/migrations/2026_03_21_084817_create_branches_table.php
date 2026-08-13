@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('phone');
             $table->string('mobile');
             $table->string('address');
-            $table->string('location');
-            $table->string('working_times');
+            $table->string('location')->nullable();
+            $table->string('working_times')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

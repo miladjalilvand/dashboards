@@ -62,5 +62,32 @@
 
 @livewireScripts
 @fluxScripts
+<footer class="mt-16 border-t border-gray-200 bg-white">
+    <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 sm:flex-row">
+
+        <div class="text-sm text-gray-500">
+            © {{ date('Y') }} تمامی حقوق محفوظ است.
+        </div>
+
+        <div class="flex items-center gap-6 text-sm text-gray-500">
+            <a href="#" class="transition hover:text-gray-900">
+                درباره ما
+            </a>
+
+            <a href="#" class="transition hover:text-gray-900">
+                تماس با ما
+            </a>
+
+            <a href="#" class="transition hover:text-gray-900">
+                قوانین و مقررات
+            </a>
+
+            <a href="#" class="transition hover:text-gray-900">
+                حریم خصوصی
+            </a>
+        </div>
+
+    </div>
+</footer>
 </body>
 </html>

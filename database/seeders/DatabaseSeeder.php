@@ -41,26 +41,26 @@ class DatabaseSeeder extends Seeder
         }
 
         // User::destroy(1);
-        $user = User::create(
-            [
-                'name' => 'milad' ,
-                'email' => 'admin@email.com' ,
-                'password' => 'password' ,
-                'mobile_number' => '09133333333',
-                'role_id' => 1
-            ]
-        );
-
-        Auth::login($user);
+//        $user = User::create(
+//            [
+//                'name' => 'milad' ,
+//                'email' => 'admin@email.com' ,
+//                'password' => 'password' ,
+//                'mobile_number' => '09133333333',
+//                'role_id' => 1
+//            ]
+//        );
+//
+//        Auth::login($user);
 
         // Panel::destroy(1);
-       $panel =  Panel::create([
-            'id' => 1 ,
-            'website' => '---',
-            'expired_date' => now() ,
-            'user_id' => userAuth()->id,
-           'dashboard_id' => 1
-        ]);
+//       $panel =  Panel::create([
+//            'id' => 1 ,
+//            'website' => '---',
+//            'expired_date' => now() ,
+//            'user_id' => userAuth()->id,
+//           'dashboard_id' => 1
+//        ]);
 
         // Role::destroy(1);
        $role =  Role::create([
@@ -73,12 +73,12 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Admin::destroy(1);
-        Admin::create([
-            'role_id' => $role->id ,
-            'panel_id' =>  $panel->id ,
-            'user_id' => userAUTH()->id,
-            'password' => '1234'
-        ]);
+//        Admin::create([
+//            'role_id' => $role->id ,
+//            'panel_id' =>  $panel->id ,
+//            'user_id' => userAUTH()->id,
+//            'password' => '1234'
+//        ]);
 
 
         $statuses = [

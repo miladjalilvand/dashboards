@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id');
+            $table->foreignId('customer_user_id');
             $table->foreignId('branch_id');
             $table->string('reff');
             $table->integer('amount');

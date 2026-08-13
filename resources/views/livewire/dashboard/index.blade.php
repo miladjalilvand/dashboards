@@ -1,6 +1,59 @@
 
 <div class="w-full" dir="rtl">
+   <!-- Mobile User Menu -->
+   <flux:header class="">
+            <flux:spacer inset="left" />
 
+            <flux:spacer />
+
+            <flux:dropdown position="top" align="end">
+                <flux:profile
+                    :initials="auth()->user()->initials()"
+                    icon-trailing="chevron-down"
+                />
+
+                <flux:menu>
+                    <flux:menu.radio.group>
+                        <div class="p-0 text-sm font-normal">
+                            <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
+                                <flux:avatar
+                                    :name="auth()->user()->name"
+                                    :initials="auth()->user()->initials()"
+                                />
+
+                                <div class="grid flex-1 text-start text-sm leading-tight">
+                                    <flux:heading class="truncate">{{ auth()->user()->name }}</flux:heading>
+                                    <flux:text class="truncate">{{ auth()->user()->email }}</flux:text>
+                                </div>
+                            </div>
+                        </div>
+                    </flux:menu.radio.group>
+
+                    <flux:menu.separator />
+
+                    <flux:menu.radio.group>
+{{--                        <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>--}}
+{{--                            {{ __('ویرایش پروفایل کاربری') }}--}}
+{{--                        </flux:menu.item>--}}
+                    </flux:menu.radio.group>
+
+                    <flux:menu.separator />
+
+                    <form method="POST" action="{{ route('logout') }}" class="w-full">
+                        @csrf
+                        <flux:menu.item
+                            as="button"
+                            type="submit"
+                            icon="arrow-right-start-on-rectangle"
+                            class="w-full cursor-pointer"
+                            data-test="logout-button"
+                        >
+                            {{ __('خروج ') }}
+                        </flux:menu.item>
+                    </form>
+                </flux:menu>
+            </flux:dropdown>
+        </flux:header>
     {{-- =========================================================
          DASHBOARD LIST
     ========================================================== --}}
@@ -33,10 +86,42 @@
 
                 {{-- HEADER --}}
                 <div class="flex items-start justify-between gap-3">
-
                     <div class="min-w-0">
+                        @if($this->user->getDashboardPanel($dashboard['id']))
 
-                        <h2 class="
+                        <a
+                            href="https://{{ $this->user->getDashboardPanel($dashboard['id'])->website }}.abc.test/12"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="group inline-flex items-center gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-3 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-zinc-300 hover:shadow-md dark:border-zinc-700 dark:bg-zinc-900 dark:hover:border-zinc-600"
+                        >
+                            <div class="flex size-9 items-center justify-center rounded-lg bg-zinc-100 transition group-hover:bg-zinc-900 dark:bg-zinc-800 dark:group-hover:bg-white">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    class="size-4 text-zinc-700 transition group-hover:text-white dark:text-zinc-300 dark:group-hover:text-zinc-900"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M13.5 6H19.5V12M19 6.5L12 13.5M19 13.5V18A1.5 1.5 0 0 1 17.5 19.5H6A1.5 1.5 0 0 1 4.5 18V6.5A1.5 1.5 0 0 1 6 5h4.5"/>
+                                </svg>
+                            </div>
+
+                            <div class="text-right">
+                                <div class="text-sm font-semibold text-zinc-900 dark:text-white">
+                                    مشاهده سایت
+                                </div>
+
+                                <div class="text-xs text-zinc-500 dark:text-zinc-400">
+                                    {{ $this->user->getDashboardPanel($dashboard['id'])->website }}.abc.test
+                                </div>
+                            </div>
+                        </a>
+
+                        @endif
+<h2 class="
                             truncate
                             text-lg font-semibold
                             text-zinc-900

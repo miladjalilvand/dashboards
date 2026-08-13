@@ -29,4 +29,9 @@ class Panel extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function customers (){
+        return $this->hasMany(\App\Models\Customer::class);
+    }
+
 }

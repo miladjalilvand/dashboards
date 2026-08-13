@@ -6,6 +6,19 @@
 @source '../../vendor/livewire/flux-pro/stubs/**/*.blade.php';
 @source '../../vendor/livewire/flux/stubs/**/*.blade.php';
 
+@font-face {
+    font-family: "Yekan Bakh";
+    src: url("../fonts/webfonts/woff2/YekanBakh-Light.woff2") format("woff2");
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+html,
+body {
+    font-family: "Yekan Bakh", sans-serif;
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 .scrollbar-hide::-webkit-scrollbar {
     display: none;

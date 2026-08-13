@@ -18,7 +18,7 @@ use Livewire\Component;
 
     public $showModal ;
 
-    public $caption ,$phone , $mobile , $address , $location , $working_times ;
+    public $caption ,$phone , $mobile , $address , $location , $working_times , $bank_key ;
 
     public $edit_mode =false;
 
@@ -123,7 +123,8 @@ use Livewire\Component;
            'location'=> $this->location ,
            'address'=> $this->address ,
           'working_times'=>  $this->working_times,
-          'panel_id' => panelID($user)
+          'panel_id' => panelID($user),
+                   'bank_key' => $this->bank_key
         ]);
 
 
@@ -141,7 +142,9 @@ use Livewire\Component;
            'location'=> $this->location ,
            'address'=> $this->address ,
           'working_times'=>  $this->working_times,
-          'panel_id' => panelID($user)
+          'panel_id' => panelID($user) ,
+                   'bank_key' => $this->bank_key
+
         ]);
       }
             $user = Auth::user();

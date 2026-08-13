@@ -20,6 +20,7 @@ class Index extends Component
     public $caption;
     public $category_id;
     public $branch_id;
+    public $reserve_price;
 
 
 
@@ -99,6 +100,7 @@ class Index extends Component
                 'caption' =>$this->caption,
                 'category_id'=>$this->category_id ,
                 'branch_id' =>$this->branch_id,
+                'reserve_price' =>$this->reserve_price,
             ]);
 
 
@@ -110,6 +112,8 @@ class Index extends Component
                 'caption' =>$this->caption,
                 'category_id'=>$this->category_id ,
                 'branch_id' =>$this->branch_id,
+                'reserve_price' =>$this->reserve_price,
+
             ]);
 
         }
