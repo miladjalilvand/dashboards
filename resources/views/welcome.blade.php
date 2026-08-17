@@ -21,14 +21,7 @@
     <header class="w-full border-b bg-white">
         <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
 
-            <div>
-                <h1 class="text-xl font-bold">
-                    سیستم نوبت‌دهی
-                </h1>
-                <p class="mt-1 text-sm text-gray-500">
-                    راهنمای راه‌اندازی پنل نوبت‌دهی
-                </p>
-            </div>
+
 
             @if (Route::has('login'))
                 <nav class="flex items-center gap-3">
@@ -58,7 +51,14 @@
 
                 </nav>
             @endif
-
+                <div>
+                    <h1 class="text-xl font-bold">
+                        سیستم نوبت‌دهی
+                    </h1>
+                    <p class="mt-1 text-sm text-gray-500">
+                        راهنمای راه‌اندازی پنل نوبت‌دهی
+                    </p>
+                </div>
         </div>
     </header>
 
@@ -86,7 +86,7 @@
 
 
         {{-- Steps --}}
-        <div class="relative mt-16 grid gap-6 md:grid-cols-3">
+        <div class="relative mt-16 grid gap-6 md:grid-cols-3" dir="rtl" >
 
             {{-- Step 1 --}}
             <div class="relative rounded-2xl border border-gray-200 bg-white p-7 shadow-sm">
@@ -137,7 +137,7 @@
 
 
             {{-- Step 2 --}}
-            <div class="relative rounded-2xl border border-gray-200 bg-white p-7 shadow-sm">
+            <div class="relative rounded-2xl border border-gray-200 bg-white p-7 shadow-sm" >
 
                 <div class="flex items-center justify-between">
 

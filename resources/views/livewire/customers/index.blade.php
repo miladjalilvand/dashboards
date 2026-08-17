@@ -85,20 +85,20 @@
                         required
                     />
 
-                    <flux:input
-                        wire:model="customer_email"
-                        label="ایمیل"
-                        placeholder="example@gmail.com"
-                        type="email"
-                    />
+{{--                    <flux:input--}}
+{{--                        wire:model="customer_email"--}}
+{{--                        label="ایمیل"--}}
+{{--                        placeholder="example@gmail.com"--}}
+{{--                        type="email"--}}
+{{--                    />--}}
 
-                    <flux:input
-                        wire:model="customer_password"
-                        label="رمز عبور"
-                        type="password"
-                        required
-                        viewable
-                    />
+{{--                    <flux:input--}}
+{{--                        wire:model="customer_password"--}}
+{{--                        label="رمز عبور"--}}
+{{--                        type="password"--}}
+{{--                        required--}}
+{{--                        viewable--}}
+{{--                    />--}}
 
                     <div class="flex justify-end gap-2">
 

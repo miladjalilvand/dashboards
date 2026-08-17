@@ -4,6 +4,7 @@ namespace App\Livewire\Customers;
 
 use App\Models\Branch;
 use App\Models\Customer;
+use App\Models\CustomerUser;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -83,48 +84,37 @@ class Index extends Component
                 'unique:users,mobile_number',
             ],
 
-            'customer_email' => [
-                'nullable',
-                'email',
-                'max:255',
-                'unique:users,email',
-            ],
 
-            'customer_password' => [
-                'required',
-                'string',
-                'min:6',
-            ],
         ], [
             'customer_name.required' => 'نام مشتری را وارد کنید.',
 
             'customer_mobile.required' => 'شماره موبایل را وارد کنید.',
             'customer_mobile.unique' => 'این شماره موبایل قبلاً ثبت شده است.',
-
-            'customer_email.email' => 'ایمیل وارد شده معتبر نیست.',
-            'customer_email.unique' => 'این ایمیل قبلاً ثبت شده است.',
-
-            'customer_password.required' => 'رمز عبور را وارد کنید.',
-            'customer_password.min' => 'رمز عبور باید حداقل ۶ کاراکتر باشد.',
         ]);
+
 
         DB::transaction(function () use ($validated) {
 
-            $user = User::create([
+//            $user = CustomerUser::create([
+//                'name' => $validated['customer_name'],
+//                'email' => $validated['customer_email'] ?: null,
+//                'password' => Hash::make($validated['customer_password']),
+//                'role_id' => 2,
+//                'mobile_number' => $validated['customer_mobile'],
+//            ]);
+            $user = CustomerUser::create([
                 'name' => $validated['customer_name'],
-                'email' => $validated['customer_email'] ?: null,
-                'password' => Hash::make($validated['customer_password']),
-                'role_id' => 2,
-                'mobile_number' => $validated['customer_mobile'],
+                'mobile' => $validated['customer_mobile'],
             ]);
+            $loged_user = Auth::user();
 
-            $user = Auth::user();
             Customer::create([
                 'user_id' => $user->id,
-                'branch_id' => $this->current_branch_id,
-                'panel_id' => $user->panels()->where('dashboard_id' , 1)->first()->id,
+//                'branch_id' => $this->current_branch_id,
+                'panel_id' => $loged_user->panels()->where('dashboard_id', 1)->first()->id,
             ]);
         });
+
 
         // Refresh customers
 //        $this->branch_selected = Branch::find($this->current_branch_id);

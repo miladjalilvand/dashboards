@@ -537,6 +537,9 @@ class Index extends Component
 
     public function confirmReservation()
     {
+
+        $this->current_customer =$this->customers->first()->id;
+
         $this->clearMessages();
 
 
@@ -553,6 +556,10 @@ class Index extends Component
 
         if (!$this->selected_service) {
             $this->error_message = 'سرویس انتخاب نشده است.';
+            return;
+        }
+        if (!$this->current_customer) {
+            $this->error_message = 'مشتزی انتخاب نشده است.';
             return;
         }
 

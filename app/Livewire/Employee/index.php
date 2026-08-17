@@ -204,6 +204,8 @@ use Livewire\Component;
         $this->reset(['hour_end_selected','min_end_selected' , 'hour_start_selected','min_start_selected']);
 
         }
+
+
     }
 
     public function remove_time($key_item , $week_day){

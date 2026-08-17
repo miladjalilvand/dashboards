@@ -2,6 +2,7 @@
 
     <livewire:branch_switcher />
 
+<div class="h-3"></div>
 
     <flux:button wire:click="open_modal">
         {{ __('جدید') }}
@@ -89,8 +90,10 @@
             <flux:modal name="showModalWeekday" :show="$errors->isNotEmpty()" focusable class="max-w-lg"
                 wire:model="showModalWeekday">
                 <span class="text-gray-900 dark:text-gray-100">{{$farsi_week_days[$weekday_selected]?? ''}}</span><br />
-                @if(isset($working_times[$week_day_index]))
-                    @foreach($working_times[$week_day_index] as $key => $item)
+                @if(isset($working_times[$weekday_selected]))
+
+
+                    @foreach($working_times[$weekday_selected] as $key => $item)
                         <span class="text-gray-700 dark:text-gray-300">
                             {{$item['start']['h'].':'.$item['start']['m']}}تا  {{$item['end']['h'].':'.$item['end']['m']}}
                         </span>

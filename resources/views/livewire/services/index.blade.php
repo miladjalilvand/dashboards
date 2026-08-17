@@ -131,7 +131,7 @@
               مبلغ:  {{$service->cost}}
             </span><br/>
 <span class="text-gray-700 dark:text-gray-300">
-              مبلغ برای ثبت نوبت:  {{$service->reserve_price == 0 ? "رایگان" : $reserve->reserve_price}}
+              مبلغ برای ثبت نوبت:  {{$service->reserve_price == 0 ? "رایگان" : $service->reserve_price}}
             </span><br/>
 
              <span class="text-gray-600 dark:text-gray-400">
