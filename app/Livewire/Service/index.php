@@ -32,16 +32,7 @@ class Index extends Component
 
     public $isopen = false;
 
-    protected function rules()
-    {
-        return [
-            'caption' => ['required', 'string', 'max:255'],
-            'category_id' => ['required', 'exists:categories,id'],
-            'time' => ['required', 'integer', 'min:1', 'max:999'],
-            'cost' => ['required', 'integer', 'min:0', 'max:999999999'],
-            'description' => ['nullable', 'string', 'max:1000'],
-        ];
-    }
+
 
     #[On(['branch-switched'])]
     public function refresh(){
@@ -90,44 +81,122 @@ class Index extends Component
 //        $this->refresh();
     }
 
-    public function store(){
+    public function store()
+    {
         $this->validate();
-        if(!$this->edit_mode){
+
+        if (!$this->edit_mode) {
             Service::create([
-                'description' =>$this->description,
+                'description' => $this->description,
                 'cost' => filled($this->cost) ? $this->cost : 0,
                 'time' => filled($this->time) ? $this->time : 0,
-                'caption' =>$this->caption,
-                'category_id'=>$this->category_id ,
-                'branch_id' =>$this->branch_id,
-                'reserve_price' =>$this->reserve_price,
+                'caption' => $this->caption,
+                'category_id' => $this->category_id,
+                'branch_id' => $this->branch_id,
+                'reserve_price' => $this->reserve_price,
             ]);
-
-
-        }else{
+        } else {
             $this->current_service->update([
-                'description' =>$this->description,
+                'description' => $this->description,
                 'cost' => filled($this->cost) ? $this->cost : 0,
                 'time' => filled($this->time) ? $this->time : 0,
-                'caption' =>$this->caption,
-                'category_id'=>$this->category_id ,
-                'branch_id' =>$this->branch_id,
-                'reserve_price' =>$this->reserve_price,
-
+                'caption' => $this->caption,
+                'category_id' => $this->category_id,
+                'branch_id' => $this->branch_id,
+                'reserve_price' => $this->reserve_price,
             ]);
-
         }
 
-        $branch = current_branch()->fresh(); // این لازم است
+        $branch = current_branch()->fresh();
 
-        $this->services = $branch->services()->orderBy('id', 'desc')->get();
+        $this->services = $branch->services()
+            ->orderBy('id', 'desc')
+            ->get();
+
         $this->categories = $branch->categories()->get();
         $this->branch_id = $branch->id;
-        Flux::modal('services')->close();  $this->isopen = false;
 
+        Flux::modal('services')->close();
+        $this->isopen = false;
+    }
+//
+//    public function store(){
+//        $this->validate();
+//        if(!$this->edit_mode){
+//            Service::create([
+//                'description' =>$this->description,
+//                'cost' => filled($this->cost) ? $this->cost : 0,
+//                'time' => filled($this->time) ? $this->time : 0,
+//                'caption' =>$this->caption,
+//                'category_id'=>$this->category_id ,
+//                'branch_id' =>$this->branch_id,
+//                'reserve_price' =>$this->reserve_price,
+//            ]);
+//
+//
+//        }else{
+//            $this->current_service->update([
+//                'description' =>$this->description,
+//                'cost' => filled($this->cost) ? $this->cost : 0,
+//                'time' => filled($this->time) ? $this->time : 0,
+//                'caption' =>$this->caption,
+//                'category_id'=>$this->category_id ,
+//                'branch_id' =>$this->branch_id,
+//                'reserve_price' =>$this->reserve_price,
+//
+//            ]);
+//
+//        }
+//
+//        $branch = current_branch()->fresh(); // این لازم است
+//
+//        $this->services = $branch->services()->orderBy('id', 'desc')->get();
+//        $this->categories = $branch->categories()->get();
+//        $this->branch_id = $branch->id;
+//        Flux::modal('services')->close();  $this->isopen = false;
+//
+//
+//
+//        // $this->dispatch('new-service');
+//    }
+    protected function rules(): array
+    {
+        return [
+            'caption' => ['required', 'string', 'max:255'],
+            'time' => ['required', 'integer', 'min:1'],
+            'cost' => ['nullable', 'integer', 'min:0'],
+            'reserve_price' => ['nullable', 'integer', 'min:0'],
+            'description' => ['nullable', 'string'],
+            'category_id' => ['required', 'exists:categories,id'],
+            'branch_id' => ['required', 'exists:branches,id'],
+        ];
+    }
 
+    protected function messages(): array
+    {
+        return [
+            'caption.required' => 'وارد کردن عنوان الزامی است.',
+            'caption.string' => 'عنوان باید به صورت متن باشد.',
+            'caption.max' => 'عنوان نمی‌تواند بیشتر از ۲۵۵ کاراکتر باشد.',
 
-        // $this->dispatch('new-service');
+            'time.required' => 'وارد کردن زمان الزامی است.',
+            'time.integer' => 'زمان باید به صورت عدد باشد.',
+            'time.min' => 'زمان باید حداقل ۱ باشد.',
+
+            'cost.integer' => 'مبلغ باید به صورت عدد باشد.',
+            'cost.min' => 'مبلغ نمی‌تواند منفی باشد.',
+
+            'reserve_price.integer' => 'مبلغ ثبت نوبت باید به صورت عدد باشد.',
+            'reserve_price.min' => 'مبلغ ثبت نوبت نمی‌تواند منفی باشد.',
+
+            'description.string' => 'توضیحات باید به صورت متن باشد.',
+
+            'category_id.required' => 'انتخاب دسته‌بندی الزامی است.',
+            'category_id.exists' => 'دسته‌بندی انتخاب شده معتبر نیست.',
+
+            'branch_id.required' => 'انتخاب شعبه الزامی است.',
+            'branch_id.exists' => 'شعبه انتخاب شده معتبر نیست.',
+        ];
     }
 
     public function show_edit($service){

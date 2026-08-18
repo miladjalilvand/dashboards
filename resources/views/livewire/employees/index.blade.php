@@ -66,8 +66,10 @@
             @endforeach
 
             <br />
-            <flux:button wire:click="store_employe_service()">
-                ذخیره تغیرات</flux:button>
+            <br />
+            <br />
+            <flux:button wire:click="store_employe_service()" class="p-1">
+                ذخیره </flux:button>
 
         </flux:modal>
     @endforeach

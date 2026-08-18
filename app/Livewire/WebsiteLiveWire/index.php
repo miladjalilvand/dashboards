@@ -68,6 +68,7 @@ class Index extends Component
     */
 
     public $reserve_data;
+    public $reserve_data_miladu;
 
     public $week_of_day;
 
@@ -142,6 +143,10 @@ class Index extends Component
         $this->branches = $panel
             ->branches()
             ->get();
+
+        $this->customers =$panel->customers; ;
+
+            $this->current_customer = $this->customers->first()->id ;
     }
 
 
@@ -538,7 +543,7 @@ class Index extends Component
     public function confirmReservation()
     {
 
-        $this->current_customer =$this->customers->first()->id;
+//        $this->current_customer =$this->customers->first()->id;
 
         $this->clearMessages();
 
@@ -732,9 +737,9 @@ class Index extends Component
 
         try {
 
-            $date = Verta::parse(
-                $this->reserve_data
-            )->format('Y-m-d');
+
+            $date = Verta::parse( $this->reserve_data)->datetime()->format('Y-m-d');
+
 
         } catch (\Throwable $e) {
 

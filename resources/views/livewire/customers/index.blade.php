@@ -21,6 +21,7 @@
 <input type="date"  id="ab"/> -->
 
 
+    <br />
 
         {{-- دکمه ایجاد مشتری --}}
         <div>
@@ -32,6 +33,7 @@
                 ایجاد مشتری جدید
             </flux:button>
         </div>
+    <br />
 
     <div class="space-y-6">
 

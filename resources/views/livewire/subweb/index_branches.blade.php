@@ -8,20 +8,43 @@ dir="rtl"
         {{-- ========================================================= --}}
         {{-- Customer Authentication --}}
         {{-- ========================================================= --}}
+<div>
+@if($state==1)
+    <button
+        type="button"
+        wire:click="switchState(0)"
+        class="
+                        px-4
+                        py-2
+                        rounded-xl
+                        border
+                        border-gray-200
+                        dark:border-gray-700
+                        hover:bg-gray-100
+                        dark:hover:bg-gray-800
 
+                    ">
+
+         بازگشت
+
+    </button>
+@endif
+</div>
         @if (!$logged)
+<div class="p-1">
 
-            <flux:button
-                variant="primary"
-                icon="arrow-right-end-on-rectangle"
-                wire:click="openLoginModal"
-            >
-                ورود / ثبت‌نام
-            </flux:button>
+    <flux:button
+        variant="primary"
+        icon="arrow-right-end-on-rectangle"
+        wire:click="openLoginModal"
+    >
+        ورود / ثبت‌نام
+    </flux:button>
+</div>
 
         @else
 
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 p-1">
 
                 {{-- User Info --}}
                 <div class="flex items-center gap-3">
@@ -279,9 +302,7 @@ dir="rtl"
                         dark:border-red-900
                         p-4 shadow-xl">
 
-                <div class="text-xl">
-                    ❌
-                </div>
+
 
                 <div class="flex-1">
 
@@ -361,7 +382,7 @@ dir="rtl"
 
     @if($employee_selected)
 
-        <div class="fixed top-0 left-0 right-0 z-50
+        <div class="fixed top-10 left-0 right-0 z-50
                     bg-white/95 dark:bg-gray-900/95
                     backdrop-blur-md
                     border-b border-gray-200
@@ -444,16 +465,15 @@ dir="rtl"
                     {{-- Select Time Button --}}
 
                     <div>
-
+                        @if($reserve_data)
                         <button
                             type="button"
                             wire:click="save_date"
                             class="w-full md:w-auto
                                    px-5 py-2.5
                                    rounded-xl
-                                   bg-blue-600
-                                   hover:bg-blue-700
-                                   text-white
+
+
                                    font-medium
                                    transition
                                    shadow-sm">
@@ -462,6 +482,8 @@ dir="rtl"
 
                         </button>
 
+
+@endif
                     </div>
 
                 </div>
@@ -504,84 +526,192 @@ dir="rtl"
 
                 @foreach($branches as $branch)
 
-                    <div class="
-                        rounded-2xl
-                        border border-gray-200
-                        dark:border-gray-700
-                        bg-white
-                        dark:bg-gray-800
-                        p-5
-                        shadow-sm
-                        hover:shadow-md
-                        transition
-                    ">
+                    <div
+                        class="
+        group relative overflow-hidden
+        rounded-3xl
+        border border-gray-200 dark:border-gray-700
+        bg-white dark:bg-gray-800
+        shadow-sm
+        transition-all duration-300
+        hover:-translate-y-1
+        hover:shadow-xl
+    "
+                    >
+                        {{-- Header --}}
+                        <div class="p-5 pb-4">
 
-                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-start gap-4">
 
-                            <div>
+                                {{-- Branch Icon --}}
+                                <div
+                                    class="
+                    flex h-12 w-12 shrink-0 items-center justify-center
+                    rounded-2xl
+                    bg-blue-50 dark:bg-blue-900/30
+                    text-2xl
+                    transition-transform duration-300
+                    group-hover:scale-110
+                "
+                                >
+                                    🏪
+                                </div>
 
-                                <h2 class="
-                                    text-lg
-                                    font-bold
-                                    text-gray-900
-                                    dark:text-white
-                                ">
+                                <div class="min-w-0 flex-1">
 
-                                    {{ $branch->caption }}
+                                    <h2
+                                        class="
+                        truncate
+                        text-lg font-bold
+                        text-gray-900 dark:text-white
+                    "
+                                    >
+                                        {{ $branch->caption }}
+                                    </h2>
 
-                                </h2>
+                                    @if($branch->address)
+                                        <div
+                                            class="
+                            mt-2 flex items-start gap-1.5
+                            text-sm
+                            text-gray-500 dark:text-gray-400
+                        "
+                                        >
+                                            <span class="shrink-0">📍</span>
 
-                                @if($branch->address)
+                                            <span class="line-clamp-2">
+                            {{ $branch->address }}
+                        </span>
+                                        </div>
+                                    @endif
 
-                                    <p class="
-                                        text-sm
-                                        text-gray-500
-                                        dark:text-gray-400
-                                        mt-2
-                                    ">
-
-                                        📍 {{ $branch->address }}
-
-                                    </p>
-
-                                @endif
+                                </div>
 
                             </div>
 
                         </div>
 
 
-                        <div class="flex gap-2 mt-5">
+                        {{-- Contact --}}
+                        @if($branch->phone || $branch->mobile)
 
-                            <button
-                                type="button"
-                                class="flex-1
-                                       px-4 py-2.5
-                                       rounded-xl
-                                       border border-gray-200
-                                       dark:border-gray-600
-                                       text-gray-700
-                                       dark:text-gray-200
-                                       hover:bg-gray-100
-                                       dark:hover:bg-gray-700">
+                            <div
+                                class="
+                mx-5
+                rounded-2xl
+                bg-gray-50 dark:bg-gray-700/40
+                p-3
+            "
+                            >
 
-                                تماس
+                                <div class="mb-2 text-xs font-medium text-gray-400">
+                                    تماس با شعبه
+                                </div>
 
-                            </button>
+                                <div class="flex flex-wrap gap-2">
 
+                                    @if($branch->phone)
+                                        <a
+                                            href="tel:{{ $branch->phone }}"
+                                            class="
+                            inline-flex items-center gap-2
+                            rounded-xl
+                            bg-white dark:bg-gray-800
+                            px-3 py-2
+                            text-sm font-medium
+                            text-gray-700 dark:text-gray-200
+                            shadow-sm
+                            transition-all duration-200
+                            hover:-translate-y-0.5
+                            hover:shadow-md
+                        "
+                                        >
+                        <span
+                            class="
+                                flex h-7 w-7 items-center justify-center
+                                rounded-lg
+                                bg-green-50 dark:bg-green-900/30
+                            "
+                        >
+                            ☎️
+                        </span>
+
+                                            {{ $branch->phone }}
+                                        </a>
+                                    @endif
+
+                                    @if($branch->mobile)
+                                        <a
+                                            href="tel:{{ $branch->mobile }}"
+                                            class="
+                            inline-flex items-center gap-2
+                            rounded-xl
+                            bg-white dark:bg-gray-800
+                            px-3 py-2
+                            text-sm font-medium
+                            text-gray-700 dark:text-gray-200
+                            shadow-sm
+                            transition-all duration-200
+                            hover:-translate-y-0.5
+                            hover:shadow-md
+                        "
+                                        >
+                        <span
+                            class="
+                                flex h-7 w-7 items-center justify-center
+                                rounded-lg
+                                bg-green-50 dark:bg-green-900/30
+                            "
+                        >
+                            📱
+                        </span>
+
+                                            {{ $branch->mobile }}
+                                        </a>
+                                    @endif
+
+                                </div>
+
+                            </div>
+
+                        @endif
+
+
+                        {{-- Action --}}
+                        <div class="p-5 pt-4">
 
                             <button
                                 type="button"
                                 wire:click="select_branch({{ $branch->id }})"
-                                class="flex-1
-                                       px-4 py-2.5
-                                       rounded-xl
-                                       bg-blue-600
-                                       hover:bg-blue-700
-                                       text-white
-                                       font-medium">
+                                wire:loading.attr="disabled"
+                                class="
+                group/button
+                flex w-full items-center justify-center gap-2
+                rounded-2xl
+                bg-blue-600
+                px-5 py-3
+                text-sm font-bold text-white
+                shadow-sm
+                transition-all duration-200
+                hover:bg-blue-700
+                hover:shadow-lg
+                active:scale-[0.98]
+                disabled:opacity-60
+            "
+                            >
 
-                                نوبت جدید
+            <span>
+                نوبت جدید
+            </span>
+
+                                <span
+                                    class="
+                    transition-transform duration-200
+                    group-hover/button:-translate-x-1
+                "
+                                >
+                ←
+            </span>
 
                             </button>
 
@@ -768,23 +898,7 @@ dir="rtl"
                 </div>
 
 
-                <button
-                    type="button"
-                    wire:click="switchState(0)"
-                    class="
-                        px-4
-                        py-2
-                        rounded-xl
-                        border
-                        border-gray-200
-                        dark:border-gray-700
-                        hover:bg-gray-100
-                        dark:hover:bg-gray-800
-                    ">
 
-                    ← بازگشت
-
-                </button>
 
             </div>
 
@@ -1048,6 +1162,46 @@ dir="rtl"
 
         <div class="space-y-5">
 
+            @if($error_message)
+
+                <div class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-[92%] max-w-lg">
+
+                    <div class="flex items-start gap-3 rounded-2xl
+                        border border-red-200
+                        bg-red-50
+                        dark:bg-red-950/50
+                        dark:border-red-900
+                        p-4 shadow-xl">
+
+
+
+                        <div class="flex-1">
+
+                            <div class="font-semibold text-red-800 dark:text-red-200">
+                                خطا
+                            </div>
+
+                            <div class="text-sm text-red-700 dark:text-red-300 mt-1">
+                                {{ $error_message }}
+                            </div>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            wire:click="$set('error_message', null)"
+                            class="text-red-400 hover:text-red-600 text-lg">
+
+                            ×
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            @endif
+
             {{-- Header --}}
 
             <div>
@@ -1242,6 +1396,46 @@ dir="rtl"
         <div class="space-y-5">
 
             {{-- Header --}}
+
+            @if($error_message)
+
+                <div class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-[92%] max-w-lg">
+
+                    <div class="flex items-start gap-3 rounded-2xl
+                        border border-red-200
+                        bg-red-50
+                        dark:bg-red-950/50
+                        dark:border-red-900
+                        p-4 shadow-xl">
+
+
+
+                        <div class="flex-1">
+
+                            <div class="font-semibold text-red-800 dark:text-red-200">
+                                خطا
+                            </div>
+
+                            <div class="text-sm text-red-700 dark:text-red-300 mt-1">
+                                {{ $error_message }}
+                            </div>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            wire:click="$set('error_message', null)"
+                            class="text-red-400 hover:text-red-600 text-lg">
+
+                            ×
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            @endif
 
             <div class="text-center">
 

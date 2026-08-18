@@ -99,10 +99,7 @@
     @if($employee_selected)
 
         <div class="fixed top-0 left-0
-                    bg-white/95 dark:bg-gray-900/95
-                    backdrop-blur-md
-                    border-b border-gray-200
-                    dark:border-gray-700
+
                     shadow-md">
 
             <div class="max-w-5xl mx-auto px-4 py-3">
@@ -182,23 +179,23 @@
 
                     <div>
 
+@if($reserve_data)
                         <button
                             type="button"
                             wire:click="save_date"
                             class="w-full md:w-auto
                                    px-5 py-2.5
                                    rounded-xl
-                                   bg-blue-600
-                                   hover:bg-blue-700
-                                   text-white
+
                                    font-medium
                                    transition
                                    shadow-sm">
 
+
                             🕐 انتخاب ساعت
 
                         </button>
-
+@endif
                     </div>
 
                 </div>
@@ -290,21 +287,21 @@
 
                         <div class="flex gap-2 mt-5">
 
-                            <button
-                                type="button"
-                                class="flex-1
-                                       px-4 py-2.5
-                                       rounded-xl
-                                       border border-gray-200
-                                       dark:border-gray-600
-                                       text-gray-700
-                                       dark:text-gray-200
-                                       hover:bg-gray-100
-                                       dark:hover:bg-gray-700">
+{{--                            <button--}}
+{{--                                type="button"--}}
+{{--                                class="flex-1--}}
+{{--                                       px-4 py-2.5--}}
+{{--                                       rounded-xl--}}
+{{--                                       border border-gray-200--}}
+{{--                                       dark:border-gray-600--}}
+{{--                                       text-gray-700--}}
+{{--                                       dark:text-gray-200--}}
+{{--                                       hover:bg-gray-100--}}
+{{--                                       dark:hover:bg-gray-700">--}}
 
-                                تماس
+{{--                                تماس--}}
 
-                            </button>
+{{--                            </button>--}}
 
 
                             <button
@@ -743,6 +740,7 @@
 
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
 
+
                     @foreach($time_of_wtimes as $slot)
 
                         <button
@@ -833,7 +831,47 @@
         <div class="space-y-5">
 
             {{-- Header --}}
+            @if($error_message)
 
+                <div class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-[92%] max-w-lg">
+
+                    <div class="flex items-start gap-3 rounded-2xl
+                        border border-red-200
+                        bg-red-50
+                        dark:bg-red-950/50
+                        dark:border-red-900
+                        p-4 shadow-xl">
+
+                        <div class="text-xl">
+                            ❌
+                        </div>
+
+                        <div class="flex-1">
+
+                            <div class="font-semibold text-red-800 dark:text-red-200">
+                                خطا
+                            </div>
+
+                            <div class="text-sm text-red-700 dark:text-red-300 mt-1">
+                                {{ $error_message }}
+                            </div>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            wire:click="$set('error_message', null)"
+                            class="text-red-400 hover:text-red-600 text-lg">
+
+                            ×
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            @endif
             <div class="text-center">
 
                 <div class="

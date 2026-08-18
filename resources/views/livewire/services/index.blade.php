@@ -51,51 +51,66 @@
                     @endforelse
                 </flux:select>
 
-    <flux:input
-        label="عنوان"
-        placeholder="عنوان را وارد کنید"
-        type="text"
-        wire:model="caption"
-        :error="$errors->first('caption')"
-    />
+                           <flux:field>
+                               <flux:label>عنوان</flux:label>
 
-    {{-- فیلد phone --}}
-    <flux:input
-        label="زمان"
+                               <flux:input
+                                   placeholder="عنوان را وارد کنید"
+                                   type="text"
+                                   wire:model="caption"
+                               />
 
-        placeholder="زمان را وارد کنید"
-        type="number"
-        wire:model="time"
-        :error="$errors->first('time')"
-    />
+                               <flux:error name="caption" />
+                           </flux:field>
 
-    {{-- فیلد mobile --}}
-    <flux:input
-        label="مبلغ"
+                           <flux:field>
+                               <flux:label>زمان</flux:label>
 
-        placeholder="مبلغ را وارد کنید"
-        type="number"
-        wire:model="cost"
-        :error="$errors->first('cost')"
-    />
-    <flux:input
-        label="مبلغ برای ثبت نوبت"
+                               <flux:input
+                                   placeholder="زمان را وارد کنید"
+                                   type="number"
+                                   wire:model="time"
+                               />
 
-        placeholder="مبلغ را وارد کنید"
-        type="number"
-        wire:model="reserve_price"
-        :error="$errors->first('reserve_price')"
-    />
+                               <flux:error name="time" />
+                           </flux:field>
 
-    {{-- فیلد address --}}
-    <flux:input
-        label="توضیحات"
-        placeholder=" توضیحات را وارد کنید"
-        type="text"
-        wire:model="description"
-        :error="$errors->first('description')"
-    />
+                           <flux:field>
+                               <flux:label>مبلغ (تومان)</flux:label>
 
+                               <flux:input
+                                   placeholder="مبلغ را وارد کنید"
+                                   type="number"
+                                   wire:model="cost"
+                               />
+
+                               <flux:error name="cost" />
+                           </flux:field>
+
+                           <flux:field>
+                               <flux:label>مبلغ برای ثبت نوبت (تومان)</flux:label>
+
+                               <flux:input
+                                   placeholder="مبلغ را وارد کنید"
+                                   type="number"
+                                   wire:model="reserve_price"
+
+                               />
+
+                               <flux:error name="reserve_price" />
+                           </flux:field>
+
+                           <flux:field>
+                               <flux:label>توضیحات</flux:label>
+
+                               <flux:input
+                                   placeholder="توضیحات را وارد کنید"
+                                   type="text"
+                                   wire:model="description"
+                               />
+
+                               <flux:error name="description" />
+                           </flux:field>
 
     {{-- دکمه ارسال --}}
 
@@ -127,12 +142,14 @@
              <span class="text-gray-700 dark:text-gray-300">
               زمان:  {{$service->time}}
             </span><br/>
-             <span class="text-gray-700 dark:text-gray-300">
-              مبلغ:  {{$service->cost}}
-            </span><br/>
-<span class="text-gray-700 dark:text-gray-300">
-              مبلغ برای ثبت نوبت:  {{$service->reserve_price == 0 ? "رایگان" : $service->reserve_price}}
-            </span><br/>
+            <span class="text-gray-700 dark:text-gray-300">
+    مبلغ (تومان): {{ number_format($service->cost) }} تومان
+</span><br/>
+
+            <span class="text-gray-700 dark:text-gray-300">
+    مبلغ برای ثبت نوبت (تومان):
+    {{ $service->reserve_price == 0 ? 'رایگان' : number_format($service->reserve_price) . ' تومان' }}
+</span><br/>
 
              <span class="text-gray-600 dark:text-gray-400">
               توضیحات:  {{$service->description}}

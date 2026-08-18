@@ -513,10 +513,16 @@ class Index extends Component
     |--------------------------------------------------------------------------
     */
 
-    public function onCustomerChange()
+    public function call_branch($branchId)
     {
+        $branch = Branch::findOrFail($branchId);
 
+        return [
+            'phone' => $branch->phone,
+            'mobile' => $branch->mobile,
+        ];
     }
+
     public function select_branch($branchId)
     {
         $this->clearMessages();
@@ -552,6 +558,11 @@ class Index extends Component
         $total_time_service,
         $service_id
     ) {
+
+        if (!$this->logged) {
+            $this->error_message = 'لطفا ابتدا ثبت نام / ورود کنید.';
+            return;
+        }
         $this->clearMessages();
 
         $employee = Employee::findOrFail($employee_id);
@@ -610,6 +621,10 @@ class Index extends Component
 
         if (!$this->reserve_data) {
             $this->error_message = 'لطفاً تاریخ را انتخاب کنید.';
+            return;
+        }
+        if (!$this->logged) {
+            $this->error_message = 'لطفا ابتدا ثبت نام / ورود کنید.';
             return;
         }
 
