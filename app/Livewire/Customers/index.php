@@ -39,7 +39,9 @@ class Index extends Component
 
         $this->current_branch_id = $this->branch_selected?->id;
 
-        $this->branch_customers = $this->branch_selected?->customers;
+//        $this->branch_customers = $this->branch_selected?->customers;
+        $this->branch_customers = Auth::user()->panels('dashboard_id' , 1)->first()->customers;
+
     }
 
     public function render()
@@ -51,7 +53,9 @@ class Index extends Component
     {
         $this->branch_selected = Branch::find($this->current_branch_id);
 
-        $this->branch_customers = $this->branch_selected?->customers;
+
+        $this->branch_customers = Auth::user()->panels('dashboard_id' , 1)->first()->customers;
+
     }
 
     public function openCustomerModal()

@@ -722,7 +722,8 @@ dir="rtl"
                 @endforeach
 
             </div>
-
+<br/>
+<br/>
 @if($current_customer_id)
             <flux:table>
 

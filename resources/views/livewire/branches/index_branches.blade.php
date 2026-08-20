@@ -176,10 +176,7 @@
 
 
                     {{-- Select Time Button --}}
-
-                    <div>
-
-@if($reserve_data)
+                    @if($reserve_data)
                         <button
                             type="button"
                             wire:click="save_date"
@@ -189,13 +186,17 @@
 
                                    font-medium
                                    transition
-                                   shadow-sm">
+                                   shadow-sm ">
+
 
 
                             🕐 انتخاب ساعت
 
                         </button>
-@endif
+                    @endif
+                    <div>
+
+
                     </div>
 
                 </div>
@@ -342,7 +343,23 @@
         <div class="max-w-5xl mx-auto px-4">
 
             {{-- Branch Header --}}
+            <button
+                type="button"
+                wire:click="switchState(0)"
+                class="
+                        px-4
+                        py-2
+                        rounded-xl
+                        border
+                        border-gray-200
+                        dark:border-gray-700
+                        hover:bg-gray-100
+                        dark:hover:bg-gray-800
+                    ">
 
+                ← بازگشت
+
+            </button>
             <div class="
                 flex
                 items-center
@@ -372,23 +389,7 @@
                 </div>
 
 
-                <button
-                    type="button"
-                    wire:click="switchState(0)"
-                    class="
-                        px-4
-                        py-2
-                        rounded-xl
-                        border
-                        border-gray-200
-                        dark:border-gray-700
-                        hover:bg-gray-100
-                        dark:hover:bg-gray-800
-                    ">
 
-                    ← بازگشت
-
-                </button>
 
             </div>
 

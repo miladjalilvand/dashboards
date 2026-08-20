@@ -18,7 +18,9 @@ use Livewire\Component;
 
     public $showModal ;
 
-    public $caption ,$phone , $mobile , $address , $location , $working_times , $bank_key ;
+    public $caption ,$phone , $mobile , $address , $location  , $bank_key ;
+
+    public  $working_times = '';
 
     public $edit_mode =false;
 
@@ -79,7 +81,7 @@ use Livewire\Component;
 
             'location' => ['nullable', 'string', 'max:255'],
 
-            'working_times' => ['required', 'string'],
+
 
 
         ];
@@ -141,7 +143,7 @@ use Livewire\Component;
             'mobile'=>$this->mobile ,
            'location'=> $this->location ,
            'address'=> $this->address ,
-          'working_times'=>  $this->working_times,
+//          'working_times'=>  $this->working_times,
           'panel_id' => panelID($user) ,
                    'bank_key' => $this->bank_key
 

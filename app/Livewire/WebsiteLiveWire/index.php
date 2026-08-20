@@ -144,9 +144,7 @@ class Index extends Component
             ->branches()
             ->get();
 
-        $this->customers =$panel->customers; ;
 
-            $this->current_customer = $this->customers->first()->id ;
     }
 
 
@@ -172,7 +170,7 @@ class Index extends Component
         $user = Auth::user();
 
         $this->branch_selected = $branch;
-        $this->customers =$user->panels()->where('dashboard_id' , 1)->first()->customers; ;
+
 
         $this->branch_services = $branch->services;
 
@@ -196,39 +194,54 @@ class Index extends Component
         $total_time_service,
         $service_id
     ) {
-        $this->clearMessages();
+        $panel = Auth::user()
+            ->panels()
+            ->where('dashboard_id', 1)
+            ->first();
+        $this->customers =$panel->customers;
 
-        $employee = Employee::findOrFail($employee_id);
+        if($panel->customers->count()) {
 
-        $service = Service::findOrFail($service_id);
 
-        $this->employee_selected = $employee->id;
+            $this->current_customer = $this->customers->first()->id;
 
-        $this->selected_employee = $employee;
+            $this->clearMessages();
 
-        $this->selected_service = $service;
+            $employee = Employee::findOrFail($employee_id);
 
-        $this->total_time = (int) $total_time_service;
+            $service = Service::findOrFail($service_id);
 
-        $this->working_times = json_decode(
-            $employee->working_times,
-            true
-        ) ?? [];
+            $this->employee_selected = $employee->id;
 
-        // reset date/time when employee changes
-        $this->reserve_data = null;
+            $this->selected_employee = $employee;
 
-        $this->selected_time = null;
+            $this->selected_service = $service;
 
-        $this->selected_end_time = null;
+            $this->total_time = (int)$total_time_service;
 
-        $this->time_of_wtimes = [];
+            $this->working_times = json_decode(
+                $employee->working_times,
+                true
+            ) ?? [];
 
-        $this->select_time_modal = false;
+            // reset date/time when employee changes
+            $this->reserve_data = null;
 
-        $this->confirm_reservation_modal = false;
+            $this->selected_time = null;
 
-        $this->employee_service_list_selected = true;
+            $this->selected_end_time = null;
+
+            $this->time_of_wtimes = [];
+
+            $this->select_time_modal = false;
+
+            $this->confirm_reservation_modal = false;
+
+            $this->employee_service_list_selected = true;
+        }else {
+            $this->error_message = 'یک مشتری ایجاد کنید';
+
+        }
     }
 
 

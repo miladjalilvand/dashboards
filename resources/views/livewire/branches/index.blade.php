@@ -61,7 +61,7 @@
 {{-- فیلد location --}}
 <flux:input
     label="موقعیت مکانی (لینک گوگل مپ)"
-    placeholder="مثال: 35.6892, 51.3890"
+    placeholder=""
     type="text" {{-- یا type="text" --}}
     wire:model="location"
     :error="$errors->first('location')"
@@ -69,13 +69,13 @@
 
 {{-- فیلد working_times --}}
 {{-- برای زمان‌های کاری، بسته به پیچیدگی، ممکن است نیاز به یک کامپوننت سفارشی‌تر یا textarea باشد --}}
-<flux:input
-    label="ساعات کاری"
-    placeholder="مثال: شنبه تا چهارشنبه: 8:00 - 17:00"
-    type="text" {{-- یا type="textarea" اگر کامپوننت flux:input از آن پشتیبانی کند --}}
-    wire:model="working_times"
-    :error="$errors->first('working_times')"
-/>
+{{--<flux:input--}}
+{{--    label="توضیحات"--}}
+{{--    placeholder=""--}}
+{{--    type="text" --}}{{-- یا type="textarea" اگر کامپوننت flux:input از آن پشتیبانی کند --}}
+{{--    wire:model="working_times"--}}
+{{--    :error="$errors->first('working_times')"--}}
+{{--/>--}}
                        <flux:input
     label=" کلید درگاه پرداخت "
     placeholder="xxxxx"
@@ -122,11 +122,11 @@
                 آدرس : {{$branch->address}}
             </span>
         </div>
-        <div>
-            <span class="text-gray-700 dark:text-gray-300">
-                ساعات کاری : {{$branch->working_times}}
-            </span>
-        </div>
+{{--        <div>--}}
+{{--            <span class="text-gray-700 dark:text-gray-300">--}}
+{{--                ساعات کاری : {{$branch->working_times}}--}}
+{{--            </span>--}}
+{{--        </div>--}}
                 <div>
             <span class="text-gray-700 dark:text-gray-300">
                 شماره تماس : {{$branch->phone}}
