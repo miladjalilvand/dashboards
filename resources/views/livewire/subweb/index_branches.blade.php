@@ -910,7 +910,7 @@ dir="rtl"
             <div class="space-y-8">
 
                 @foreach($branch_categories as $category)
-
+@if($category->is_active)
                     <div>
 
                         {{-- Category --}}
@@ -939,6 +939,7 @@ dir="rtl"
                         <div class="space-y-4">
 
                             @foreach($category->services as $service)
+                                @if($service->is_active)
 
                                 <div class="
                                     rounded-2xl
@@ -1038,7 +1039,7 @@ dir="rtl"
 
                                             </div>
 
-
+@endif
                                             @if($service->description)
 
                                                 <p class="
@@ -1080,7 +1081,9 @@ dir="rtl"
 
                                                     @foreach($service->employees as $employee)
 
+                                                        @if($employee->is_active)
                                                         <button
+
                                                             type="button"
                                                             wire:click="select_employee(
                                                                 {{ $employee->id }},
@@ -1112,7 +1115,7 @@ dir="rtl"
                                                                 ?? 'بدون نام' }}
 
                                                         </button>
-
+@endif
                                                     @endforeach
 
                                                 </div>
@@ -1138,6 +1141,7 @@ dir="rtl"
                                 </div>
 
                             @endforeach
+                                @endif
 
                         </div>
 

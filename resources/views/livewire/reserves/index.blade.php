@@ -144,13 +144,17 @@
                         </flux:table.cell>
 
                         <flux:table.cell>
-                            {{ substr($reserve->start_time, 0, 2) . ':' . substr($reserve->start_time, 2) }}
+                            @php
+                                $start = str_pad($reserve->start_time, 4, '0', STR_PAD_LEFT);
+                            @endphp
+                            {{ substr($start, 0, 2) . ':' . substr($start, 2) }}
                         </flux:table.cell>
 
                         <flux:table.cell>
-                            {{ substr($reserve->end_time, 0, 2) . ':' . substr($reserve->end_time, 2) }}
-
-
+                            @php
+                                $end = str_pad($reserve->end_time, 4, '0', STR_PAD_LEFT);
+                            @endphp
+                            {{ substr($end, 0, 2) . ':' . substr($end, 2) }}
                         </flux:table.cell>
 
                         <flux:table.cell>
@@ -312,8 +316,10 @@
                         </span>
 
                         <span class="text-gray-900 dark:text-white">
-                               {{ substr($selectedReserve->start_time, 0, 2) . ':' . substr($selectedReserve->start_time, 2) }}
-
+                              @php
+                                  $start = str_pad($selectedReserve->start_time, 4, '0', STR_PAD_LEFT);
+                              @endphp
+                            {{ substr($start, 0, 2) . ':' . substr($start, 2) }}
                         </span>
 
                     </div>
@@ -327,8 +333,10 @@
                         </span>
 
                         <span class="text-gray-900 dark:text-white">
-                            {{ substr($selectedReserve->end_time, 0, 2) . ':' . substr($selectedReserve->end_time, 2) }}
-
+   @php
+       $end = str_pad($selectedReserve->end_time, 4, '0', STR_PAD_LEFT);
+   @endphp
+                            {{ substr($end, 0, 2) . ':' . substr($end, 2) }}
                         </span>
 
                     </div>

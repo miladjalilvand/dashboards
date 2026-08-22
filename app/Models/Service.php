@@ -27,16 +27,14 @@ class Service extends Model
     // Fixed: Removed unnecessary parameters
     public function employees()
     {
-        return $this->belongsToMany(Employee::class, 'employee_services')
-                    ->withPivot('is_active')
-                    ->withTimestamps();
+        return $this->belongsToMany(Employee::class, 'employee_services');
     }
 
     // Optional: Get only active employees for this service
     public function activeEmployees()
     {
         return $this->belongsToMany(Employee::class, 'employee_services')
-                    ->wherePivot('is_active', true)
+                    ->wherePivot('is_active', 1)
                     ->withPivot('is_active');
     }
 }

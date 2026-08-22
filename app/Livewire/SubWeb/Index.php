@@ -25,6 +25,8 @@ class Index extends Component
     |--------------------------------------------------------------------------
     */
 
+    public $service_employees ;
+
     public $customer_reserves ;
 
 
@@ -445,7 +447,8 @@ class Index extends Component
         }
 
         $this->branches = $this->panel
-            ->branches()
+            ->branches()->
+            where('is_active' , 1)
             ->get();
 
         /*
