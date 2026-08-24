@@ -90,6 +90,10 @@ new class extends Component
     @endforeach
  @endif
 @endforeach
+
+            <span class=" font-semibold">
+        سایت ساز
+        </sapn>
         @foreach($options as $option)
 
                 <flux:sidebar.item
