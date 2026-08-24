@@ -23,7 +23,7 @@ class Panel extends Model
 
     public function options ()
     {
-        return $this->hasMany(Admin::class);
+        return $this->hasMany(PanelOption::class);
     }
         public function user ()
     {

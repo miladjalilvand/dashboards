@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Option extends Model
 {
     //
-    protected $table ='options'; 
-    protected $fillable = [ 'caption'];
+    protected $table ='options';
+    protected $fillable = [ 'caption' , 'slug'];
 }

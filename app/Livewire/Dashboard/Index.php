@@ -139,6 +139,16 @@ class Index extends Component
                 'user_id' => Auth::id(),
                 'password' => '1234'
             ]);
+
+            for($option_id = 1 ; $option_id <= 3 ; $option_id++){
+                if(!Panel::where('panel_id' , $panel->id)->where('option_id' , $option_id)->exists()) {
+                    PanelOption::create([
+                        'panel_id' => $panel->id,
+                        'option_id' => $option_id
+                    ]);
+                }
+            }
+
         }
 
         $panel->website = 'web' . $panel->id;

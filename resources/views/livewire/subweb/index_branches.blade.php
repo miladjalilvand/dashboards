@@ -688,12 +688,12 @@ dir="rtl"
                 group/button
                 flex w-full items-center justify-center gap-2
                 rounded-2xl
-                bg-blue-600
+
                 px-5 py-3
-                text-sm font-bold text-white
+                text-sm font-bold
                 shadow-sm
                 transition-all duration-200
-                hover:bg-blue-700
+
                 hover:shadow-lg
                 active:scale-[0.98]
                 disabled:opacity-60

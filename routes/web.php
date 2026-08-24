@@ -90,6 +90,16 @@ Route::view(uri: 'sample', view: 'sample')
             Route::get('create' , employee_create::class)->name('create');
             Route::get('edit' , employee_edit::class)->name('edit');
     });
+
+        Route::get('banner_edit' , function(){
+            return 'banner edir';
+        })->name('opt_banner.index');
+        Route::get('opt_aboutus' , function(){
+            return 'opt_aboutus edir';
+        })->name('opt_aboutus.index');
+        Route::get('samples' , function(){
+            return 'samples edir';
+        })->name('samples.index');
     });
 
 

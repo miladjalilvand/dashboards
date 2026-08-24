@@ -12,6 +12,8 @@ new class extends Component
 
     public $show_menu ;
 
+    public $options=[];
+
 
 
  public  $branchesCount ;
@@ -24,6 +26,23 @@ new class extends Component
     $this->branchesCount = Branch::count();
 
     $this->show_menu = app('show-menu-all');
+    $panel = Auth::user()
+        ->panels()
+        ->where('dashboard_id', 1)
+        ->first();
+
+    if ($panel) {
+        foreach ($panel->options as $panel_option) {
+            $this->options[] = [
+                'caption' => $panel_option->option->caption,
+                'slug' => $panel_option->option->slug,
+                'id' => $panel_option->option->id,
+            ];
+        }
+    }
+//    $panels_option =
+
+
 }
 
 };
@@ -71,7 +90,20 @@ new class extends Component
     @endforeach
  @endif
 @endforeach
+        @foreach($options as $option)
 
+                <flux:sidebar.item
+
+                    :href="route($option['slug'].'.index')"
+
+                    :current="request()->is('/'.$option['slug'])"
+                    wire:navigate
+                    icon="plus"
+                >
+            {{$option['caption'] }}
+        </flux:sidebar.item>
+
+    @endforeach
 </div>
 
 <!-- :href="url('/'.$menu->slug)"  -->
