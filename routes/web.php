@@ -19,6 +19,8 @@ use App\Livewire\Reserves\Index as reserves_index;
 use App\Livewire\ReservesDashboard\Index as reserves_dashboard_index;
 use App\Livewire\Customers\Index as customers_index;
 use App\Livewire\Payments\Index as payments_index;
+use App\Livewire\Elementor\Banners\Index as banners_index;
+use App\Livewire\Elementor\Aboutus\Index as aboutus_index;
 
 
 
@@ -91,12 +93,8 @@ Route::view(uri: 'sample', view: 'sample')
             Route::get('edit' , employee_edit::class)->name('edit');
     });
 
-        Route::get('banner_edit' , function(){
-            return 'banner edir';
-        })->name('opt_banner.index');
-        Route::get('opt_aboutus' , function(){
-            return 'opt_aboutus edir';
-        })->name('opt_aboutus.index');
+        Route::get('banner_edit' , banners_index::class)->name('opt_banner.index');
+        Route::get('opt_aboutus' ,aboutus_index::class)->name('opt_aboutus.index');
         Route::get('samples' , function(){
             return 'samples edir';
         })->name('samples.index');
