@@ -854,6 +854,267 @@ dir="rtl"
             </flux:table>
 
 @endif
+            <div class="min-h-screen bg-zinc-50 dark:bg-zinc-950">
+
+                {{-- ========================================================= --}}
+                {{-- Banners --}}
+                {{-- ========================================================= --}}
+
+                @if(!empty($banners_data))
+
+                    <section class="py-8">
+
+                        <div class="max-w-6xl mx-auto px-4">
+
+                            <div class="space-y-6">
+
+                                @foreach($banners_data as $index => $banner)
+
+                                    <div
+                                        wire:key="banner-{{ $index }}"
+                                        class="relative overflow-hidden rounded-2xl
+                                   bg-white dark:bg-zinc-900
+                                   border border-zinc-200 dark:border-zinc-800"
+                                    >
+
+                                        {{-- Image --}}
+
+                                        @if(!empty($banner['image']))
+
+                                            <img
+                                                src="{{ str_starts_with($banner['image'], 'storage/')
+                                        ? asset($banner['image'])
+                                        : asset('storage/' . $banner['image']) }}"
+                                                class="w-full h-[300px] md:h-[420px] object-cover"
+                                                alt="{{ $banner['title'] ?? '' }}"
+                                            >
+
+                                        @endif
+
+
+                                        {{-- Content --}}
+
+                                        <div class="p-6 md:p-8">
+
+                                            @if(!empty($banner['title']))
+
+                                                <h2
+                                                    class="text-2xl md:text-3xl
+                                               font-bold
+                                               text-zinc-900
+                                               dark:text-white"
+                                                >
+                                                    {{ $banner['title'] }}
+                                                </h2>
+
+                                            @endif
+
+
+                                            @if(!empty($banner['caption']))
+
+                                                <p
+                                                    class="mt-3
+                                               text-zinc-600
+                                               dark:text-zinc-400
+                                               leading-8"
+                                                >
+                                                    {{ $banner['caption'] }}
+                                                </p>
+
+                                            @endif
+
+                                        </div>
+
+                                    </div>
+
+                                @endforeach
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                @endif
+
+
+                {{-- ========================================================= --}}
+                {{-- About Us --}}
+                {{-- ========================================================= --}}
+
+                @if(
+                    !empty($aboutus['aboutus']) ||
+                    !empty($aboutus['images'])
+                )
+
+                    <section class="py-12 md:py-16">
+
+                        <div class="max-w-6xl mx-auto px-4">
+
+                            {{-- Title --}}
+
+                            <div class="mb-8">
+
+                                <h2
+                                    class="text-3xl
+                               font-bold
+                               text-zinc-900
+                               dark:text-white"
+                                >
+                                    درباره ما
+                                </h2>
+
+                                <div
+                                    class="mt-3
+                               w-16
+                               h-1
+                               rounded-full
+                               bg-indigo-600"
+                                ></div>
+
+                            </div>
+
+
+                            {{-- Text --}}
+
+                            @if(!empty($aboutus['aboutus']))
+
+                                <div
+                                    class="rounded-2xl
+                               p-6 md:p-8
+                               bg-white dark:bg-zinc-900
+                               border
+                               border-zinc-200
+                               dark:border-zinc-800"
+                                >
+
+                                    <p
+                                        class="text-base
+                                   md:text-lg
+                                   leading-9
+                                   text-zinc-600
+                                   dark:text-zinc-300
+                                   whitespace-pre-line"
+                                    >
+                                        {{ $aboutus['aboutus'] }}
+                                    </p>
+
+                                </div>
+
+                            @endif
+
+
+                            {{-- Images --}}
+
+                            @if(!empty($aboutus['images']))
+
+                                <div
+                                    class="grid
+                               grid-cols-2
+                               md:grid-cols-3
+                               lg:grid-cols-4
+                               gap-4
+                               mt-6"
+                                >
+
+                                    @foreach($aboutus['images'] as $index => $image)
+
+                                        <button
+                                            type="button"
+                                            wire:key="about-image-{{ $index }}"
+                                            wire:click="openAboutImage({{ $index }})"
+                                            class="overflow-hidden
+                                       rounded-xl
+                                       bg-zinc-100
+                                       dark:bg-zinc-900
+                                       border
+                                       border-zinc-200
+                                       dark:border-zinc-800"
+                                        >
+
+                                            <img
+                                                src="{{ str_starts_with($image, 'storage/')
+                                        ? asset($image)
+                                        : asset('storage/' . $image) }}"
+                                                class="w-full
+                                           h-48
+                                           md:h-56
+                                           object-cover
+                                           transition
+                                           duration-300
+                                           hover:scale-105"
+                                                alt="درباره ما"
+                                            >
+
+                                        </button>
+
+                                    @endforeach
+
+                                </div>
+
+                            @endif
+
+                        </div>
+
+                    </section>
+
+                @endif
+
+
+                {{-- ========================================================= --}}
+                {{-- Image Dialog --}}
+                {{-- ========================================================= --}}
+
+                <flux:modal
+                    wire:model="showAboutImage"
+                    class="md:w-[900px]"
+                >
+
+                    <div class="relative">
+
+                        <button
+                            type="button"
+                            wire:click="closeAboutImage"
+                            class="absolute
+                       top-3 right-3
+                       z-10
+                       w-10 h-10
+                       rounded-full
+                       bg-black/60
+                       text-white
+                       flex
+                       items-center
+                       justify-center
+                       hover:bg-black/80"
+                        >
+                            ✕
+                        </button>
+
+
+                        @if($selectedAboutImage)
+
+                            <div class="flex justify-center">
+
+                                <img
+                                    src="{{ str_starts_with($selectedAboutImage, 'storage/')
+                            ? asset($selectedAboutImage)
+                            : asset('storage/' . $selectedAboutImage) }}"
+                                    class="max-w-full
+                               max-h-[80vh]
+                               object-contain
+                               rounded-xl"
+                                    alt="تصویر"
+                                >
+
+                            </div>
+
+                        @endif
+
+                    </div>
+
+                </flux:modal>
+
+            </div>
         </div>
 
     @endif
@@ -1015,8 +1276,26 @@ dir="rtl"
                                                         مبلغ
                                                     </div>
 
-                                                    <div class="font-semibold mt-1">
-                                                        {{ number_format($service->cost) }}
+                                                    <div class="mt-1">
+                                                        @if($service->discount > 0)
+                                                            <div class="flex items-center gap-2">
+            <span class="text-sm text-zinc-400 line-through">
+                {{ number_format($service->cost) }}
+            </span>
+
+                                                                <span class="font-semibold text-green-600">
+                {{ number_format($service->cost - ($service->cost * $service->discount / 100)) }}
+            </span>
+                                                            </div>
+
+                                                            <span class="text-xs text-red-500">
+            {{ $service->discount }}٪ تخفیف
+        </span>
+                                                        @else
+                                                            <span class="font-semibold">
+            {{ number_format($service->cost) }}
+        </span>
+                                                        @endif
                                                     </div>
 
                                                 </div>

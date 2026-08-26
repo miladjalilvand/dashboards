@@ -24,6 +24,8 @@ class Index extends Component
     | Branch
     |--------------------------------------------------------------------------
     */
+    public $banners_data;
+    public $aboutus;
 
     public $service_employees ;
 
@@ -155,7 +157,33 @@ class Index extends Component
 
     // وضعیت فرم
     public $showRegisterForm = false;
+    public bool $showAboutImage = false;
 
+    public ?string $selectedAboutImage = null;
+
+
+    public function openAboutImage(int $index)
+    {
+        if (
+            !isset($this->aboutus['images']) ||
+            !isset($this->aboutus['images'][$index])
+        ) {
+            return;
+        }
+
+        $this->selectedAboutImage =
+            $this->aboutus['images'][$index];
+
+        $this->showAboutImage = true;
+    }
+
+
+    public function closeAboutImage()
+    {
+        $this->showAboutImage = false;
+
+        $this->selectedAboutImage = null;
+    }
     public function backToMobile()
     {
         $this->showRegisterForm = false;
@@ -375,6 +403,8 @@ class Index extends Component
         session()->put('customer_id', $customer->id);
     }
 
+
+
     /**
      * خروج
      */
@@ -439,6 +469,10 @@ class Index extends Component
             'website',
             $this->website
         )->first();
+
+        $this->banners_data = $this->panel->options()->where('option_id' , 1)->first()->data;
+        $this->aboutus = $this->panel->options()->where('option_id' , 2)->first()->data;
+
 
         if (!$this->panel) {
             $this->branches = [];
@@ -509,6 +543,8 @@ class Index extends Component
         $this->logged = true;
 
         $this->customer_reserves = $customer->reserves;
+
+
     }
     /*
     |--------------------------------------------------------------------------

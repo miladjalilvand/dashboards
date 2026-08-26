@@ -40,11 +40,9 @@
                 @if(!empty($banner['image']))
 
                     <img
-                        src="{{ str_starts_with($banner['image'], 'storage/')
-                            ? asset($banner['image'])
-                            : $banner['image'] }}"
+                        src="{{ asset('storage/' . ltrim($banner['image'], '/')) }}"
                         class="w-full h-48 object-cover"
-                        alt="{{ $banner['title'] }}"
+                        alt="{{ $banner['title'] ?? 'بنر' }}"
                     >
 
                 @else
@@ -65,14 +63,14 @@
                 <div class="p-4">
 
                     <h3 class="font-bold text-zinc-900 dark:text-white">
-                        {{ $banner['title'] }}
+                        {{ $banner['title'] ?? '' }}
                     </h3>
 
                     <p
                         class="text-sm text-zinc-500 dark:text-zinc-400
                                mt-2 line-clamp-2"
                     >
-                        {{ $banner['caption'] }}
+                        {{ $banner['caption'] ?? '' }}
                     </p>
 
 
@@ -116,7 +114,10 @@
     </div>
 
 
+    {{-- ========================================================= --}}
     {{-- Dialog --}}
+    {{-- ========================================================= --}}
+
     <flux:modal
         wire:model="showDialog"
         class="md:w-[600px]"
@@ -124,7 +125,7 @@
 
         <div class="space-y-6">
 
-            {{-- Dialog Header --}}
+            {{-- Header --}}
             <div>
 
                 <flux:heading size="lg">
@@ -149,9 +150,11 @@
                 />
 
                 @error('title')
+
                 <div class="text-sm text-red-500 dark:text-red-400">
                     {{ $message }}
                 </div>
+
                 @enderror
 
 
@@ -164,13 +167,15 @@
                 />
 
                 @error('caption')
+
                 <div class="text-sm text-red-500 dark:text-red-400">
                     {{ $message }}
                 </div>
+
                 @enderror
 
 
-                {{-- Image --}}
+                {{-- Image Upload --}}
                 <div>
 
                     <flux:label>
@@ -200,34 +205,44 @@
                     >
 
                     @error('image')
+
                     <div class="text-sm text-red-500 dark:text-red-400 mt-1">
                         {{ $message }}
                     </div>
+
                     @enderror
 
                 </div>
 
 
+                {{-- ================================================= --}}
                 {{-- New Image Preview --}}
+                {{-- ================================================= --}}
+
                 @if($image)
 
                     <div>
 
                         <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-2">
-                            پیش‌نمایش:
+                            پیش‌نمایش تصویر جدید:
                         </p>
 
                         <img
                             src="{{ $image->temporaryUrl() }}"
                             class="w-full h-48 object-cover rounded-xl"
+                            alt="پیش‌نمایش"
                         >
 
                     </div>
 
+
+                    {{-- ================================================= --}}
+                    {{-- Current Image --}}
+                    {{-- ================================================= --}}
+
                 @elseif(
                     $editingIndex !== null &&
-                    isset($banners[$editingIndex]['image']) &&
-                    $banners[$editingIndex]['image']
+                    !empty($banners[$editingIndex]['image'])
                 )
 
                     <div>
@@ -237,11 +252,9 @@
                         </p>
 
                         <img
-                            src="{{ str_starts_with($banners[$editingIndex]['image'], 'storage/')
-                                ? asset($banners[$editingIndex]['image'])
-                                : $banners[$editingIndex]['image'] }}"
+                            src="{{ asset('storage/' . ltrim($banners[$editingIndex]['image'], '/')) }}"
                             class="w-full h-48 object-cover rounded-xl"
-                            alt="{{ $banners[$editingIndex]['title'] }}"
+                            alt="{{ $banners[$editingIndex]['title'] ?? 'بنر' }}"
                         >
 
                     </div>
@@ -265,6 +278,7 @@
                     wire:click="save"
                     wire:loading.attr="disabled"
                 >
+
                     <span wire:loading.remove>
                         ذخیره
                     </span>
@@ -272,6 +286,7 @@
                     <span wire:loading>
                         در حال ذخیره...
                     </span>
+
                 </flux:button>
 
             </div>

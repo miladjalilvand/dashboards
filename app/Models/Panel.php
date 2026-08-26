@@ -34,4 +34,8 @@ class Panel extends Model
         return $this->hasMany(\App\Models\Customer::class);
     }
 
+    public function panelPortofilios(){
+        return $this->hasMany(PanelPortofolio::class);
+    }
+
 }

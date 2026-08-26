@@ -32,7 +32,59 @@ class Index extends Component
 
     public $isopen = false;
 
+    public $showDiscountDialog = false;
+    public $discount = 0;
+    public $discountService;
+    public $finalCost = 0;
 
+    public $current_service_id ;
+
+    public function openDiscountDialog($serviceId)
+    {
+        $this->current_service_id = $serviceId;
+        $this->discountService = Service::findOrFail($serviceId);
+
+        $this->discount = $this->discountService->discount ?? 0;
+
+        $this->calculateFinalCost();
+
+        $this->showDiscountDialog = true;
+    }
+
+    public function updatedDiscount()
+    {
+        $this->calculateFinalCost();
+    }
+
+    public function calculateFinalCost()
+    {
+        if (!$this->discountService) {
+            return;
+        }
+
+        $this->finalCost = $this->discountService->cost -
+            ($this->discountService->cost * $this->discount / 100);
+    }
+
+    public function saveDiscount()
+    {
+        $this->validate([
+            'discount' => 'required|numeric|min:0|max:100',
+        ]);
+
+        $service = Service::findOrFail($this->current_service_id);
+
+        $service->update([
+            'discount' => $this->discount,
+        ]);
+
+        // دوباره لیست سرویس‌ها را از دیتابیس بخوان
+        $this->services = Service::with('category')
+            ->where('branch_id', $this->branch_id)
+            ->get();
+
+        $this->showDiscountDialog = false;
+    }
 
     #[On(['branch-switched'])]
     public function refresh(){
@@ -204,12 +256,12 @@ class Index extends Component
 
 // dd($branch);
 
-        $this->current_service = Service::find($service['id']);
-        $this->caption= $service['caption'];
-        $this->time = $service['time'];
-        $this->cost = $service['cost'];
-        $this->description = $service['description'];
-        $this->category_id = $service['category_id'];
+        $this->current_service = Service::find($service);
+        $this->caption= $this->current_service->caption;
+        $this->time =  $this->current_service->ctime;
+        $this->cost = $this->current_service->ccost;
+        $this->description = $this->current_service->cdescription;
+        $this->category_id = $this->current_service->ccategory_id;
 
 
 

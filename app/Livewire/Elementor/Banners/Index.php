@@ -25,6 +25,8 @@ class Index extends Component
 
     public $image = null;
 
+    public $branch_selected ;
+
     public function closeImage()
     {
         $this->showImageDialog = false;

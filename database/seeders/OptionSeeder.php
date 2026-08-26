@@ -17,7 +17,7 @@ class OptionSeeder extends Seeder
         $options = [
             ['id' => 1 ,  'caption' => 'بنر معرفی' , 'slug' => 'opt_banner'] ,
             ['id' => 2 , 'caption' => 'درباره ما' , 'slug' => 'opt_aboutus'],
-            ['id' => 3 , 'caption' => 'نمونه کار ها' , 'slug' => 'samples'] ,
+            ['id' => 3 , 'caption' => 'نمونه کار ها' , 'slug' => 'panel_portofolios'] ,
         ];
 
 

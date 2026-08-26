@@ -141,6 +141,8 @@
             </span><br/>
              <span class="text-gray-700 dark:text-gray-300">
               زمان:  {{$service->time}}
+            </span><br/> <span class="text-gray-700 dark:text-gray-300">
+              تخفیف:  {{$service->discount}}%
             </span><br/>
             <span class="text-gray-700 dark:text-gray-300">
     مبلغ (تومان): {{ number_format($service->cost) }} تومان
@@ -157,15 +159,21 @@
         </div>
                         <div class="text-left mt-2">
                             <div>
-     <flux:modal.trigger name="services">
-            <flux:button variant="primary"
-            wire:click="show_edit({{$service}})" >
+                                <flux:modal.trigger name="services">
+                                    <flux:button
+                                        variant="primary"
+                                        wire:click="show_edit({{ $service->id }})"
+                                    >
+                                        <b>ویرایش</b>
+                                    </flux:button>
+                                </flux:modal.trigger>
 
-
-                    ویرایش
-
-            </flux:button>
-        </flux:modal.trigger>
+                                <flux:button
+                                    variant="primary"
+                                    wire:click="openDiscountDialog({{ $service->id }})"
+                                >
+                                    <b>تخفیف</b>
+                                </flux:button>
                             <flux:button
                                 wire:click="toggleStatus({{ $service->id }})"
                                 variant="{{ $service->is_active ? 'danger' : 'primary' }}"
@@ -176,6 +184,109 @@
     </div>
     </div>
     </div>
+            <flux:modal wire:model="showDiscountDialog" class="md:w-[450px]">
 
+                <div class="space-y-6">
+
+                    <div>
+                        <flux:heading size="lg">
+                            ایجاد تخفیف
+                        </flux:heading>
+
+                        <flux:text class="mt-1">
+                            درصد تخفیف سرویس را مشخص کنید.
+                        </flux:text>
+                    </div>
+
+                    @if($discountService)
+
+                        {{-- قیمت اصلی --}}
+                        <div class="flex items-center justify-between">
+                <span class="text-zinc-500">
+                    قیمت اصلی
+                </span>
+
+                            <span class="font-semibold">
+                    {{ number_format($discountService->cost) }}
+                </span>
+                        </div>
+
+                        {{-- Slider --}}
+                        <div class="space-y-3">
+
+                            <div class="flex items-center justify-between">
+                    <span class="text-sm text-zinc-500">
+                        درصد تخفیف
+                    </span>
+
+                                <span class="font-bold text-red-500">
+                        {{ $discount }}٪
+                    </span>
+                            </div>
+
+                            <input
+                                type="range"
+                                min="0"
+                                max="100"
+                                step="1"
+                                wire:model.live="discount"
+                                class="w-full accent-red-500"
+                            >
+
+                            <div class="flex justify-between text-xs text-zinc-400">
+                                <span>۰٪</span>
+                                <span>۵۰٪</span>
+                                <span>۱۰۰٪</span>
+                            </div>
+
+                        </div>
+
+                        {{-- قیمت نهایی --}}
+                        <div class="rounded-xl bg-zinc-100 dark:bg-zinc-800 p-4">
+
+                            <div class="flex items-center justify-between">
+                    <span class="text-zinc-500 dark:text-zinc-400">
+                        مبلغ نهایی
+                    </span>
+
+                                <span class="text-xl font-bold text-green-600">
+                        {{ number_format($finalCost) }}
+                    </span>
+                            </div>
+
+                            @if($discount > 0)
+                                <div class="mt-2 text-sm text-red-500">
+                                    مبلغ تخفیف:
+                                    {{ number_format($discountService->cost - $finalCost) }}
+                                </div>
+                            @endif
+
+                        </div>
+
+                    @endif
+
+                    {{-- Buttons --}}
+                    <div class="flex justify-end gap-2">
+
+                        <flux:button
+                            variant="ghost"
+                            wire:click="$set('showDiscountDialog', false)"
+                        >
+                            انصراف
+                        </flux:button>
+
+                        <flux:button
+                            variant="primary"
+                            wire:click="saveDiscount"
+                        >
+                            ذخیره تخفیف
+                        </flux:button>
+
+                    </div>
+
+                </div>
+
+            </flux:modal>
     @endforeach
+
     </div>
