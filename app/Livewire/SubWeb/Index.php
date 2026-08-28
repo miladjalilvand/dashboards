@@ -153,6 +153,9 @@ class Index extends Component
     public $logged = false;
 
 
+    public $portfolios ;
+
+
     public $panel;
 
     // وضعیت فرم
@@ -480,6 +483,7 @@ class Index extends Component
             return;
         }
 
+        $this->portfolios = $this->panel->panelPortofilios;
         $this->branches = $this->panel
             ->branches()->
             where('is_active' , 1)

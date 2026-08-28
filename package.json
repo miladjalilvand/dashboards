@@ -10,6 +10,7 @@
         "@majidh1/jalalidatepicker": "^0.9.12",
         "axios": "^1.7.4",
         "concurrently": "^9.0.1",
+        "echarts": "^6.1.0",
         "flatpickr": "^4.6.13",
         "flowbite": "^4.0.1",
         "jquery": "^4.0.0",

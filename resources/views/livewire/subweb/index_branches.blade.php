@@ -1,6 +1,5 @@
-
 <div class="min-h-screen pb-24"
-dir="rtl"
+     dir="rtl"
 >
 
     <div class="flex items-center justify-between">
@@ -8,12 +7,12 @@ dir="rtl"
         {{-- ========================================================= --}}
         {{-- Customer Authentication --}}
         {{-- ========================================================= --}}
-<div>
-@if($state==1)
-    <button
-        type="button"
-        wire:click="switchState(0)"
-        class="
+        <div>
+            @if($state==1)
+                <button
+                    type="button"
+                    wire:click="switchState(0)"
+                    class="
                         px-4
                         py-2
                         rounded-xl
@@ -25,22 +24,22 @@ dir="rtl"
 
                     ">
 
-         بازگشت
+                    بازگشت
 
-    </button>
-@endif
-</div>
+                </button>
+            @endif
+        </div>
         @if (!$logged)
-<div class="p-1">
+            <div class="p-1">
 
-    <flux:button
-        variant="primary"
-        icon="arrow-right-end-on-rectangle"
-        wire:click="openLoginModal"
-    >
-        ورود / ثبت‌نام
-    </flux:button>
-</div>
+                <flux:button
+                    variant="primary"
+                    icon="arrow-right-end-on-rectangle"
+                    wire:click="openLoginModal"
+                >
+                    ورود / ثبت‌نام
+                </flux:button>
+            </div>
 
         @else
 
@@ -303,7 +302,6 @@ dir="rtl"
                         p-4 shadow-xl">
 
 
-
                 <div class="flex-1">
 
                     <div class="font-semibold text-red-800 dark:text-red-200">
@@ -466,10 +464,10 @@ dir="rtl"
 
                     <div>
                         @if($reserve_data)
-                        <button
-                            type="button"
-                            wire:click="save_date"
-                            class="w-full md:w-auto
+                            <button
+                                type="button"
+                                wire:click="save_date"
+                                class="w-full md:w-auto
                                    px-5 py-2.5
                                    rounded-xl
 
@@ -478,12 +476,11 @@ dir="rtl"
                                    transition
                                    shadow-sm">
 
-                            🕐 انتخاب ساعت
+                                🕐 انتخاب ساعت
 
-                        </button>
+                            </button>
 
-
-@endif
+                        @endif
                     </div>
 
                 </div>
@@ -722,210 +719,469 @@ dir="rtl"
                 @endforeach
 
             </div>
-<br/>
-<br/>
-@if($current_customer_id)
-            <flux:table>
+            <br/>
+            <br/>
+            @if($current_customer_id)
+                <flux:table>
 
-                <flux:table.columns>
+                    <flux:table.columns>
 
-                    <flux:table.column>#</flux:table.column>
-                    <flux:table.column>شعبه</flux:table.column>
-                    <flux:table.column>کارمند</flux:table.column>
-                    <flux:table.column>مشتری</flux:table.column>
-                    <flux:table.column>تاریخ</flux:table.column>
-                    <flux:table.column>شروع</flux:table.column>
-                    <flux:table.column>پایان</flux:table.column>
-                    <flux:table.column>مدت</flux:table.column>
-                    <flux:table.column>مبلغ</flux:table.column>
-                    <flux:table.column>وضعیت</flux:table.column>
+                        <flux:table.column>#</flux:table.column>
+                        <flux:table.column>شعبه</flux:table.column>
+                        <flux:table.column>کارمند</flux:table.column>
+                        <flux:table.column>مشتری</flux:table.column>
+                        <flux:table.column>تاریخ</flux:table.column>
+                        <flux:table.column>شروع</flux:table.column>
+                        <flux:table.column>پایان</flux:table.column>
+                        <flux:table.column>مدت</flux:table.column>
+                        <flux:table.column>مبلغ</flux:table.column>
+                        <flux:table.column>وضعیت</flux:table.column>
 
-                </flux:table.columns>
+                    </flux:table.columns>
 
 
-                <flux:table.rows>
+                    <flux:table.rows>
 
-                    @forelse($customer_reserves ?? [] as $reserve)
+                        @forelse($customer_reserves ?? [] as $reserve)
 
-                        <flux:table.row
-                            wire:key="reserve-{{ $reserve->id }}"
-{{--                            wire:click="showReserve({{ $reserve->id }})"--}}
-                            class="cursor-pointer transition-colors
+                            <flux:table.row
+                                wire:key="reserve-{{ $reserve->id }}"
+                                {{--                            wire:click="showReserve({{ $reserve->id }})"--}}
+                                class="cursor-pointer transition-colors
                                hover:bg-gray-50
                                dark:hover:bg-gray-800/70"
-                        >
-
-                            <flux:table.cell>
-                                {{ $loop->iteration }}
-                            </flux:table.cell>
-
-                            <flux:table.cell>
-                                {{ $reserve->branch->caption }}
-                            </flux:table.cell>
-
-                            <flux:table.cell>
-                                {{ $reserve->employee->name }}
-                            </flux:table.cell>
-
-                            <flux:table.cell>
-                                {{ $reserve->customer?->user->name }}
-                            </flux:table.cell>
-
-                            <flux:table.cell>
-                                {{ \Hekmatinasser\Verta\Verta::instance($reserve->date)->format('Y/m/d') }}
-                            </flux:table.cell>
-
-                            <flux:table.cell>
-                                {{ substr($reserve->start_time, 0, 2) . ':' . substr($reserve->start_time, 2) }}
-                            </flux:table.cell>
-
-                            <flux:table.cell>
-                                {{ substr($reserve->end_time, 0, 2) . ':' . substr($reserve->end_time, 2) }}
-
-
-                            </flux:table.cell>
-
-                            <flux:table.cell>
-                                {{ $reserve->total_time }} دقیقه
-                            </flux:table.cell>
-
-                            <flux:table.cell>
-                                {{ number_format($reserve->total_cost) }}
-                            </flux:table.cell>
-
-                            <flux:table.cell>
-
-                                @switch($reserve->status_id)
-
-                                    @case(1)
-
-                                        <flux:badge color="amber">
-                                            در انتظار
-                                        </flux:badge>
-
-                                        @break
-
-                                    @case(2)
-
-                                        <flux:badge color="green">
-                                            بررسی شده
-                                        </flux:badge>
-
-                                        @break
-
-                                    @case(3)
-
-                                        <flux:badge color="red">
-                                            لغو شده
-                                        </flux:badge>
-
-                                        @break
-
-                                    @default
-
-                                        <flux:badge>
-                                            {{ $reserve->status->caption }}
-                                        </flux:badge>
-
-                                @endswitch
-
-                            </flux:table.cell>
-
-                        </flux:table.row>
-
-                    @empty
-
-                        <flux:table.row>
-
-                            <flux:table.cell
-                                colspan="10"
-                                class="py-10 text-center text-gray-500
-                                   dark:text-gray-400"
                             >
-                                اطلاعاتی وجود ندارد.
-                            </flux:table.cell>
 
-                        </flux:table.row>
+                                <flux:table.cell>
+                                    {{ $loop->iteration }}
+                                </flux:table.cell>
 
-                    @endforelse
+                                <flux:table.cell>
+                                    {{ $reserve->branch->caption }}
+                                </flux:table.cell>
 
-                </flux:table.rows>
+                                <flux:table.cell>
+                                    {{ $reserve->employee->name }}
+                                </flux:table.cell>
 
-            </flux:table>
+                                <flux:table.cell>
+                                    {{ $reserve->customer?->user->name }}
+                                </flux:table.cell>
 
-@endif
-            <div class="min-h-screen bg-zinc-50 dark:bg-zinc-950">
+                                <flux:table.cell>
+                                    {{ \Hekmatinasser\Verta\Verta::instance($reserve->date)->format('Y/m/d') }}
+                                </flux:table.cell>
+
+                                <flux:table.cell>
+                                    {{ substr($reserve->start_time, 0, 2) . ':' . substr($reserve->start_time, 2) }}
+                                </flux:table.cell>
+
+                                <flux:table.cell>
+                                    {{ substr($reserve->end_time, 0, 2) . ':' . substr($reserve->end_time, 2) }}
+
+
+                                </flux:table.cell>
+
+                                <flux:table.cell>
+                                    {{ $reserve->total_time }} دقیقه
+                                </flux:table.cell>
+
+                                <flux:table.cell>
+                                    {{ number_format($reserve->total_cost) }}
+                                </flux:table.cell>
+
+                                <flux:table.cell>
+
+                                    @switch($reserve->status_id)
+
+                                        @case(1)
+
+                                            <flux:badge color="amber">
+                                                در انتظار
+                                            </flux:badge>
+
+                                            @break
+
+                                        @case(2)
+
+                                            <flux:badge color="green">
+                                                بررسی شده
+                                            </flux:badge>
+
+                                            @break
+
+                                        @case(3)
+
+                                            <flux:badge color="red">
+                                                لغو شده
+                                            </flux:badge>
+
+                                            @break
+
+                                        @default
+
+                                            <flux:badge>
+                                                {{ $reserve->status->caption }}
+                                            </flux:badge>
+
+                                    @endswitch
+
+                                </flux:table.cell>
+
+                            </flux:table.row>
+
+                        @empty
+
+                            <flux:table.row>
+
+                                <flux:table.cell
+                                    colspan="10"
+                                    class="py-10 text-center text-gray-500
+                                   dark:text-gray-400"
+                                >
+                                    اطلاعاتی وجود ندارد.
+                                </flux:table.cell>
+
+                            </flux:table.row>
+
+                        @endforelse
+
+                    </flux:table.rows>
+
+                </flux:table>
+
+            @endif
+            <div class="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
 
                 {{-- ========================================================= --}}
-                {{-- Banners --}}
+                {{-- BANNERS --}}
                 {{-- ========================================================= --}}
 
                 @if(!empty($banners_data))
 
-                    <section class="py-8">
+                    <section class="relative">
 
-                        <div class="max-w-6xl mx-auto px-4">
+                        <div class="space-y-5">
 
-                            <div class="space-y-6">
+                            @foreach($banners_data as $index => $banner)
 
-                                @foreach($banners_data as $index => $banner)
+                                <div
+                                    wire:key="banner-{{ $index }}"
+                                    class="
+                            relative
+                            overflow-hidden
+                            min-h-[320px]
+                            md:min-h-[480px]
+                            flex
+                            items-end
+                            bg-zinc-900
+                        "
+                                >
+
+                                    {{-- Image --}}
+
+                                    @if(!empty($banner['image']))
+
+                                        <img
+                                            src="{{ str_starts_with($banner['image'], 'storage/')
+                                    ? asset($banner['image'])
+                                    : asset('storage/' . $banner['image']) }}"
+                                            alt="{{ $banner['title'] ?? 'بنر' }}"
+                                            class="
+                                    absolute
+                                    inset-0
+                                    w-full
+                                    h-full
+                                    object-cover
+                                "
+                                        >
+
+                                    @endif
+
+
+                                    {{-- Dark Gradient --}}
 
                                     <div
-                                        wire:key="banner-{{ $index }}"
-                                        class="relative overflow-hidden rounded-2xl
-                                   bg-white dark:bg-zinc-900
-                                   border border-zinc-200 dark:border-zinc-800"
+                                        class="
+                                absolute
+                                inset-0
+                                bg-gradient-to-t
+                                from-black/80
+                                via-black/30
+                                to-transparent
+                            "
+                                    ></div>
+
+
+                                    {{-- Content --}}
+
+                                    <div
+                                        class="
+                                relative
+                                z-10
+                                w-full
+                                max-w-7xl
+                                mx-auto
+                                px-5
+                                md:px-10
+                                pb-10
+                                md:pb-14
+                            "
                                     >
 
-                                        {{-- Image --}}
+                                        @if(!empty($banner['title']))
 
-                                        @if(!empty($banner['image']))
-
-                                            <img
-                                                src="{{ str_starts_with($banner['image'], 'storage/')
-                                        ? asset($banner['image'])
-                                        : asset('storage/' . $banner['image']) }}"
-                                                class="w-full h-[300px] md:h-[420px] object-cover"
-                                                alt="{{ $banner['title'] ?? '' }}"
+                                            <h1
+                                                class="
+                                        text-3xl
+                                        md:text-5xl
+                                        font-black
+                                        text-white
+                                        max-w-3xl
+                                    "
                                             >
+                                                {{ $banner['title'] }}
+                                            </h1>
 
                                         @endif
 
 
-                                        {{-- Content --}}
+                                        @if(!empty($banner['caption']))
 
-                                        <div class="p-6 md:p-8">
+                                            <p
+                                                class="
+                                        mt-4
+                                        max-w-2xl
+                                        text-sm
+                                        md:text-base
+                                        leading-8
+                                        text-zinc-200
+                                    "
+                                            >
+                                                {{ $banner['caption'] }}
+                                            </p>
 
-                                            @if(!empty($banner['title']))
+                                        @endif
 
-                                                <h2
-                                                    class="text-2xl md:text-3xl
-                                               font-bold
-                                               text-zinc-900
-                                               dark:text-white"
-                                                >
-                                                    {{ $banner['title'] }}
-                                                </h2>
+                                    </div>
 
-                                            @endif
+                                </div>
+
+                            @endforeach
+
+                        </div>
+
+                    </section>
+
+                @endif
 
 
-                                            @if(!empty($banner['caption']))
 
-                                                <p
-                                                    class="mt-3
-                                               text-zinc-600
-                                               dark:text-zinc-400
-                                               leading-8"
-                                                >
-                                                    {{ $banner['caption'] }}
-                                                </p>
+                {{-- ========================================================= --}}
+                {{-- ABOUT US --}}
+                {{-- ========================================================= --}}
 
-                                            @endif
+                @if(!empty($aboutus['aboutus']))
+
+                    <section class="py-14 md:py-20">
+
+                        <div class="max-w-6xl mx-auto px-5">
+
+                            {{-- Section Header --}}
+
+                            <div class="mb-8">
+
+                    <span
+                        class="
+                            inline-block
+                            text-xs
+                            font-bold
+                            text-indigo-600
+                            dark:text-indigo-400
+                            mb-2
+                        "
+                    >
+                        درباره مجموعه
+                    </span>
+
+                                <h2
+                                    class="
+                            text-3xl
+                            md:text-4xl
+                            font-black
+                            text-zinc-900
+                            dark:text-white
+                        "
+                                >
+                                    درباره ما
+                                </h2>
+
+                            </div>
+
+
+                            {{-- About Card --}}
+
+                            <div
+                                class="
+                        rounded-3xl
+                        border
+                        border-zinc-200
+                        dark:border-zinc-800
+                        bg-white
+                        dark:bg-zinc-900
+                        p-6
+                        md:p-10
+                        shadow-sm
+                    "
+                            >
+
+                                <p
+                                    class="
+                            text-base
+                            md:text-lg
+                            leading-9
+                            text-zinc-600
+                            dark:text-zinc-300
+                            whitespace-pre-line
+                        "
+                                >
+                                    {{ $aboutus['aboutus'] }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                @endif
+
+
+
+                {{-- ========================================================= --}}
+                {{-- ABOUT GALLERY --}}
+                {{-- ========================================================= --}}
+
+                @if(!empty($aboutus['images']))
+
+                    <section class="pb-16 md:pb-20">
+
+                        <div class="max-w-6xl mx-auto px-5">
+
+                            {{-- Header --}}
+
+                            <div class="flex items-end justify-between mb-7">
+
+                                <div>
+
+                        <span
+                            class="
+                                text-xs
+                                font-bold
+                                text-indigo-600
+                                dark:text-indigo-400
+                            "
+                        >
+                            گالری
+                        </span>
+
+                                    <h2
+                                        class="
+                                mt-1
+                                text-2xl
+                                md:text-3xl
+                                font-black
+                                text-zinc-900
+                                dark:text-white
+                            "
+                                    >
+                                        تصاویر مجموعه
+                                    </h2>
+
+                                </div>
+
+                            </div>
+
+
+                            {{-- Gallery --}}
+
+                            <div
+                                class="
+                        grid
+                        grid-cols-2
+                        md:grid-cols-3
+                        lg:grid-cols-4
+                        gap-4
+                    "
+                            >
+
+                                @foreach($aboutus['images'] as $index => $image)
+
+                                    <button
+                                        type="button"
+                                        wire:key="about-image-{{ $index }}"
+                                        wire:click="openAboutImage({{ $index }})"
+                                        class="
+                                group
+                                relative
+                                overflow-hidden
+                                rounded-2xl
+                                bg-zinc-100
+                                dark:bg-zinc-900
+                                aspect-square
+                                border
+                                border-zinc-200
+                                dark:border-zinc-800
+                            "
+                                    >
+
+                                        <img
+                                            src="{{ str_starts_with($image, 'storage/')
+                                    ? asset($image)
+                                    : asset('storage/' . $image) }}"
+                                            alt="تصویر مجموعه"
+                                            class="
+                                    w-full
+                                    h-full
+                                    object-cover
+                                    transition
+                                    duration-500
+                                    group-hover:scale-110
+                                "
+                                        >
+
+
+                                        {{-- Hover Overlay --}}
+
+                                        <div
+                                            class="
+                                    absolute
+                                    inset-0
+                                    flex
+                                    items-center
+                                    justify-center
+                                    bg-black/0
+                                    group-hover:bg-black/40
+                                    transition
+                                    duration-300
+                                "
+                                        >
+
+                                <span
+                                    class="
+                                        opacity-0
+                                        group-hover:opacity-100
+                                        transition
+                                        text-white
+                                        text-2xl
+                                    "
+                                >
+                                    ⛶
+                                </span>
 
                                         </div>
 
-                                    </div>
+                                    </button>
 
                                 @endforeach
 
@@ -938,121 +1194,311 @@ dir="rtl"
                 @endif
 
 
+
                 {{-- ========================================================= --}}
-                {{-- About Us --}}
+                {{-- PORTFOLIOS --}}
                 {{-- ========================================================= --}}
 
-                @if(
-                    !empty($aboutus['aboutus']) ||
-                    !empty($aboutus['images'])
-                )
+                @if($portfolios->count())
 
-                    <section class="py-12 md:py-16">
+                    <section
+                        class="
+                py-16
+                md:py-20
+                bg-white
+                dark:bg-zinc-900/40
+                border-y
+                border-zinc-200
+                dark:border-zinc-800
+            "
+                    >
 
-                        <div class="max-w-6xl mx-auto px-4">
+                        <div class="max-w-6xl mx-auto px-5">
 
-                            {{-- Title --}}
+                            {{-- Header --}}
 
                             <div class="mb-8">
 
+                    <span
+                        class="
+                            text-xs
+                            font-bold
+                            text-indigo-600
+                            dark:text-indigo-400
+                        "
+                    >
+                        پروژه‌ها
+                    </span>
+
                                 <h2
-                                    class="text-3xl
-                               font-bold
-                               text-zinc-900
-                               dark:text-white"
+                                    class="
+                            mt-1
+                            text-3xl
+                            md:text-4xl
+                            font-black
+                            text-zinc-900
+                            dark:text-white
+                        "
                                 >
-                                    درباره ما
+                                    نمونه‌کارهای ما
                                 </h2>
 
-                                <div
-                                    class="mt-3
-                               w-16
-                               h-1
-                               rounded-full
-                               bg-indigo-600"
-                                ></div>
+                                <p
+                                    class="
+                            mt-2
+                            text-sm
+                            text-zinc-500
+                            dark:text-zinc-400
+                        "
+                                >
+                                    بخشی از خدمات و پروژه‌های انجام شده
+                                </p>
 
                             </div>
 
 
-                            {{-- Text --}}
+                            {{-- Portfolio Grid --}}
 
-                            @if(!empty($aboutus['aboutus']))
+                            <div
+                                class="
+                        grid
+                        grid-cols-1
+                        sm:grid-cols-2
+                        lg:grid-cols-3
+                        gap-6
+                    "
+                            >
 
-                                <div
-                                    class="rounded-2xl
-                               p-6 md:p-8
-                               bg-white dark:bg-zinc-900
-                               border
-                               border-zinc-200
-                               dark:border-zinc-800"
-                                >
+                                @foreach($portfolios as $portfolio)
 
-                                    <p
-                                        class="text-base
-                                   md:text-lg
-                                   leading-9
-                                   text-zinc-600
-                                   dark:text-zinc-300
-                                   whitespace-pre-line"
+                                    <article
+                                        wire:key="portfolio-{{ $portfolio->id }}"
+                                        class="
+                                group
+                                overflow-hidden
+                                rounded-3xl
+                                border
+                                border-zinc-200
+                                dark:border-zinc-800
+                                bg-zinc-50
+                                dark:bg-zinc-900
+                                transition
+                                duration-300
+                                hover:-translate-y-1
+                                hover:shadow-xl
+                            "
                                     >
-                                        {{ $aboutus['aboutus'] }}
-                                    </p>
 
-                                </div>
+                                        {{-- Image --}}
 
-                            @endif
-
-
-                            {{-- Images --}}
-
-                            @if(!empty($aboutus['images']))
-
-                                <div
-                                    class="grid
-                               grid-cols-2
-                               md:grid-cols-3
-                               lg:grid-cols-4
-                               gap-4
-                               mt-6"
-                                >
-
-                                    @foreach($aboutus['images'] as $index => $image)
-
-                                        <button
-                                            type="button"
-                                            wire:key="about-image-{{ $index }}"
-                                            wire:click="openAboutImage({{ $index }})"
-                                            class="overflow-hidden
-                                       rounded-xl
-                                       bg-zinc-100
-                                       dark:bg-zinc-900
-                                       border
-                                       border-zinc-200
-                                       dark:border-zinc-800"
+                                        <div
+                                            class="
+                                    relative
+                                    aspect-[4/3]
+                                    overflow-hidden
+                                    bg-zinc-100
+                                    dark:bg-zinc-800
+                                "
                                         >
 
-                                            <img
-                                                src="{{ str_starts_with($image, 'storage/')
-                                        ? asset($image)
-                                        : asset('storage/' . $image) }}"
-                                                class="w-full
-                                           h-48
-                                           md:h-56
-                                           object-cover
-                                           transition
-                                           duration-300
-                                           hover:scale-105"
-                                                alt="درباره ما"
+                                            @if($portfolio->image)
+
+                                                <img
+                                                    src="{{ asset('storage/' . ltrim($portfolio->image, '/')) }}"
+                                                    alt="{{ $portfolio->service?->caption ?? 'نمونه‌کار' }}"
+                                                    class="
+                                            w-full
+                                            h-full
+                                            object-cover
+                                            transition
+                                            duration-500
+                                            group-hover:scale-105
+                                        "
+                                                >
+
+                                            @else
+
+                                                <div
+                                                    class="
+                                            w-full
+                                            h-full
+                                            flex
+                                            items-center
+                                            justify-center
+                                            text-zinc-400
+                                        "
+                                                >
+                                                    بدون تصویر
+                                                </div>
+
+                                            @endif
+
+
+                                            {{-- Service Badge --}}
+
+                                            @if($portfolio->service)
+
+                                                <div
+                                                    class="
+                                            absolute
+                                            top-4
+                                            right-4
+                                            rounded-xl
+                                            bg-white/90
+                                            dark:bg-zinc-950/90
+                                            backdrop-blur
+                                            px-3
+                                            py-2
+                                            text-xs
+                                            font-bold
+                                            shadow
+                                        "
+                                                >
+                                                    {{ $portfolio->service->caption }}
+                                                </div>
+
+                                            @endif
+
+                                        </div>
+
+
+                                        {{-- Content --}}
+
+                                        <div class="p-5">
+
+                                            <h3
+                                                class="
+                                        text-lg
+                                        font-bold
+                                        text-zinc-900
+                                        dark:text-white
+                                    "
                                             >
+                                                {{ $portfolio->service?->caption ?? 'نمونه‌کار' }}
+                                            </h3>
 
-                                        </button>
 
-                                    @endforeach
+                                            {{-- Employee --}}
 
+                                            @if($portfolio->employee)
+
+                                                <div
+                                                    class="
+                                            mt-3
+                                            flex
+                                            items-center
+                                            gap-2
+                                            text-sm
+                                            text-zinc-500
+                                            dark:text-zinc-400
+                                        "
+                                                >
+
+                                                    <span>👤</span>
+
+                                                    <span>
+                                            {{ $portfolio->employee->name }}
+                                        </span>
+
+                                                </div>
+
+                                            @endif
+
+
+                                            {{-- Branch --}}
+
+                                            @if($portfolio->branch)
+
+                                                <div
+                                                    class="
+                                            mt-2
+                                            flex
+                                            items-center
+                                            gap-2
+                                            text-sm
+                                            text-zinc-500
+                                            dark:text-zinc-400
+                                        "
+                                                >
+
+                                                    <span>📍</span>
+
+                                                    <span>
+                                            {{ $portfolio->branch->caption }}
+                                        </span>
+
+                                                </div>
+
+                                            @endif
+
+
+                                            {{-- Caption --}}
+
+                                            @if($portfolio->caption)
+
+                                                <p
+                                                    class="
+                                            mt-4
+                                            text-sm
+                                            leading-7
+                                            text-zinc-600
+                                            dark:text-zinc-300
+                                            line-clamp-3
+                                        "
+                                                >
+                                                    {{ $portfolio->caption }}
+                                                </p>
+
+                                            @endif
+
+                                        </div>
+
+                                    </article>
+
+                                @endforeach
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                @else
+
+                    {{-- Empty Portfolio --}}
+
+                    <section class="py-16">
+
+                        <div class="max-w-6xl mx-auto px-5">
+
+                            <div
+                                class="
+                        rounded-3xl
+                        border
+                        border-dashed
+                        border-zinc-300
+                        dark:border-zinc-700
+                        py-16
+                        text-center
+                    "
+                            >
+
+                                <div class="text-4xl">
+                                    💼
                                 </div>
 
-                            @endif
+                                <h3
+                                    class="
+                            mt-4
+                            font-bold
+                            text-zinc-900
+                            dark:text-white
+                        "
+                                >
+                                    هنوز نمونه‌کاری ثبت نشده است
+                                </h3>
+
+                            </div>
 
                         </div>
 
@@ -1061,8 +1507,9 @@ dir="rtl"
                 @endif
 
 
+
                 {{-- ========================================================= --}}
-                {{-- Image Dialog --}}
+                {{-- IMAGE MODAL --}}
                 {{-- ========================================================= --}}
 
                 <flux:modal
@@ -1070,22 +1517,40 @@ dir="rtl"
                     class="md:w-[900px]"
                 >
 
-                    <div class="relative">
+                    <div
+                        class="
+                relative
+                flex
+                items-center
+                justify-center
+                min-h-[300px]
+                bg-zinc-950
+                rounded-2xl
+                overflow-hidden
+            "
+                    >
+
+                        {{-- Close --}}
 
                         <button
                             type="button"
                             wire:click="closeAboutImage"
-                            class="absolute
-                       top-3 right-3
-                       z-10
-                       w-10 h-10
-                       rounded-full
-                       bg-black/60
-                       text-white
-                       flex
-                       items-center
-                       justify-center
-                       hover:bg-black/80"
+                            class="
+                    absolute
+                    top-4
+                    right-4
+                    z-20
+                    w-10
+                    h-10
+                    rounded-full
+                    flex
+                    items-center
+                    justify-center
+                    bg-black/60
+                    text-white
+                    hover:bg-black/80
+                    transition
+                "
                         >
                             ✕
                         </button>
@@ -1093,20 +1558,17 @@ dir="rtl"
 
                         @if($selectedAboutImage)
 
-                            <div class="flex justify-center">
-
-                                <img
-                                    src="{{ str_starts_with($selectedAboutImage, 'storage/')
-                            ? asset($selectedAboutImage)
-                            : asset('storage/' . $selectedAboutImage) }}"
-                                    class="max-w-full
-                               max-h-[80vh]
-                               object-contain
-                               rounded-xl"
-                                    alt="تصویر"
-                                >
-
-                            </div>
+                            <img
+                                src="{{ str_starts_with($selectedAboutImage, 'storage/')
+                        ? asset($selectedAboutImage)
+                        : asset('storage/' . $selectedAboutImage) }}"
+                                class="
+                        max-w-full
+                        max-h-[80vh]
+                        object-contain
+                    "
+                                alt="تصویر"
+                            >
 
                         @endif
 
@@ -1114,8 +1576,7 @@ dir="rtl"
 
                 </flux:modal>
 
-            </div>
-        </div>
+            </div>        </div>
 
     @endif
 
@@ -1160,10 +1621,7 @@ dir="rtl"
                 </div>
 
 
-
-
             </div>
-
 
 
             {{-- Categories --}}
@@ -1171,12 +1629,12 @@ dir="rtl"
             <div class="space-y-8">
 
                 @foreach($branch_categories as $category)
-@if($category->is_active)
-                    <div>
+                    @if($category->is_active)
+                        <div>
 
-                        {{-- Category --}}
+                            {{-- Category --}}
 
-                        <div class="mb-4">
+                            <div class="mb-4">
 
                             <span class="
                                 text-lg
@@ -1192,17 +1650,17 @@ dir="rtl"
 
                             </span>
 
-                        </div>
+                            </div>
 
 
-                        {{-- Services --}}
+                            {{-- Services --}}
 
-                        <div class="space-y-4">
+                            <div class="space-y-4">
 
-                            @foreach($category->services as $service)
-                                @if($service->is_active)
+                                @foreach($category->services as $service)
+                                    @if($service->is_active)
 
-                                <div class="
+                                        <div class="
                                     rounded-2xl
                                     border
                                     border-gray-200
@@ -1214,7 +1672,7 @@ dir="rtl"
                                     hover:shadow-md
                                 ">
 
-                                    <div class="
+                                            <div class="
                                         flex
                                         flex-col
                                         md:flex-row
@@ -1222,23 +1680,23 @@ dir="rtl"
                                         gap-4
                                     ">
 
-                                        {{-- Service info --}}
+                                                {{-- Service info --}}
 
-                                        <div class="flex-1">
+                                                <div class="flex-1">
 
-                                            <h3 class="
+                                                    <h3 class="
                                                 text-lg
                                                 font-bold
                                                 text-gray-900
                                                 dark:text-white
                                             ">
 
-                                                {{ $service->caption }}
+                                                        {{ $service->caption }}
 
-                                            </h3>
+                                                    </h3>
 
 
-                                            <div class="
+                                                    <div class="
                                                 grid
                                                 grid-cols-2
                                                 md:grid-cols-3
@@ -1247,101 +1705,101 @@ dir="rtl"
                                                 text-sm
                                             ">
 
-                                                <div class="
+                                                        <div class="
                                                     rounded-xl
                                                     bg-gray-50
                                                     dark:bg-gray-700/50
                                                     p-3
                                                 ">
 
-                                                    <div class="text-xs text-gray-400">
-                                                        زمان
-                                                    </div>
+                                                            <div class="text-xs text-gray-400">
+                                                                زمان
+                                                            </div>
 
-                                                    <div class="font-semibold mt-1">
-                                                        {{ $service->time }} دقیقه
-                                                    </div>
+                                                            <div class="font-semibold mt-1">
+                                                                {{ $service->time }} دقیقه
+                                                            </div>
 
-                                                </div>
+                                                        </div>
 
 
-                                                <div class="
+                                                        <div class="
                                                     rounded-xl
                                                     bg-gray-50
                                                     dark:bg-gray-700/50
                                                     p-3
                                                 ">
 
-                                                    <div class="text-xs text-gray-400">
-                                                        مبلغ
-                                                    </div>
+                                                            <div class="text-xs text-gray-400">
+                                                                مبلغ
+                                                            </div>
 
-                                                    <div class="mt-1">
-                                                        @if($service->discount > 0)
-                                                            <div class="flex items-center gap-2">
+                                                            <div class="mt-1">
+                                                                @if($service->discount > 0)
+                                                                    <div class="flex items-center gap-2">
             <span class="text-sm text-zinc-400 line-through">
                 {{ number_format($service->cost) }}
             </span>
 
-                                                                <span class="font-semibold text-green-600">
+                                                                        <span class="font-semibold text-green-600">
                 {{ number_format($service->cost - ($service->cost * $service->discount / 100)) }}
             </span>
-                                                            </div>
+                                                                    </div>
 
-                                                            <span class="text-xs text-red-500">
+                                                                    <span class="text-xs text-red-500">
             {{ $service->discount }}٪ تخفیف
         </span>
-                                                        @else
-                                                            <span class="font-semibold">
+                                                                @else
+                                                                    <span class="font-semibold">
             {{ number_format($service->cost) }}
         </span>
-                                                        @endif
-                                                    </div>
+                                                                @endif
+                                                            </div>
 
-                                                </div>
-<div class="
+                                                        </div>
+                                                        <div class="
                                                     rounded-xl
                                                     bg-gray-50
                                                     dark:bg-gray-700/50
                                                     p-3
                                                 ">
 
-                                                    <div class="text-xs text-gray-400">
-                                                         مبلغ برای ثبت نوبت
+                                                            <div class="text-xs text-gray-400">
+                                                                مبلغ برای ثبت نوبت
+                                                            </div>
+
+                                                            <div class="font-semibold mt-1">
+                                                                {{ number_format($service->reserve_price) }}
+                                                            </div>
+
+                                                        </div>
+
                                                     </div>
 
-                                                    <div class="font-semibold mt-1">
-                                                        {{ number_format($service->reserve_price) }}
-                                                    </div>
+                                                    @endif
+                                                    @if($service->description)
 
-                                                </div>
-
-                                            </div>
-
-@endif
-                                            @if($service->description)
-
-                                                <p class="
+                                                        <p class="
                                                     text-sm
                                                     text-gray-500
                                                     dark:text-gray-400
                                                     mt-3
                                                 ">
 
-                                                    {{ $service->description }}
+                                                            {{ $service->description }}
 
-                                                </p>
+                                                        </p>
 
-                                            @endif
+                                                    @endif
 
-                                        </div>
+                                                </div>
 
 
-                                        {{-- Employees --}}
+                                                {{-- Employees --}}
 
-                                        <div class="md:w-[300px]">
+                                                <div class="md:w-[300px]">
 
-                                            <div class="
+                                                    <div class="
                                                 text-sm
                                                 font-semibold
                                                 text-gray-700
@@ -1349,27 +1807,27 @@ dir="rtl"
                                                 mb-2
                                             ">
 
-                                                انتخاب کارمند
+                                                        انتخاب کارمند
 
-                                            </div>
+                                                    </div>
 
 
-                                            @if($service->employees->count())
+                                                    @if($service->employees->count())
 
-                                                <div class="flex flex-wrap gap-2">
+                                                        <div class="flex flex-wrap gap-2">
 
-                                                    @foreach($service->employees as $employee)
+                                                            @foreach($service->employees as $employee)
 
-                                                        @if($employee->is_active)
-                                                        <button
+                                                                @if($employee->is_active)
+                                                                    <button
 
-                                                            type="button"
-                                                            wire:click="select_employee(
+                                                                        type="button"
+                                                                        wire:click="select_employee(
                                                                 {{ $employee->id }},
                                                                 {{ $service->time }},
                                                                 {{ $service->id }}
                                                             )"
-                                                            class="
+                                                                        class="
                                                                 px-3
                                                                 py-2
                                                                 rounded-xl
@@ -1386,47 +1844,47 @@ dir="rtl"
                                                                     : 'border-gray-200 bg-gray-50 dark:border-gray-600 dark:bg-gray-700'
                                                                 }}
                                                             "
-                                                        >
+                                                                    >
 
-                                                            👤
-                                                            {{ $employee->name
-                                                                ?? $employee->caption
-                                                                ?? 'بدون نام' }}
+                                                                        👤
+                                                                        {{ $employee->name
+                                                                            ?? $employee->caption
+                                                                            ?? 'بدون نام' }}
 
-                                                        </button>
-@endif
-                                                    @endforeach
+                                                                    </button>
+                                                                @endif
+                                                            @endforeach
 
-                                                </div>
+                                                        </div>
 
-                                            @else
+                                                    @else
 
-                                                <div class="
+                                                        <div class="
                                                     text-sm
                                                     text-yellow-600
                                                     dark:text-yellow-400
                                                 ">
 
-                                                    ❌ هیچ کارمندی برای این سرویس موجود نیست
+                                                            ❌ هیچ کارمندی برای این سرویس موجود نیست
+
+                                                        </div>
+
+                                                    @endif
 
                                                 </div>
 
-                                            @endif
+                                            </div>
 
                                         </div>
 
-                                    </div>
+                                        @endforeach
+                                    @endif
 
-                                </div>
-
-                            @endforeach
-                                @endif
+                            </div>
 
                         </div>
 
-                    </div>
-
-                @endforeach
+                        @endforeach
 
             </div>
 
@@ -1456,7 +1914,6 @@ dir="rtl"
                         dark:bg-red-950/50
                         dark:border-red-900
                         p-4 shadow-xl">
-
 
 
                         <div class="flex-1">
@@ -1583,7 +2040,6 @@ dir="rtl"
             </div>
 
 
-
             {{-- Time slots --}}
 
             @if(count($time_of_wtimes))
@@ -1635,11 +2091,11 @@ dir="rtl"
                                 mt-1
                             ">
 
-{{--                                تا--}}
+                                {{--                                تا--}}
 
-{{--                                {{ substr($slot['end'], 0, 2) }}:{{--}}
-{{--                                    substr($slot['end'], 2, 2)--}}
-{{--                                }}--}}
+                                {{--                                {{ substr($slot['end'], 0, 2) }}:{{--}}
+                                {{--                                    substr($slot['end'], 2, 2)--}}
+                                {{--                                }}--}}
 
                             </div>
 
@@ -1668,7 +2124,6 @@ dir="rtl"
     </flux:modal>
 
 
-
     {{-- =========================================================
          CONFIRM RESERVATION MODAL
     ========================================================== --}}
@@ -1691,7 +2146,6 @@ dir="rtl"
                         dark:bg-red-950/50
                         dark:border-red-900
                         p-4 shadow-xl">
-
 
 
                         <div class="flex-1">
@@ -1736,7 +2190,7 @@ dir="rtl"
                     text-3xl
                 ">
 
-<!--                    📅-->
+                    <!--                    📅-->
 
                 </div>
 
@@ -1765,7 +2219,6 @@ dir="rtl"
                 </p>
 
             </div>
-
 
 
             {{-- Information --}}
@@ -1964,7 +2417,8 @@ dir="rtl"
 
                     </span>
 
-                </div>  <div class="
+                </div>
+                <div class="
                     flex
                     justify-between
                     gap-4
@@ -1992,7 +2446,6 @@ dir="rtl"
                 </div>
 
             </div>
-
 
 
             {{-- Buttons --}}
@@ -2045,7 +2498,7 @@ dir="rtl"
                     </span>
 
                     </button>
-                    @else
+                @else
                     <button
                         type="button"
                         wire:click="confirmReservation"
