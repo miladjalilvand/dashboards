@@ -59,6 +59,13 @@ $menus_seed = [
         "slug" => "employees",
     ],
     [
+        "caption" => "ادمین ها ",
+        "icon" => "users",
+        "visible" => 1,
+        "menu_type_id" => 2,
+        "slug" => "admins",
+    ],
+    [
         "caption" => "نوبت جدید",
         "icon" => "plus-circle",
         "visible" => 1,

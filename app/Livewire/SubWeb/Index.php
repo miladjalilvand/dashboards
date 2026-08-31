@@ -9,6 +9,7 @@ use App\Models\Panel;
 use App\Models\Reserve;
 use App\Models\Service;
 use App\Models\User;
+use App\Services\SmsService;
 use Flux\Flux;
 use Hekmatinasser\Verta\Facades\Verta;
 use Illuminate\Support\Facades\Auth;
@@ -159,10 +160,14 @@ class Index extends Component
     public $panel;
 
     // وضعیت فرم
-    public $showRegisterForm = false;
     public bool $showAboutImage = false;
 
     public ?string $selectedAboutImage = null;
+
+    public bool $showInputCode = false;
+    public bool $showRegisterForm = false;
+
+    public string $input_code = '';
 
 
     public function openAboutImage(int $index)
@@ -191,11 +196,16 @@ class Index extends Component
     {
         $this->showRegisterForm = false;
 
+        $this->showInputCode = false;
+
+        session()->forget('customer_otp');
+
         $this->reset([
             'input_name',
             'input_email',
             'input_password',
             'input_password_confirmation',
+            'input_code',
         ]);
 
         $this->resetValidation();
@@ -208,19 +218,26 @@ class Index extends Component
             'input_email',
             'input_password',
             'input_password_confirmation',
+            'input_code',
         ]);
 
         $this->showRegisterForm = false;
+
+        $this->showInputCode = false;
+
+        $this->logged = false;
+
+        session()->forget('customer_otp');
 
         $this->resetValidation();
 
         Flux::modal('customer-auth')->show();
     }
-
     /**
      * بررسی شماره موبایل
      */
-    public function checkMobile()
+
+    public function checkMobile(SmsService $sms)
     {
         $this->validate([
             'input_mobile_number' => [
@@ -233,10 +250,181 @@ class Index extends Component
             'input_mobile_number.regex' => 'شماره موبایل معتبر نیست.',
         ]);
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | تولید OTP
+        |--------------------------------------------------------------------------
+        */
+
+//        $code = (string) random_int(100000, 999999);
+        $code = '12345';
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ذخیره موقت OTP
+        |--------------------------------------------------------------------------
+        */
+
+        session()->put('customer_otp', [
+            'mobile' => $this->input_mobile_number,
+            'code' => $code,
+            'expires_at' => now()->addMinutes(2)->timestamp,
+        ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ارسال SMS
+        |--------------------------------------------------------------------------
+        */
+
+        $result = $sms->sendOtp(
+            $this->input_mobile_number,
+            $code
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | بررسی نتیجه ارسال
+        |--------------------------------------------------------------------------
+        */
+
+//        if (!$result['success']) {
+//
+//            $this->addError(
+//                'input_mobile_number',
+//                'ارسال کد تأیید با خطا مواجه شد.'
+//            );
+//
+//            return;
+//        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | نمایش فرم OTP
+        |--------------------------------------------------------------------------
+        */
+
+        $this->showInputCode = true;
+
+        $this->showRegisterForm = false;
+
+        $this->resetValidation();
+    }
+
+    public function verifyOtp()
+    {
+        $this->validate([
+            'input_code' => [
+                'required',
+                'digits:5',
+            ],
+        ], [
+            'input_code.required' => 'کد تأیید را وارد کنید.',
+            'input_code.digits' => 'کد تأیید باید ۶ رقمی باشد.',
+        ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | دریافت OTP از Session
+        |--------------------------------------------------------------------------
+        */
+
+        $otp = session()->get('customer_otp');
+
+
+        if (!$otp) {
+
+            $this->addError(
+                'input_code',
+                'کد تأیید پیدا نشد. دوباره درخواست کد کنید.'
+            );
+
+            $this->showInputCode = false;
+
+            return;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | بررسی شماره
+        |--------------------------------------------------------------------------
+        */
+
+        if ($otp['mobile'] !== $this->input_mobile_number) {
+
+            $this->addError(
+                'input_code',
+                'کد تأیید برای این شماره نیست.'
+            );
+
+            return;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | بررسی زمان انقضا
+        |--------------------------------------------------------------------------
+        */
+
+        if (now()->timestamp > $otp['expires_at']) {
+
+            session()->forget('customer_otp');
+
+            $this->addError(
+                'input_code',
+                'کد تأیید منقضی شده است.'
+            );
+
+            return;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | بررسی کد
+        |--------------------------------------------------------------------------
+        */
+
+        if ($otp['code'] !== $this->input_code) {
+
+
+            $this->addError(
+                'input_code',
+                'کد تأیید اشتباه است.'
+            );
+
+            return;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | OTP معتبر است
+        |--------------------------------------------------------------------------
+        */
+
+        session()->forget('customer_otp');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | پیدا کردن User
+        |--------------------------------------------------------------------------
+        */
+
         $user = CustomerUser::where(
             'mobile',
             $this->input_mobile_number
         )->first();
+
 
         /*
         |--------------------------------------------------------------------------
@@ -250,10 +438,9 @@ class Index extends Component
                 ->where('panel_id', $this->panel->id)
                 ->first();
 
+
             /*
-            |--------------------------------------------------------------------------
-            | Customer برای این پنل وجود ندارد
-            |--------------------------------------------------------------------------
+            | اگر Customer برای این Panel وجود ندارد
             */
 
             if (!$customer) {
@@ -261,8 +448,9 @@ class Index extends Component
                 $branch = $this->branches->first();
 
                 if (!$branch) {
+
                     $this->addError(
-                        'input_mobile_number',
+                        'input_code',
                         'برای این مجموعه هیچ شعبه‌ای ثبت نشده است.'
                     );
 
@@ -271,47 +459,33 @@ class Index extends Component
 
                 $customer = Customer::create([
                     'user_id' => $user->id,
-//                    'branch_id' => $branch->id,
                     'panel_id' => $this->panel->id,
                 ]);
             }
 
-            /*
-            |--------------------------------------------------------------------------
-            | Login داخلی
-            |--------------------------------------------------------------------------
-            */
-
-            $this->user_logged_id = $user->id;
-            $this->current_customer_id = $customer->id;
-
-            $this->logged = true;
-            $this->showRegisterForm = false;
 
             /*
             |--------------------------------------------------------------------------
-            | ذخیره در Session
+            | Login
             |--------------------------------------------------------------------------
             */
 
-            session()->put('customer_id', $customer->id);
-
-            $this->loadCustomerReserves();
-
-            Flux::modal('customer-auth')->close();
-
-            $this->reset([
-                'input_mobile_number',
-            ]);
+            $this->loginCustomer(
+                $user,
+                $customer
+            );
 
             return;
         }
 
+
         /*
         |--------------------------------------------------------------------------
-        | کاربر وجود ندارد
+        | User وجود ندارد → Register
         |--------------------------------------------------------------------------
         */
+
+        $this->showInputCode = false;
 
         $this->showRegisterForm = true;
     }
@@ -330,17 +504,26 @@ class Index extends Component
                 'regex:/^09[0-9]{9}$/',
                 'unique:customer_users,mobile',
             ],
-        ], [
-            'input_name.required' => 'نام و نام خانوادگی را وارد کنید.',
 
-            'input_mobile_number.required' => 'شماره موبایل را وارد کنید.',
-            'input_mobile_number.regex' => 'شماره موبایل معتبر نیست.',
-            'input_mobile_number.unique' => 'این شماره موبایل قبلاً ثبت شده است.',
+        ], [
+
+            'input_name.required' =>
+                'نام و نام خانوادگی را وارد کنید.',
+
+            'input_mobile_number.required' =>
+                'شماره موبایل را وارد کنید.',
+
+            'input_mobile_number.regex' =>
+                'شماره موبایل معتبر نیست.',
+
+            'input_mobile_number.unique' =>
+                'این شماره موبایل قبلاً ثبت شده است.',
         ]);
+
 
         /*
         |--------------------------------------------------------------------------
-        | Create Customer User
+        | Create User
         |--------------------------------------------------------------------------
         */
 
@@ -348,6 +531,7 @@ class Index extends Component
             'name' => $validated['input_name'],
             'mobile' => $validated['input_mobile_number'],
         ]);
+
 
         /*
         |--------------------------------------------------------------------------
@@ -358,6 +542,7 @@ class Index extends Component
         $branch = $this->branches->first();
 
         if (!$branch) {
+
             $user->delete();
 
             $this->addError(
@@ -368,6 +553,7 @@ class Index extends Component
             return;
         }
 
+
         /*
         |--------------------------------------------------------------------------
         | Create Customer
@@ -376,41 +562,83 @@ class Index extends Component
 
         $customer = Customer::create([
             'user_id' => $user->id,
-//            'branch_id' => $branch->id,
             'panel_id' => $this->panel->id,
         ]);
 
+
         /*
         |--------------------------------------------------------------------------
-        | Login داخلی
+        | Login
         |--------------------------------------------------------------------------
         */
 
-        $this->user_logged_id = $user->id;
-        $this->current_customer_id = $customer->id;
-
-        $this->logged = true;
-        $this->showRegisterForm = false;
-
-        $this->customer_reserves = $customer
-            ->reserves()
-            ->get();
-
-        Flux::modal('customer-auth')->close();
-
-        $this->reset([
-            'input_name',
-            'input_mobile_number',
-        ]);
-
-        session()->put('customer_id', $customer->id);
+        $this->loginCustomer(
+            $user,
+            $customer
+        );
     }
-
 
 
     /**
      * خروج
      */
+    private function loginCustomer(
+        CustomerUser $user,
+        Customer $customer
+    ): void {
+
+        $this->user_logged_id = $user->id;
+
+        $this->current_customer_id = $customer->id;
+
+        $this->logged = true;
+
+        $this->showRegisterForm = false;
+
+        $this->showInputCode = false;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Session
+        |--------------------------------------------------------------------------
+        */
+
+        session()->put(
+            'customer_id',
+            $customer->id
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Reservations
+        |--------------------------------------------------------------------------
+        */
+
+        $this->loadCustomerReserves();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Close Modal
+        |--------------------------------------------------------------------------
+        */
+
+        Flux::modal('customer-auth')->close();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Reset
+        |--------------------------------------------------------------------------
+        */
+
+        $this->reset([
+            'input_mobile_number',
+            'input_code',
+        ]);
+    }
     public function logout(): void
     {
         $this->logged = false;

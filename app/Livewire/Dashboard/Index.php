@@ -140,7 +140,7 @@ class Index extends Component
                 'password' => '1234'
             ]);
 
-            for($option_id = 1 ; $option_id <= 3 ; $option_id++){
+            for($option_id = 1 ; $option_id <= 4 ; $option_id++){
                 if(!Panel::where('panel_id' , $panel->id)->where('option_id' , $option_id)->exists()) {
                     PanelOption::create([
                         'panel_id' => $panel->id,

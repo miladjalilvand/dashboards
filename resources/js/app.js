@@ -1,6 +1,8 @@
 import '@majidh1/jalalidatepicker/dist/jalalidatepicker.min.css';
 import '@majidh1/jalalidatepicker/dist/jalalidatepicker.min.js';
 import '../css/app.css';
+import * as echarts from 'echarts';
+
 function initCalendar() {
     if (typeof window.jalaliDatepicker === "undefined") return;
 
@@ -27,3 +29,46 @@ document.addEventListener("open-calendar", () => {
     input.focus();
     input.click();
 });
+
+window.renderReservationChart = function (data) {
+
+    const element = document.getElementById('reservation-chart');
+
+    if (!element) {
+        return;
+    }
+
+    const chart = echarts.init(element);
+
+    chart.setOption({
+
+        tooltip: {
+            trigger: 'axis'
+        },
+
+        xAxis: {
+            type: 'category',
+            data: data.labels
+        },
+
+        yAxis: {
+            type: 'value'
+        },
+
+        series: [
+            {
+                name: 'نوبت',
+                type: 'line',
+                smooth: true,
+                data: data.values,
+
+                areaStyle: {}
+            }
+        ]
+
+    });
+
+    window.addEventListener('resize', () => {
+        chart.resize();
+    });
+};

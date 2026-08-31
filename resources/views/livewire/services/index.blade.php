@@ -164,7 +164,7 @@
                                         variant="primary"
                                         wire:click="show_edit({{ $service->id }})"
                                     >
-                                        <b>ویرایش</b>
+                                       ویرایش
                                     </flux:button>
                                 </flux:modal.trigger>
 
@@ -172,7 +172,7 @@
                                     variant="primary"
                                     wire:click="openDiscountDialog({{ $service->id }})"
                                 >
-                                    <b>تخفیف</b>
+                                   تخفیف
                                 </flux:button>
                             <flux:button
                                 wire:click="toggleStatus({{ $service->id }})"

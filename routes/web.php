@@ -22,6 +22,8 @@ use App\Livewire\Payments\Index as payments_index;
 use App\Livewire\Elementor\Banners\Index as banners_index;
 use App\Livewire\Elementor\Aboutus\Index as aboutus_index;
 use App\Livewire\Elementor\PanelPortofolios\Index as panel_portofolios;
+use App\Livewire\Charts\PanelCharts\Index as panel_charts;
+use App\Livewire\Admins\PanelAdmins\Index as panel_admins;
 
 
 
@@ -97,6 +99,9 @@ Route::view(uri: 'sample', view: 'sample')
         Route::get('banner_edit' , banners_index::class)->name('opt_banner.index');
         Route::get('opt_aboutus' ,aboutus_index::class)->name('opt_aboutus.index');
         Route::get('panel_portofolios' ,panel_portofolios::class)->name('panel_portofolios.index');
+        Route::get('panel_charts' ,panel_charts::class)->name('panel_charts.index');
+
+        Route::get('admins' ,panel_admins::class)->name('admins.index');
 
     });
 

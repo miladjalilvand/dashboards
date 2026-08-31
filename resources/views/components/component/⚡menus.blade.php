@@ -60,6 +60,9 @@ new class extends Component
 @if(true)
     @foreach($menuType->menus as $menu)
     @if($menu->slug == 'branches' || $branchesCount)
+                    @if($menu->visible)
+
+
         <flux:sidebar.item
 
             :href="route($menu->slug.'.index')"
@@ -71,10 +74,12 @@ new class extends Component
             {{ $menu->caption }}
         </flux:sidebar.item>
         @endif
+        @endif
     @endforeach
     @else
 
       @foreach($menuType->customer_menus as $menu)
+                @if($menu->visible)
 
         <flux:sidebar.item
 
@@ -86,6 +91,7 @@ new class extends Component
         >
             {{ $menu->caption }}
         </flux:sidebar.item>
+                @endif
 
     @endforeach
  @endif

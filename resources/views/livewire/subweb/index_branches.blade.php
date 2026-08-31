@@ -107,7 +107,7 @@
             {{-- Mobile --}}
             {{-- ===================================================== --}}
 
-            @if (!$showRegisterForm)
+            @if (!$showInputCode && !$showRegisterForm)
 
                 <div
                     wire:key="customer-mobile-login"
@@ -173,11 +173,11 @@
                             wire:loading.attr="disabled"
                         >
                         <span wire:loading.remove>
-                            ادامه
+                            دریافت کد تأیید
                         </span>
 
                             <span wire:loading>
-                            در حال بررسی...
+                            در حال ارسال...
                         </span>
                         </flux:button>
 
@@ -185,11 +185,119 @@
 
                 </div>
 
-            @else
 
-                {{-- ================================================= --}}
+                {{-- ===================================================== --}}
+                {{-- OTP --}}
+                {{-- ===================================================== --}}
+
+            @elseif ($showInputCode && !$showRegisterForm)
+
+                <div
+                    wire:key="customer-otp"
+                    class="space-y-6"
+                >
+
+                    {{-- Header --}}
+                    <div class="text-center">
+
+                        <div
+                            class="flex items-center justify-center w-12 h-12 mx-auto mb-4
+                               rounded-full
+                               bg-zinc-100 dark:bg-zinc-800"
+                        >
+                            <flux:icon.shield-check
+                                class="w-6 h-6"
+                            />
+                        </div>
+
+                        <flux:heading size="lg">
+                            تأیید شماره موبایل
+                        </flux:heading>
+
+                        <flux:text class="mt-2">
+                            کد تأیید ارسال شده به شماره
+                        </flux:text>
+
+                        <flux:text
+                            class="font-semibold mt-1"
+                            dir="ltr"
+                        >
+                            {{ $input_mobile_number }}
+                        </flux:text>
+
+                    </div>
+
+
+                    {{-- OTP Form --}}
+                    <form
+                        wire:submit="verifyOtp"
+                        class="space-y-5"
+                    >
+
+                        <flux:input
+                            wire:model="input_code"
+                            label="کد تأیید"
+                            type="text"
+                            inputmode="numeric"
+                            dir="ltr"
+                            maxlength="6"
+                            placeholder="------"
+                            autocomplete="one-time-code"
+                            autofocus
+                            required
+                        />
+
+                        @error('input_code')
+                        <flux:text
+                            color="red"
+                            class="text-sm"
+                        >
+                            {{ $message }}
+                        </flux:text>
+                        @enderror
+
+
+                        <flux:button
+                            type="submit"
+                            variant="primary"
+                            class="w-full"
+                            wire:loading.attr="disabled"
+                        >
+
+                        <span wire:loading.remove>
+                            تأیید و ادامه
+                        </span>
+
+                            <span wire:loading>
+                            در حال بررسی...
+                        </span>
+
+                        </flux:button>
+
+
+                        <div class="text-center">
+
+                            <button
+                                type="button"
+                                wire:click="backToMobile"
+                                class="text-sm text-zinc-500 hover:text-zinc-800
+                                   dark:hover:text-zinc-200"
+                            >
+                                تغییر شماره موبایل
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+
+                {{-- ===================================================== --}}
                 {{-- Register --}}
-                {{-- ================================================= --}}
+                {{-- ===================================================== --}}
+
+            @elseif ($showRegisterForm)
 
                 <div
                     wire:key="customer-register"
@@ -227,7 +335,6 @@
                         class="space-y-5"
                     >
 
-                        {{-- Name --}}
                         <flux:input
                             wire:model="input_name"
                             label="نام و نام خانوادگی"
@@ -238,7 +345,7 @@
                             autocomplete="name"
                         />
 
-                        {{-- Mobile --}}
+
                         <flux:input
                             wire:model="input_mobile_number"
                             label="شماره موبایل"
@@ -248,7 +355,6 @@
                         />
 
 
-                        {{-- Buttons --}}
                         <div class="flex gap-3 pt-2">
 
                             <flux:button
@@ -266,6 +372,7 @@
                                 wire:loading.attr="disabled"
                                 class="flex-1"
                             >
+
                             <span wire:loading.remove>
                                 ثبت نام
                             </span>
@@ -273,6 +380,7 @@
                                 <span wire:loading>
                                 در حال ثبت...
                             </span>
+
                             </flux:button>
 
                         </div>

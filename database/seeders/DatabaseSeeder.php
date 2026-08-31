@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Admin;
 use App\Models\MenuType;
 use App\Models\Panel;
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Status;
 use App\Models\User;
@@ -68,6 +69,9 @@ class DatabaseSeeder extends Seeder
            'caption' => 'system admin'
         ]);
        Role::create([
+            'id' => 2,
+            'caption' => 'admin'
+        ]); Role::create([
             'id' => 3,
             'caption' => 'customer'
         ]);
@@ -93,6 +97,30 @@ class DatabaseSeeder extends Seeder
             Status::updateOrCreate([
                 'id' => $status['id'] ,
                 'caption' => $status['caption']
+            ]);
+        }
+
+$permissions = [
+            ['id' => 1 ,
+            'caption' => 'اطلاعات پایه'],
+            'code' => 'c-1'],
+            ['id' => 2 ,
+            'caption' => 'مدیریت نوبت ها '],
+            'code' => 'c2'],
+        ['id' => 3 ,
+            'caption' => 'مشاهده گزارش ها'],
+            'code' => 'c3'],
+        ['id' => 4 ,
+            'caption' => 'مدیریت ادمین ها'],
+            'code' => 'c4'],
+
+        ];
+
+        foreach($permissions as $permission){
+            Permission::updateOrCreate([
+                'id' => $permission['id'] ,
+                'caption' => $permission['caption'],
+                'code' => $permission['code']
             ]);
         }
 
