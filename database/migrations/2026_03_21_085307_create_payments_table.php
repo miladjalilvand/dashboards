@@ -13,10 +13,36 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('customer_user_id');
-            $table->foreignId('branch_id');
-            $table->string('reff');
-            $table->integer('amount');
+
+            // مبلغ به تومان
+            $table->unsignedBigInteger('amount');
+
+            // زرین پال
+            $table->string('authority')->nullable()->index();
+
+            // کد نتیجه درخواست/تأیید
+            $table->integer('status_code')->nullable();
+
+            // وضعیت پرداخت
+            $table->enum('status', [
+                'pending',
+                'paid',
+                'failed',
+                'cancelled',
+            ])->default('pending')->index();
+
+            // شماره پیگیری زرین پال
+            $table->string('ref_id')->nullable()->index();
+
+            // توضیحات
+            $table->text('description')->nullable();
+
+            // اطلاعات پاسخ زرین پال برای لاگ
+            $table->json('response')->nullable();
+
+            // زمان پرداخت موفق
+            $table->timestamp('paid_at')->nullable();
+
             $table->timestamps();
         });
     }

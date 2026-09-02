@@ -34,6 +34,18 @@ class Reserve extends Model
     public function employee(){
         return $this->belongsTo('App\Models\Employee');
     }
+
+    public function payments()
+    {
+        return $this->belongsToMany(
+            Payment::class,
+            'reserve_payments',
+            'reserve_id',
+            'payment_id'
+        );
+    }
+
+
     public function scopePendingReseerves(){
 
     }
@@ -53,6 +65,7 @@ class Reserve extends Model
     public function scopeUserReseerves(){
 
     }
+
 
     public function changeStatus(){
 

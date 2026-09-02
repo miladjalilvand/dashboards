@@ -103,7 +103,13 @@ class Index extends Component
 
         $this->edit_mode = false;
         if(!$this->edit_mode){
-         $this->reset(['description','cost','time','caption','category_id']);
+            $this->reset([
+                'description',
+                'cost',
+                'time',
+                'caption',
+                'category_id',
+            ]);
 
         }
 
@@ -145,7 +151,9 @@ class Index extends Component
                 'caption' => $this->caption,
                 'category_id' => $this->category_id,
                 'branch_id' => $this->branch_id,
-                'reserve_price' => $this->reserve_price,
+                'reserve_price' => filled($this->reserve_price)
+                    ? $this->reserve_price
+                    : 0,
             ]);
         } else {
             $this->current_service->update([
@@ -155,7 +163,9 @@ class Index extends Component
                 'caption' => $this->caption,
                 'category_id' => $this->category_id,
                 'branch_id' => $this->branch_id,
-                'reserve_price' => $this->reserve_price,
+                'reserve_price' => filled($this->reserve_price)
+                    ? $this->reserve_price
+                    : 0,
             ]);
         }
 
@@ -251,20 +261,21 @@ class Index extends Component
         ];
     }
 
-    public function show_edit($service){
-        $this->edit_mode = true ;
+    public function show_edit($serviceId)
+    {
+        $this->edit_mode = true;
 
-// dd($branch);
+        $this->current_service = Service::findOrFail($serviceId);
 
-        $this->current_service = Service::find($service);
-        $this->caption= $this->current_service->caption;
-        $this->time =  $this->current_service->ctime;
-        $this->cost = $this->current_service->ccost;
-        $this->description = $this->current_service->cdescription;
-        $this->category_id = $this->current_service->ccategory_id;
+        $this->caption = $this->current_service->caption;
+        $this->time = $this->current_service->time;
+        $this->cost = $this->current_service->cost;
+        $this->reserve_price = $this->current_service->reserve_price ?? 0;
+        $this->description = $this->current_service->description;
+        $this->category_id = $this->current_service->category_id;
+        $this->branch_id = $this->current_service->branch_id;
 
-
-
+        $this->isopen = true;
     }
 
 

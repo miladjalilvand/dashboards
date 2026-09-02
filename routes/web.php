@@ -138,5 +138,10 @@ Route::get('customers' , customers_index::class)->name('customers.index');
 Route::get('payments' , payments_index::class)->name('payments.index');
 
 
+Route::get(
+    '/payment/zarinpal/callback',
+    [\App\Http\Controllers\PaymentController::class, 'zarinpalCallback']
+)->name('payment.zarinpal.callback');
+
 require __DIR__.'/settings.php';
 

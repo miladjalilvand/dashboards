@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('discount');
             $table->integer('total_time');
             $table->foreignId('employee_id');
+            $table->foreignId('service_id')->nullable();
 
             $table->timestamps();
         });

@@ -9,7 +9,9 @@ use App\Models\Panel;
 use App\Models\Reserve;
 use App\Models\Service;
 use App\Models\User;
+use App\Services\PaymentService;
 use App\Services\SmsService;
+use App\Services\ZarinPalService;
 use Flux\Flux;
 use Hekmatinasser\Verta\Facades\Verta;
 use Illuminate\Support\Facades\Auth;
@@ -74,6 +76,7 @@ class Index extends Component
     */
 
     public $selected_service;
+    public $selected_service_id;
 
     public $total_time;
 
@@ -114,6 +117,8 @@ class Index extends Component
     public $selected_time;
 
     public $selected_end_time;
+
+    public $customer_user_mobile;
 
     public $select_time_modal = false;
 
@@ -597,6 +602,7 @@ class Index extends Component
 
         $this->showInputCode = false;
 
+        $this->customer_user_mobile = $user->mobile ?? '';
 
         /*
         |--------------------------------------------------------------------------
@@ -845,6 +851,7 @@ class Index extends Component
         $this->selected_employee = $employee;
 
         $this->selected_service = $service;
+        $this->selected_service_id = $service_id;
 
         $this->total_time = (int) $total_time_service;
 
@@ -1316,96 +1323,147 @@ class Index extends Component
 //                $this->employee_selected,
 //        ]);
 
+        $service = Service::findOrFail($this->selected_service_id);
 
-        Reserve::create([
-
-            'total_time' =>
-                $this->total_time,
-
-            'discount' =>
-                $this->selected_service->discount ?? 0,
-
-            'total_cost' =>
-                $this->selected_service->cost,
-
-            'end_time' =>
-                $endTime,
-
-            'start_time' =>
-                $this->selected_time,
-
-            'customer_id' =>
-                $this->current_customer_id,
-
-            'branch_id' =>
-                $this->branch_selected->id,
-
-            'status_id' =>
-                1,
-
-            'date' =>
-                $date,
-
-            'employee_id' =>
-                $this->employee_selected,
-        ]);
+        if($service->reserve_price > 0){
+           //start peyemnt service ($data + $panel -> key_pass)
+            $zarinPalService = new ZarinPalService();
+            $zarinPal = new PaymentService($zarinPalService);
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Close Confirmation
-        |--------------------------------------------------------------------------
-        */
+            $result = $zarinPal->startReservePayment(
+                [
 
-        $this->confirm_reservation_modal = false;
+                    'total_time' =>
+                        $this->total_time,
 
+                    'discount' =>
+                       $service->discount ?? 0,
 
-        /*
-        |--------------------------------------------------------------------------
-        | Success
-        |--------------------------------------------------------------------------
-        */
+                    'total_cost' =>
+                        $service->cost,
 
-        $this->success_message =
-            'نوبت شما با موفقیت ثبت شد.';
+                    'end_time' =>
+                        $endTime,
 
+                    'start_time' =>
+                        $this->selected_time,
 
-        /*
-        |--------------------------------------------------------------------------
-        | Reset Date & Time
-        |--------------------------------------------------------------------------
-        */
+                    'customer_id' =>
+                        $this->current_customer_id,
 
-        $this->reserve_data = null;
+                    'branch_id' =>
+                        $this->branch_selected->id,
 
-        $this->selected_time = null;
+                    'status_id' =>
+                        1,
 
-        $this->selected_end_time = null;
+                    'date' =>
+                        $date,
 
-        $this->time_of_wtimes = [];
-
-        $this->state= 0 ;
-
-
-        $customer = Customer::find(
-            $this->current_customer_id
-        );
-
-        if ($customer) {
-
-            $this->logged = true;
-
-            $this->user_logged_id = $customer->user_id;
-
-            $this->loadCustomerReserves();
-
-        } else {
-
-            session()->forget('customer_id');
-
-            $this->current_customer_id = null;
+                    'employee_id' =>
+                        $this->employee_selected,
+                    'service_id' =>
+                        $this->selected_service_id,
+            'mobile' =>$this->customer_user_mobile ?? '',
+            'key_pass' => $this->panel->key_pass
+                ]
+            );
         }
-        $this->resetBooking() ;
+        else {
+            Reserve::create([
+
+                'total_time' =>
+                    $this->total_time,
+
+                'discount' =>
+                    $this->selected_service->discount ?? 0,
+
+                'total_cost' =>
+                    $this->selected_service->cost,
+
+                'end_time' =>
+                    $endTime,
+
+                'start_time' =>
+                    $this->selected_time,
+
+                'customer_id' =>
+                    $this->current_customer_id,
+
+                'branch_id' =>
+                    $this->branch_selected->id,
+
+                'status_id' =>
+                    1,
+
+                'date' =>
+                    $date,
+
+                'employee_id' =>
+                    $this->employee_selected,
+                'service_id' =>
+                    $this->selected_service_id,
+            ]);
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Close Confirmation
+            |--------------------------------------------------------------------------
+            */
+
+            $this->confirm_reservation_modal = false;
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Success
+            |--------------------------------------------------------------------------
+            */
+
+            $this->success_message =
+                'نوبت شما با موفقیت ثبت شد.';
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Reset Date & Time
+            |--------------------------------------------------------------------------
+            */
+
+            $this->reserve_data = null;
+
+            $this->selected_time = null;
+
+            $this->selected_end_time = null;
+
+            $this->time_of_wtimes = [];
+
+            $this->state = 0;
+
+
+            $customer = Customer::find(
+                $this->current_customer_id
+            );
+
+            if ($customer) {
+
+                $this->logged = true;
+
+                $this->user_logged_id = $customer->user_id;
+
+                $this->loadCustomerReserves();
+
+            } else {
+
+                session()->forget('customer_id');
+
+                $this->current_customer_id = null;
+            }
+            $this->resetBooking();
+
+        }
 
     }
 

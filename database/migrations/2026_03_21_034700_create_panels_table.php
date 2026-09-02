@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('panels', function (Blueprint $table) {
             $table->id();
             $table->string('website');
+            $table->string('key_pass')->nullable();
             $table->dateTime('expired_date');
             $table->foreignId('user_id');
             $table->timestamps();

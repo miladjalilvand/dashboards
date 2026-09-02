@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
 class SmsService2
@@ -13,46 +14,75 @@ class SmsService2
         string $code
     ): array {
 
-        $response = Http::asJson()
-            ->timeout(15)
-            ->withHeaders([
-                'X-API-KEY' =>  'vRU3dXKNwOZAKD5RT6WnPfdakfNJT1ThbZBzUauvcUNlO4OIYuYJ9bfz2xJVEAj0',
-                'Accept' => 'application/json',
-                'Content-Type' => 'application/json',
-            ])
-            ->post(
-                $this->baseUrl . '/send/verify',
-                [
-                    'mobile' => $mobile,
-//*************************************** CREATE TEMP SMS.IR
-                    'templateId' => 12345,
+        try {
 
-                    'parameters' => [
-                        [
-                            'name' => 'PARAMETER1',
-                            'value' => $code,
+            $response = Http::asJson()
+                ->timeout(15)
+                ->withHeaders([
+                    'X-API-KEY' => 'YOUR_API_KEY',
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
+                ])
+                ->post(
+                    $this->baseUrl . '/send/verify',
+                    [
+                        'mobile' => $mobile,
+
+                        'templateId' => 12345,
+
+                        'parameters' => [
+                            [
+                                'name' => 'PARAMETER1',
+                                'value' => $code,
+                            ],
                         ],
-                    ],
-                ]
-            );
+                    ]
+                );
 
-        dd($response);
-        $data = $response->json();
+            $data = $response->json();
 
-        return [
-            'success' => ($data['status'] ?? 0) == 1,
+            return [
+                'success' => ($data['status'] ?? 0) == 1,
 
-            'status' => $data['status'] ?? null,
+                'status' => $data['status'] ?? null,
 
-            'message' => $data['message'] ?? 'خطا در ارسال پیامک',
+                'message' => $data['message']
+                    ?? 'خطا در ارسال پیامک',
 
-            'messageId' => $data['data']['messageId'] ?? null,
+                'messageId' => $data['data']['messageId']
+                    ?? null,
 
-            'cost' => $data['data']['cost'] ?? null,
+                'cost' => $data['data']['cost']
+                    ?? null,
 
-            'response' => $data,
+                'response' => $data,
 
-            'http_status' => $response->status(),
-        ];
+                'http_status' => $response->status(),
+            ];
+
+        } catch (ConnectionException $e) {
+
+            return [
+                'success' => false,
+                'status' => null,
+                'message' => 'ارتباط با سامانه پیامک برقرار نشد.',
+                'messageId' => null,
+                'cost' => null,
+                'response' => null,
+                'http_status' => null,
+            ];
+
+        } catch (\Throwable $e) {
+
+            return [
+                'success' => false,
+                'status' => null,
+                'message' => 'خطایی در ارسال پیامک رخ داد.',
+                'messageId' => null,
+                'cost' => null,
+                'response' => null,
+                'http_status' => null,
+            ];
+        }
     }
 }

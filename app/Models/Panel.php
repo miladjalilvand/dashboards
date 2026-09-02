@@ -9,7 +9,7 @@ class Panel extends Model
     //
     protected $table = 'panels' ;
 
-    protected $fillable = ['id','website' , 'expired_date' , 'user_id' , 'dashboard_id'];
+    protected $fillable = ['id','website' , 'expired_date' , 'user_id' , 'dashboard_id','key_pass'];
 
     public function branches ()
     {

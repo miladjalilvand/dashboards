@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class SmsService
 {
@@ -36,42 +38,99 @@ class SmsService
         string $toNumber,
         string $code
     ): array {
-        $response = Http::timeout(15)
-            ->withHeaders([
-                'X-API-KEY' => env('SMS_API_KEY'),
-                'Accept' => 'application/json',
-                'Content-Type' => 'application/json',
-            ])
-            ->post(
-                $this->baseUrl . '/SMS/Send',
-                [
-                    'From' => '9998883493',
 
-                    'ToNumber' => $toNumber,
+        try {
 
-                    'PatternId' => '12345',
+            $response = Http::timeout(15)
+                ->withHeaders([
+                    'X-API-KEY' => env('SMS_API_KEY'),
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
+                ])
+                ->post(
+                    $this->baseUrl . '/SMS/Send',
+                    [
+                        'From' => '9998883493',
 
-                    'PatternParameterData' => [
-                        'ParameterValue' => $code,
-                    ],
-                ]
-            );
+                        'ToNumber' => $toNumber,
 
-//        dd($response);
-        $data = $response->json();
+                        'PatternId' => '12345',
 
-        $resultCode = $data['resultCode'] ?? null;
+                        'PatternParameterData' => [
+                            'ParameterValue' => $code,
+                        ],
+                    ]
+                );
 
-        return [
-            'success' => ($data['Succeeded'] ?? false) === true,
-            'resultCode' => $resultCode,
+            $data = $response->json();
 
-            'message' => $this->errorMessages[$resultCode]
-                ?? 'خطای نامشخص در ارسال پیامک.',
+            $resultCode = $data['resultCode'] ?? null;
 
-            'refId' => $data['refId'] ?? null,
-            'response' => $data,
-            'http_status' => $response->status(),
-        ];
+            return [
+                'success' => ($data['Succeeded'] ?? false) === true,
+
+                'resultCode' => $resultCode,
+
+                'message' => $this->errorMessages[$resultCode]
+                    ?? 'خطای نامشخص در ارسال پیامک.',
+
+                'refId' => $data['refId'] ?? null,
+
+                'response' => $data,
+
+                'http_status' => $response->status(),
+            ];
+
+        } catch (ConnectionException $e) {
+
+            // خطای اتصال مثل:
+            // cURL error 6
+            // Could not resolve host
+            // Connection timed out
+
+            Log::error('SMS Connection Error', [
+                'mobile' => $toNumber,
+                'error' => $e->getMessage(),
+            ]);
+
+            return [
+                'success' => false,
+
+                'resultCode' => null,
+
+                'message' => 'ارتباط با سامانه پیامک برقرار نشد. لطفاً کمی بعد دوباره تلاش کنید.',
+
+                'refId' => null,
+
+                'response' => null,
+
+                'http_status' => null,
+            ];
+
+        } catch (\Throwable $e) {
+
+            // سایر Exception ها
+
+            Log::error('SMS Service Error', [
+                'mobile' => $toNumber,
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+
+            return [
+                'success' => false,
+
+                'resultCode' => null,
+
+                'message' => 'خطایی در ارسال پیامک رخ داد. لطفاً دوباره تلاش کنید.',
+
+                'refId' => null,
+
+                'response' => null,
+
+                'http_status' => null,
+            ];
+        }
     }
 }

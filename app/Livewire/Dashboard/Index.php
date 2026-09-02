@@ -5,6 +5,7 @@ namespace App\Livewire\Dashboard;
 use App\Models\Admin;
 use App\Models\Dashboard;
 use App\Models\Panel;
+use App\Models\PanelOption;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -18,13 +19,38 @@ class Index extends Component
 
     public $subscription_months = 1;
 
-
     public $user;
+
+    /*
+    |--------------------------------------------------------------------------
+    | Gateway
+    |--------------------------------------------------------------------------
+    */
+
+    public $gateway_key = '';
 
 
     /*
     |--------------------------------------------------------------------------
-    | Select Dashboard
+    | Mount
+    |--------------------------------------------------------------------------
+    */
+
+    public function mount()
+    {
+        $this->user = Auth::user();
+
+        $this->dashboards_list = Dashboard::all();
+
+        $this->panels_user = Auth::user()
+            ->panels()
+            ->get();
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Select Dashboard For Subscription
     |--------------------------------------------------------------------------
     */
 
@@ -40,6 +66,252 @@ class Index extends Component
         $this->selected_dashboard = $dashboard;
 
         $this->subscription_months = 1;
+
+        $this->resetValidation();
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Open Gateway Settings Modal
+    |--------------------------------------------------------------------------
+    */
+
+    public function openGatewayModal($dashboardId)
+    {
+        /*
+        |--------------------------------------------------------------------------
+        | Find Dashboard
+        |--------------------------------------------------------------------------
+        */
+
+        $dashboard = collect($this->dashboards_list)
+            ->firstWhere('id', $dashboardId);
+
+        if (!$dashboard) {
+            return;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Select Dashboard
+        |--------------------------------------------------------------------------
+        */
+
+        $this->selected_dashboard = $dashboard;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Reset Validation
+        |--------------------------------------------------------------------------
+        */
+
+        $this->resetValidation();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Reset Gateway Key
+        |--------------------------------------------------------------------------
+        |
+        | مقدار قبلی را به خاطر امنیت داخل input نشان نمی‌دهیم.
+        |
+        */
+
+        $this->gateway_key = '';
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Open Flux Modal
+        |--------------------------------------------------------------------------
+        */
+
+        $this->modal('gateway-settings')->show();
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Save Gateway Settings
+    |--------------------------------------------------------------------------
+    */
+
+    public function saveGatewaySettings()
+    {
+        /*
+        |--------------------------------------------------------------------------
+        | Check Dashboard
+        |--------------------------------------------------------------------------
+        */
+
+        if (!$this->selected_dashboard) {
+            return;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Validate
+        |--------------------------------------------------------------------------
+        */
+
+        $this->validate(
+            [
+                'gateway_key' => [
+                    'required',
+                    'string',
+                    'min:3',
+                    'max:1000',
+                ],
+            ],
+            [
+                'gateway_key.required' =>
+                    'تنظیمات درگاه را وارد کنید.',
+
+                'gateway_key.min' =>
+                    'تنظیمات درگاه معتبر نیست.',
+
+                'gateway_key.max' =>
+                    'مقدار تنظیمات درگاه بیش از حد مجاز است.',
+            ]
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Find Panel
+        |--------------------------------------------------------------------------
+        */
+
+        $panel = Panel::where('user_id', Auth::id())
+            ->where(
+                'dashboard_id',
+                $this->selected_dashboard['id']
+            )
+            ->first();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Create Panel If Not Exists
+        |--------------------------------------------------------------------------
+        */
+
+        if (!$panel) {
+
+            $panel = Panel::create([
+                'user_id' => Auth::id(),
+
+                'website' => '',
+
+                /*
+                |--------------------------------------------------------------------------
+                | چون فقط تنظیم درگاه است،
+                | اشتراک را اینجا ایجاد نمی‌کنیم.
+                |--------------------------------------------------------------------------
+                */
+
+                'expired_date' => null,
+
+                'dashboard_id' =>
+                    $this->selected_dashboard['id'],
+
+                'key_pass' =>
+                    $this->gateway_key,
+            ]);
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Create Admin
+            |--------------------------------------------------------------------------
+            */
+
+            Admin::create([
+                'role_id' => 1,
+
+                'panel_id' => $panel->id,
+
+                'user_id' => Auth::id(),
+
+                'password' => '1234',
+            ]);
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Create Panel Options
+            |--------------------------------------------------------------------------
+            */
+
+            for ($optionId = 1; $optionId <= 4; $optionId++) {
+
+                PanelOption::firstOrCreate(
+                    [
+                        'panel_id' => $panel->id,
+
+                        'option_id' => $optionId,
+                    ]
+                );
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Website
+            |--------------------------------------------------------------------------
+            */
+
+            $panel->website =
+                'web' . $panel->id;
+
+            $panel->save();
+
+        } else {
+
+            /*
+            |--------------------------------------------------------------------------
+            | Existing Panel
+            |--------------------------------------------------------------------------
+            */
+
+            $panel->key_pass =
+                $this->gateway_key;
+
+            $panel->save();
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Refresh Panels
+        |--------------------------------------------------------------------------
+        */
+
+        $this->panels_user = Auth::user()
+            ->panels()
+            ->get();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Clear Sensitive Data
+        |--------------------------------------------------------------------------
+        */
+
+        $this->gateway_key = '';
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Close Modal
+        |--------------------------------------------------------------------------
+        */
+
+        $this->modal('gateway-settings')->close();
     }
 
 
@@ -51,13 +323,32 @@ class Index extends Component
 
     public function paySubscription()
     {
+        /*
+        |--------------------------------------------------------------------------
+        | Check Dashboard
+        |--------------------------------------------------------------------------
+        */
+
         if (!$this->selected_dashboard) {
             return;
         }
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Validate Months
+        |--------------------------------------------------------------------------
+        */
+
         $months = (int) $this->subscription_months;
 
         if ($months < 1 || $months > 12) {
+
+            $this->addError(
+                'subscription_months',
+                'مدت اشتراک باید بین ۱ تا ۱۲ ماه باشد.'
+            );
+
             return;
         }
 
@@ -68,9 +359,11 @@ class Index extends Component
         |--------------------------------------------------------------------------
         */
 
-        $price = (float) $this->selected_dashboard['per_of_month'];
+        $price =
+            (float) $this->selected_dashboard['per_of_month'];
 
-        $discount = (float) $this->selected_dashboard['percentage'];
+        $discount =
+            (float) $this->selected_dashboard['percentage'];
 
 
         /*
@@ -79,9 +372,8 @@ class Index extends Component
         |--------------------------------------------------------------------------
         */
 
-        $monthlyPrice = $price - (
-                ($price * $discount) / 100
-            );
+        $monthlyPrice =
+            $price - (($price * $discount) / 100);
 
 
         /*
@@ -90,91 +382,209 @@ class Index extends Component
         |--------------------------------------------------------------------------
         */
 
-        $totalPrice = $monthlyPrice * $months;
+        $totalPrice =
+            $monthlyPrice * $months;
 
 
         /*
         |--------------------------------------------------------------------------
-        | Payment
+        | Find Panel
         |--------------------------------------------------------------------------
         */
 
-
-
-//        dd([
-//            'dashboard_id' => $this->selected_dashboard['id'],
-//
-//            'dashboard' => $this->selected_dashboard['caption'],
-//
-//            'months' => $months,
-//
-//            'monthly_price' => $monthlyPrice,
-//
-//            'total_price' => $totalPrice,
-//        ]);
-
-
         $panel = Panel::where('user_id', Auth::id())
-            ->where('dashboard_id', $this->selected_dashboard['id'])
+            ->where(
+                'dashboard_id',
+                $this->selected_dashboard['id']
+            )
             ->first();
 
-        if ($panel) {
 
-            // پنل از قبل وجود دارد
-            $panel->expired_date = now()->addMonth($months);
+        /*
+        |--------------------------------------------------------------------------
+        | Create Panel
+        |--------------------------------------------------------------------------
+        */
+
+        if (!$panel) {
+
+            /*
+            |--------------------------------------------------------------------------
+            | Panel
+            |--------------------------------------------------------------------------
+            */
+
+            $panel = Panel::create([
+                'user_id' => Auth::id(),
+
+                'website' => '',
+
+                'expired_date' =>
+                    now()->addMonths($months),
+
+                'dashboard_id' =>
+                    $this->selected_dashboard['id'],
+
+                /*
+                |--------------------------------------------------------------------------
+                | اگر gateway قبلاً تنظیم شده باشد
+                |--------------------------------------------------------------------------
+                */
+
+                'key_pass' =>
+                    $this->gateway_key ?: null,
+            ]);
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Admin
+            |--------------------------------------------------------------------------
+            */
+
+            Admin::create([
+                'role_id' => 1,
+
+                'panel_id' => $panel->id,
+
+                'user_id' => Auth::id(),
+
+                'password' => '1234',
+            ]);
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Panel Options
+            |--------------------------------------------------------------------------
+            */
+
+            for ($optionId = 1; $optionId <= 4; $optionId++) {
+
+                PanelOption::firstOrCreate(
+                    [
+                        'panel_id' => $panel->id,
+
+                        'option_id' => $optionId,
+                    ]
+                );
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Website
+            |--------------------------------------------------------------------------
+            */
+
+            $panel->website =
+                'web' . $panel->id;
+
             $panel->save();
 
         } else {
 
-            // پنل وجود ندارد
-            $panel = Panel::create([
-                'user_id' => Auth::id(),
-                'website' => '',
-                'expired_date' => now()->addMonth($months),
-                'dashboard_id' => $this->selected_dashboard['id'],
-            ]);
-            Admin::create([
-                'role_id' => 1,
-                'panel_id' =>  $panel->id ,
-                'user_id' => Auth::id(),
-                'password' => '1234'
-            ]);
+            /*
+            |--------------------------------------------------------------------------
+            | Existing Panel
+            |--------------------------------------------------------------------------
+            |
+            | اگر اشتراک قبلی هنوز فعال است،
+            | مدت جدید را به تاریخ انقضای قبلی اضافه می‌کنیم.
+            |
+            */
 
-            for($option_id = 1 ; $option_id <= 4 ; $option_id++){
-                if(!Panel::where('panel_id' , $panel->id)->where('option_id' , $option_id)->exists()) {
-                    PanelOption::create([
-                        'panel_id' => $panel->id,
-                        'option_id' => $option_id
-                    ]);
-                }
+            $baseDate =
+                $panel->expired_date &&
+                now()->lt($panel->expired_date)
+                    ? $panel->expired_date
+                    : now();
+
+
+            $panel->expired_date =
+                $baseDate->copy()->addMonths($months);
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Gateway
+            |--------------------------------------------------------------------------
+            */
+
+            if (!empty($this->gateway_key)) {
+
+                $panel->key_pass =
+                    $this->gateway_key;
             }
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | Website
+            |--------------------------------------------------------------------------
+            */
+
+            if (empty($panel->website)) {
+
+                $panel->website =
+                    'web' . $panel->id;
+            }
+
+
+            $panel->save();
         }
 
-        $panel->website = 'web' . $panel->id;
-        $panel->save();
-        $this->render();
-//        $this->dispatch('$refresh');
-//        $this->js('window.location.reload()');
 
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Mount
-    |--------------------------------------------------------------------------
-    */
-
-    public function mount()
-    {
-
-        $this->user = Auth::user();
-        $this->dashboards_list = Dashboard::all();
+        /*
+        |--------------------------------------------------------------------------
+        | Refresh Panels
+        |--------------------------------------------------------------------------
+        */
 
         $this->panels_user = Auth::user()
             ->panels()
             ->get();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Clear Sensitive Gateway Value
+        |--------------------------------------------------------------------------
+        */
+
+        $this->gateway_key = '';
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Close Subscription Modal
+        |--------------------------------------------------------------------------
+        */
+
+        $this->modal('subscription')->close();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TODO: Payment Gateway
+        |--------------------------------------------------------------------------
+        |
+        | در مرحله بعد اینجا:
+        |
+        | 1. Reserve Payment
+        | 2. Create Authority
+        | 3. Redirect To Gateway
+        | 4. Callback
+        | 5. Verify Payment
+        | 6. Create Payment
+        | 7. Extend Panel
+        |
+        |--------------------------------------------------------------------------
+        */
+
+        // TODO:
+        // Create payment
+        // Redirect to gateway
     }
 
 
@@ -184,10 +594,10 @@ class Index extends Component
     |--------------------------------------------------------------------------
     */
 
-    public function is_paid($dashboard_id)
+    public function is_paid($dashboardId)
     {
         return $this->panels_user
-            ->where('dashboard_id', $dashboard_id)
+            ->where('dashboard_id', $dashboardId)
             ->isNotEmpty();
     }
 

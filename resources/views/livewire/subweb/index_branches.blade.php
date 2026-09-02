@@ -959,7 +959,7 @@
                 </flux:table>
 
             @endif
-            <div class="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
+            <div class="min-h-screen  text-zinc-900 dark:text-zinc-100">
 
                 {{-- ========================================================= --}}
                 {{-- BANNERS --}}
@@ -1335,7 +1335,7 @@
                             dark:text-indigo-400
                         "
                     >
-                        پروژه‌ها
+
                     </span>
 
                                 <h2
@@ -1575,42 +1575,42 @@
 
                     {{-- Empty Portfolio --}}
 
-                    <section class="py-16">
+{{--                    <section class="py-16">--}}
 
-                        <div class="max-w-6xl mx-auto px-5">
+{{--                        <div class="max-w-6xl mx-auto px-5">--}}
 
-                            <div
-                                class="
-                        rounded-3xl
-                        border
-                        border-dashed
-                        border-zinc-300
-                        dark:border-zinc-700
-                        py-16
-                        text-center
-                    "
-                            >
+{{--                            <div--}}
+{{--                                class="--}}
+{{--                        rounded-3xl--}}
+{{--                        border--}}
+{{--                        border-dashed--}}
+{{--                        border-zinc-300--}}
+{{--                        dark:border-zinc-700--}}
+{{--                        py-16--}}
+{{--                        text-center--}}
+{{--                    "--}}
+{{--                            >--}}
 
-                                <div class="text-4xl">
-                                    💼
-                                </div>
+{{--                                <div class="text-4xl">--}}
+{{--                                    💼--}}
+{{--                                </div>--}}
 
-                                <h3
-                                    class="
-                            mt-4
-                            font-bold
-                            text-zinc-900
-                            dark:text-white
-                        "
-                                >
-                                    هنوز نمونه‌کاری ثبت نشده است
-                                </h3>
+{{--                                <h3--}}
+{{--                                    class="--}}
+{{--                            mt-4--}}
+{{--                            font-bold--}}
+{{--                            text-zinc-900--}}
+{{--                            dark:text-white--}}
+{{--                        "--}}
+{{--                                >--}}
+{{--                                    هنوز نمونه‌کاری ثبت نشده است--}}
+{{--                                </h3>--}}
 
-                            </div>
+{{--                            </div>--}}
 
-                        </div>
+{{--                        </div>--}}
 
-                    </section>
+{{--                    </section>--}}
 
                 @endif
 
@@ -1877,7 +1877,7 @@
                                                             </div>
 
                                                             <div class="font-semibold mt-1">
-                                                                {{ number_format($service->reserve_price) }}
+                                                                {{ $service->reserve_price > 0 ? number_format($service->reserve_price) : 'رایگان' }}
                                                             </div>
 
                                                         </div>
