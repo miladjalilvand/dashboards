@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('caption');
             $table->longText('description');
             $table->integer('percentage');
+            $table->integer('is_active');
             $table->timestamps();
         });
     }

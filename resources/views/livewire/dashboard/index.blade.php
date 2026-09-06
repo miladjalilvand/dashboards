@@ -393,7 +393,11 @@
 
                     <flux:modal.trigger name="subscription">
 
+
+                        @if( $dashboard['is_active'] )
                         <button
+
+
                             type="button"
                             wire:click="openSubscriptionModal({{ $dashboard['id'] }})"
                             class="
@@ -415,6 +419,7 @@
                             خرید اشتراک
                         </button>
 
+                            @endif
                     </flux:modal.trigger>
 
 

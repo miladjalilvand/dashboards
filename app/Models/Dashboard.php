@@ -12,7 +12,8 @@ class Dashboard extends Model
         'percentage',
         'description'.
         'caption'.
-        'per_of_month'
+        'per_of_month',
+        'is_active'
     ];
 
 
