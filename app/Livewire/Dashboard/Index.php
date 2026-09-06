@@ -414,10 +414,11 @@ class Index extends Component
             |--------------------------------------------------------------------------
             */
 
+            $website =  Auth::id().'web';
             $panel = Panel::create([
                 'user_id' => Auth::id(),
 
-                'website' => '',
+                'website' => $website,
 
                 'expired_date' =>
                     now()->addMonths($months),
@@ -434,7 +435,7 @@ class Index extends Component
                 'key_pass' =>
                     $this->gateway_key ?: null,
             ]);
-
+dd($panel , $website);
 
             /*
             |--------------------------------------------------------------------------
