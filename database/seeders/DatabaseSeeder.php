@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 class DatabaseSeeder extends Seeder
 {
     /**
+     * no days off
      * Seed the application's database.
      */
     public function run(): void
