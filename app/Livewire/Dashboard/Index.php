@@ -408,13 +408,14 @@ class Index extends Component
 
         if (!$panel) {
 
+            dd('411');
             /*
             |--------------------------------------------------------------------------
             | Panel
             |--------------------------------------------------------------------------
             */
 
-            $website = 'web-' .Auth::id();
+            $website = 'web' .Auth::id();
             $panel = Panel::create([
                 'user_id' => Auth::id(),
 
@@ -586,7 +587,6 @@ class Index extends Component
         // TODO:
         // Create payment
         // Redirect to gateway
-        dd('test');
 
     }
 
