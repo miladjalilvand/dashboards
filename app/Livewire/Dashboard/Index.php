@@ -329,6 +329,7 @@ class Index extends Component
         |--------------------------------------------------------------------------
         */
 
+        dd('test');
         if (!$this->selected_dashboard) {
             return;
         }
