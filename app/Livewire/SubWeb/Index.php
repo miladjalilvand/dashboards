@@ -702,6 +702,7 @@ class Index extends Component
     {
         $this->website = $website;
 
+        dd(Panel::all());
         $this->panel = Panel::where(
             'website',
             $this->website
