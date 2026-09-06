@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 
 class DatabaseSeeder extends Seeder
 {
+    //
     /**
      * Seed the application's database.
      */
