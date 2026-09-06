@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('reserve_payments', function (Blueprint $table) {
+        Schema::create('reserve_payment_loads', function (Blueprint $table) {
 
             $table->id();
 

@@ -1,0 +1,73 @@
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: app
+    container_name: wayy-app
+    restart: unless-stopped
+    working_dir: /var/www
+    env_file:
+      - .env
+    volumes:
+      - storage:/var/www/storage
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - wayy
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: nginx
+    container_name: wayy-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - storage:/var/www/storage:ro
+      - ./docker/nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - app
+    networks:
+      - wayy
+
+  db:
+    image: mysql:8.4
+    container_name: wayy-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: wayy
+      MYSQL_USER: wayy
+      MYSQL_PASSWORD: "@mj64523"
+      MYSQL_ROOT_PASSWORD: "@mj64523"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-p@mj64523"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - wayy
+
+networks:
+  wayy:
+
+volumes:
+  mysql_data:
+  storage:
