@@ -20,7 +20,16 @@ class DashboardSeeder extends Seeder
                 'percentage' => 90,
                 'description' => 'سامانه نوبت دهی برای سالن های زیبایی ',
                 'caption' => 'نوبت دهی',
-                'per_of_month' => 700000
+                'per_of_month' => 700000 ,
+                'is_active' => 1 ,
+            ] ,
+            [
+                'id' => 2,
+                'percentage' => 90,
+                'description' => 'سامانه فروش اینرنتی',
+                'caption' => ' فروشگاه اینترنتی ',
+                'per_of_month' => 700000 ,
+                'is_active' => 0 ,
             ]
         ];
 

@@ -68,6 +68,7 @@ class DatabaseSeeder extends Seeder
             'id' => 1,
            'caption' => 'system admin'
         ]);
+
        Role::create([
             'id' => 2,
             'caption' => 'admin'
@@ -133,7 +134,7 @@ foreach ($permissions as $permission) {
     );
 }
 
-  
+
 
 
 
