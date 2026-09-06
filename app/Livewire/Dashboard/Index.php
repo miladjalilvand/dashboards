@@ -329,7 +329,6 @@ class Index extends Component
         |--------------------------------------------------------------------------
         */
 
-        dd('test');
         if (!$this->selected_dashboard) {
             return;
         }
@@ -587,6 +586,8 @@ class Index extends Component
         // TODO:
         // Create payment
         // Redirect to gateway
+        dd('test');
+
     }
 
 
