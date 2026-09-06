@@ -414,7 +414,7 @@ class Index extends Component
             |--------------------------------------------------------------------------
             */
 
-            $website =  Auth::id().'web';
+            $website = 'web-' .Auth::id();
             $panel = Panel::create([
                 'user_id' => Auth::id(),
 
@@ -435,7 +435,7 @@ class Index extends Component
                 'key_pass' =>
                     $this->gateway_key ?: null,
             ]);
-dd($panel , $website);
+
 
             /*
             |--------------------------------------------------------------------------
