@@ -11,9 +11,18 @@ trait PasswordValidationRules
      *
      * @return array<int, \Illuminate\Contracts\Validation\Rule|array<mixed>|string>
      */
+//    protected function passwordRules(): array
+//    {
+//        return ['required', 'string', Password::default(), 'confirmed'];
+//    }
     protected function passwordRules(): array
     {
-        return ['required', 'string'];
+        return [
+            'required',
+            'string',
+            'min:8',
+            'confirmed',
+        ];
     }
 
     /**
