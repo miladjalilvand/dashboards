@@ -101,35 +101,39 @@ class DatabaseSeeder extends Seeder
         }
 
         $permissions = [
-            [
-                'id' => 1,
-                'caption' => 'اطلاعات پایه',
-                'code' => 'c-1',
-            ],
-            [
-                'id' => 2,
-                'caption' => 'مدیریت نوبت ها',
-                'code' => 'c2',
-            ],
-            [
-                'id' => 3,
-                'caption' => 'مشاهده گزارش ها',
-                'code' => 'c3',
-            ],
-            [
-                'id' => 4,
-                'caption' => 'مدیریت ادمین ها',
-                'code' => 'c4',
-            ],
-        ];
+    [
+        'id' => 1,
+        'caption' => 'اطلاعات پایه',
+        'code' => 'c-1',
+    ],
+    [
+        'id' => 2,
+        'caption' => 'مدیریت نوبت ها',
+        'code' => 'c2',
+    ],
+    [
+        'id' => 3,
+        'caption' => 'مشاهده گزارش ها',
+        'code' => 'c3',
+    ],
+    [
+        'id' => 4,
+        'caption' => 'مدیریت ادمین ها',
+        'code' => 'c4',
+    ],
+];
 
-        foreach($permissions as $permission){
-            Permission::updateOrCreate([
-                'id' => $permission['id'] ,
-                'caption' => $permission['caption'],
-                'code' => $permission['code']
-            ]);
-        }
+foreach ($permissions as $permission) {
+    Permission::updateOrCreate(
+        ['id' => $permission['id']],
+        [
+            'caption' => $permission['caption'],
+            'code' => $permission['code'],
+        ]
+    );
+}
+
+  
 
 
 
