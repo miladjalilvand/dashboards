@@ -130,7 +130,7 @@ Route::view('dashboard-1', view: 'dashboard')
     //auth middleware for customers
 
 Route::get('new-reserve' , website_index::class)->name('new-reserve.index');
-Route::domain('{website}.abc.test')->group(function () {
+Route::domain('{website}.wayy.ir')->group(function () {
     Route::get('/12', Site::class);
 });
 

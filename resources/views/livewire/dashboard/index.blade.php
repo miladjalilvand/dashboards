@@ -125,7 +125,7 @@
                         @if($panel)
 
                             <a
-                                href="https://{{ $panel->website }}.abc.test/12"
+                                href="https://{{ $panel->website }}.wayy.ir/12"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 class="
@@ -198,7 +198,7 @@
                                     </div>
 
                                     <div class="text-xs text-zinc-500 dark:text-zinc-400">
-                                        {{ $panel->website }}.abc.test
+                                        {{ $panel->website }}.wayy.ir
                                     </div>
 
                                 </div>
