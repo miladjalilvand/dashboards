@@ -848,145 +848,142 @@
     {{-- =========================================================
          GATEWAY SETTINGS MODAL
     ========================================================== --}}
-
     <flux:modal
         name="gateway-settings"
         class="w-full max-w-md"
     >
-
         <div class="space-y-6">
-
 
             {{-- Header --}}
             <div>
-
-                <h2
-                    class="
-                        text-lg
-                        font-semibold
-                        text-zinc-900
-                        dark:text-white
-                    "
-                >
-                    تنظیمات درگاه
+                <h2 class="text-lg font-semibold text-zinc-900">
+                    راهنمای دریافت کد درگاه
                 </h2>
 
-                <p
-                    class="
-                        mt-1
-                        text-sm
-                        leading-6
-                        text-zinc-500
-                        dark:text-zinc-400
-                    "
-                >
-                    تنظیمات درگاه پرداخت
-                    <span class="font-medium text-zinc-700 dark:text-zinc-300">
-                        {{ $selected_dashboard['caption'] ?? '' }}
-                    </span>
-                    را وارد کنید.
+                <p class="mt-1 text-sm leading-6 text-zinc-500">
+                    راهنمای دریافت و ثبت اطلاعات درگاه پرداخت
                 </p>
+            </div>
+
+
+            {{-- Guide --}}
+            <div class="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+
+                <div class="space-y-5">
+
+                    {{-- Step 1 --}}
+                    <div class="flex gap-3">
+
+                        <div
+                            class="
+                            flex size-7 shrink-0 items-center justify-center
+                            rounded-full
+                            bg-zinc-900
+                            text-xs font-bold text-white
+                        "
+                        >
+                            ۱
+                        </div>
+
+                        <p class="text-sm leading-7 text-zinc-600">
+                            ابتدا شعبه موردنظر خود را در سیستم ایجاد کنید.
+                        </p>
+
+                    </div>
+
+
+                    {{-- Step 2 --}}
+                    <div class="flex gap-3">
+
+                        <div
+                            class="
+                            flex size-7 shrink-0 items-center justify-center
+                            rounded-full
+                            bg-zinc-900
+                            text-xs font-bold text-white
+                        "
+                        >
+                            ۲
+                        </div>
+
+                        <p class="text-sm leading-7 text-zinc-600">
+                            پس از ایجاد شعبه، برای دریافت کد درگاه پرداخت
+                            از طریق زرین‌پال اقدام کنید.
+                        </p>
+
+                    </div>
+
+
+                    {{-- Step 3 --}}
+                    <div class="flex gap-3">
+
+                        <div
+                            class="
+                            flex size-7 shrink-0 items-center justify-center
+                            rounded-full
+                            bg-zinc-900
+                            text-xs font-bold text-white
+                        "
+                        >
+                            ۳
+                        </div>
+
+                        <p class="text-sm leading-7 text-zinc-600">
+                            کد دریافت‌شده از زرین‌پال را در قسمت
+                            <span class="font-semibold text-zinc-900">
+                            ایجاد / ویرایش شعبه
+                        </span>
+                            وارد کنید.
+                        </p>
+
+                    </div>
+
+
+                    {{-- Step 4 --}}
+                    <div class="flex gap-3">
+
+                        <div
+                            class="
+                            flex size-7 shrink-0 items-center justify-center
+                            rounded-full
+                            bg-zinc-900
+                            text-xs font-bold text-white
+                        "
+                        >
+                            ۴
+                        </div>
+
+                        <p class="text-sm leading-7 text-zinc-600">
+                            پس از ثبت کد، درگاه پرداخت شعبه فعال شده و
+                            امکان دریافت هزینه نوبت‌ها به صورت آنلاین فراهم می‌شود.
+                        </p>
+
+                    </div>
+
+                </div>
 
             </div>
 
 
-            {{-- Gateway key --}}
-            <div>
-
-                <label
-                    for="gateway_key"
-                    class="
-                        mb-2
-                        block
-                        text-sm
-                        font-medium
-                        text-zinc-700
-                        dark:text-zinc-300
-                    "
-                >
-                    کلید / تنظیمات درگاه
-                </label>
-
-
-                <input
-                    id="gateway_key"
-                    type="password"
-                    wire:model.defer="gateway_key"
-                    autocomplete="new-password"
-                    placeholder="تنظیمات درگاه را وارد کنید"
-                    class="
-                        w-full
-                        rounded-lg
-                        border
-                        border-zinc-200
-                        bg-white
-                        px-3
-                        py-2.5
-                        text-sm
-                        text-zinc-900
-                        outline-none
-                        transition
-                        focus:border-zinc-400
-                        focus:ring-2
-                        focus:ring-zinc-200
-                        dark:border-zinc-700
-                        dark:bg-zinc-900
-                        dark:text-white
-                        dark:focus:border-zinc-500
-                        dark:focus:ring-zinc-800
-                    "
-                />
-
-
-                @error('gateway_key')
-
-                <p class="mt-2 text-xs text-red-500">
-                    {{ $message }}
-                </p>
-
-                @enderror
-
-
-                <p
-                    class="
-                        mt-2
-                        text-xs
-                        leading-6
-                        text-zinc-400
-                        dark:text-zinc-500
-                    "
-                >
-                    این مقدار به صورت رمزنگاری‌شده ذخیره خواهد شد و برای
-                    پردازش پرداخت‌های پنل استفاده می‌شود.
-                </p>
-
-            </div>
-
-
-            {{-- Security notice --}}
+            {{-- Important Notice --}}
             <div
                 class="
-                    rounded-lg
-                    border
-                    border-amber-200
-                    bg-amber-50
-                    p-3
-                    dark:border-amber-900/50
-                    dark:bg-amber-950/30
-                "
+                rounded-xl
+                border border-amber-200
+                bg-amber-50
+                p-4
+            "
             >
-
-                <div class="flex gap-2">
+                <div class="flex gap-3">
 
                     <div class="mt-0.5 shrink-0">
-
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
                             stroke-width="2"
-                            class="size-4 text-amber-600 dark:text-amber-400"
+                            class="size-5 text-amber-600"
                         >
                             <path
                                 stroke-linecap="round"
@@ -994,104 +991,40 @@
                                 d="M12 9v4m0 4h.01M10.29 3.86 2.82 17a2 2 0 0 0 1.74 3h14.88a2 2 0 0 0 1.74-3L13.71 3.86a2 2 0 0 0-3.42 0Z"
                             />
                         </svg>
-
                     </div>
 
-
-                    <p
-                        class="
-                            text-xs
-                            leading-6
-                            text-amber-700
-                            dark:text-amber-300
-                        "
-                    >
-                        این اطلاعات حساس است. فقط اطلاعات مربوط به درگاه
-                        پرداخت را وارد کنید.
+                    <p class="text-xs leading-6 text-amber-700">
+                        کد درگاه هر شعبه اختصاصی است. هنگام ثبت کد،
+                        اطمینان حاصل کنید که کد مربوط به همان شعبه را وارد می‌کنید.
                     </p>
 
                 </div>
-
             </div>
 
 
-            {{-- Actions --}}
-            <div class="flex gap-3">
+            {{-- Close --}}
+            <flux:modal.close class="w-full">
 
-
-                {{-- Cancel --}}
-                <flux:modal.close class="flex-1">
-
-                    <button
-                        type="button"
-                        class="
-                            w-full
-                            cursor-pointer
-                            rounded-lg
-                            border
-                            border-zinc-200
-                            py-2.5
-                            text-sm
-                            font-medium
-                            text-zinc-700
-                            transition
-                            hover:bg-zinc-50
-                            dark:border-zinc-700
-                            dark:text-zinc-300
-                            dark:hover:bg-zinc-800
-                        "
-                    >
-                        انصراف
-                    </button>
-
-                </flux:modal.close>
-
-
-                {{-- Save --}}
                 <button
                     type="button"
-                    wire:click="saveGatewaySettings"
-                    wire:loading.attr="disabled"
-                    wire:target="saveGatewaySettings"
                     class="
-                        flex-1
-                        cursor-pointer
-                        rounded-lg
-                        bg-zinc-900
-                        py-2.5
-                        text-sm
-                        font-semibold
-                        text-white
-                        transition
-                        hover:bg-zinc-800
-                        disabled:cursor-not-allowed
-                        disabled:opacity-50
-                        dark:bg-white
-                        dark:text-zinc-900
-                        dark:hover:bg-zinc-200
-                    "
+                    w-full
+                    cursor-pointer
+                    rounded-lg
+                    bg-zinc-900
+                    py-2.5
+                    text-sm font-semibold
+                    text-white
+                    transition
+                    hover:bg-zinc-800
+                "
                 >
-
-                    <span
-                        wire:loading.remove
-                        wire:target="saveGatewaySettings"
-                    >
-                        ذخیره تنظیمات
-                    </span>
-
-                    <span
-                        wire:loading
-                        wire:target="saveGatewaySettings"
-                    >
-                        در حال ذخیره...
-                    </span>
-
+                    متوجه شدم
                 </button>
 
-            </div>
+            </flux:modal.close>
 
         </div>
-
     </flux:modal>
 
 </div>

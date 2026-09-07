@@ -133,7 +133,7 @@ Route::view('dashboard-1', view: 'dashboard')
 
 Route::get('new-reserve' , website_index::class)->name('new-reserve.index');
 Route::domain('{website}.wayy.ir')->group(function () {
-    Route::get('/12', Site::class);
+    Route::get('/welcome', Site::class);
 });
 
 Route::get('customers' , customers_index::class)->name('customers.index');

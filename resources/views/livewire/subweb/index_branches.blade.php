@@ -1021,13 +1021,19 @@
                                 </flux:table.cell>
 
                                 <flux:table.cell>
-                                    {{ substr($reserve->start_time, 0, 2) . ':' . substr($reserve->start_time, 2) }}
+                                    @php
+                                        $time = str_pad($reserve->start_time, 4, '0', STR_PAD_LEFT);
+                                    @endphp
+
+                                    {{ substr($time, 0, 2) . ':' . substr($time, 2, 2) }}
                                 </flux:table.cell>
 
                                 <flux:table.cell>
-                                    {{ substr($reserve->end_time, 0, 2) . ':' . substr($reserve->end_time, 2) }}
+                                    @php
+                                        $time = str_pad($reserve->end_time, 4, '0', STR_PAD_LEFT);
+                                    @endphp
 
-
+                                    {{ substr($time, 0, 2) . ':' . substr($time, 2, 2) }}
                                 </flux:table.cell>
 
                                 <flux:table.cell>

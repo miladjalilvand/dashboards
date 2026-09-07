@@ -1405,7 +1405,7 @@ class Index extends Component
                     'service_id' =>
                         $this->selected_service_id,
             'mobile' =>$this->customer_user_mobile ?? '',
-            'key_pass' => $this->panel->key_pass
+            'key_pass' =>$this->branch_selected->bank_key
                 ]
             );
         }
