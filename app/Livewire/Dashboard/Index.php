@@ -398,7 +398,7 @@ class Index extends Component
                 $this->selected_dashboard['id']
             )
             ->first();
-        dd($panel);
+
 
         /*
         |--------------------------------------------------------------------------

@@ -11,7 +11,7 @@ use Livewire\Component;
 
 #[Layout('layouts.app')]
 
- class Index extends Component
+class Index extends Component
 {
     //
     public $branches ;
