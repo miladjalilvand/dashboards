@@ -391,14 +391,14 @@ class Index extends Component
         | Find Panel
         |--------------------------------------------------------------------------
         */
-dd(394);
+
         $panel = Panel::where('user_id', Auth::id())
             ->where(
                 'dashboard_id',
                 $this->selected_dashboard['id']
             )
             ->first();
-
+        dd($panel);
 
         /*
         |--------------------------------------------------------------------------
