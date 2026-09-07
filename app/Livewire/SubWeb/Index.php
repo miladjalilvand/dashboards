@@ -29,7 +29,7 @@ class Index extends Component
     */
     public $banners_data;
     public $aboutus;
-
+    public array $branchSocialLinks = [];
     public $service_employees ;
 
     public $customer_reserves ;
@@ -174,7 +174,43 @@ class Index extends Component
 
     public string $input_code = '';
 
+    private function loadBranchSocialLinks($data)
+    {
 
+
+        if (is_string($data)) {
+            $data = json_decode($data, true);
+        }
+
+        $data = is_array($data) ? $data : [];
+
+        /*
+        |--------------------------------------------------------------------------
+        | تبدیل به ساختار:
+        |
+        | branch_id => [
+        |     [
+        |         caption => instagram,
+        |         link => ...
+        |     ]
+        | ]
+        |--------------------------------------------------------------------------
+        */
+
+        $this->branchSocialLinks = collect($data)
+            ->filter(function ($item) {
+                return isset(
+                    $item['branch_id'],
+                    $item['caption'],
+                    $item['link']
+                );
+            })
+            ->groupBy('branch_id')
+            ->map(function ($links) {
+                return $links->values()->toArray();
+            })
+            ->toArray();
+    }
     public function openAboutImage(int $index)
     {
         if (
@@ -712,6 +748,7 @@ class Index extends Component
         $this->aboutus = $this->panel->options()->where('option_id' , 2)->first()->data;
 
 
+
         if (!$this->panel) {
             $this->branches = [];
 
@@ -753,6 +790,7 @@ class Index extends Component
                 $this->current_customer_id = null;
             }
         }
+        $this->loadBranchSocialLinks($this->panel->options()->where('option_id' , 5)->first()->data);
     }
     private function loadCustomerReserves(): void
     {

@@ -247,7 +247,7 @@ class Index extends Component
             |--------------------------------------------------------------------------
             */
 
-            for ($optionId = 1; $optionId <= 4; $optionId++) {
+            for ($optionId = 1; $optionId <= 5; $optionId++) {
 
                 PanelOption::firstOrCreate(
                     [

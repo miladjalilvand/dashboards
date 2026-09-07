@@ -635,7 +635,7 @@
                         class="
         group relative overflow-hidden
         rounded-3xl
-        border border-gray-200 dark:border-gray-700
+        border border-gray-200/80 dark:border-gray-700
         bg-white dark:bg-gray-800
         shadow-sm
         transition-all duration-300
@@ -653,7 +653,7 @@
                                     class="
                     flex h-12 w-12 shrink-0 items-center justify-center
                     rounded-2xl
-                    bg-blue-50 dark:bg-blue-900/30
+                    bg-blue-50 dark:bg-blue-900/20
                     text-2xl
                     transition-transform duration-300
                     group-hover:scale-110
@@ -662,6 +662,7 @@
                                     🏪
                                 </div>
 
+                                {{-- Branch Info --}}
                                 <div class="min-w-0 flex-1">
 
                                     <h2
@@ -675,6 +676,7 @@
                                     </h2>
 
                                     @if($branch->address)
+
                                         <div
                                             class="
                             mt-2 flex items-start gap-1.5
@@ -682,12 +684,15 @@
                             text-gray-500 dark:text-gray-400
                         "
                                         >
-                                            <span class="shrink-0">📍</span>
+                        <span class="shrink-0">
+                            📍
+                        </span>
 
                                             <span class="line-clamp-2">
                             {{ $branch->address }}
                         </span>
                                         </div>
+
                                     @endif
 
                                 </div>
@@ -703,76 +708,103 @@
                             <div
                                 class="
                 mx-5
-                rounded-2xl
-                bg-gray-50 dark:bg-gray-700/40
-                p-3
+                border-t
+                border-gray-100 dark:border-gray-700
+                pt-4
             "
                             >
 
-                                <div class="mb-2 text-xs font-medium text-gray-400">
-                                    تماس با شعبه
+                                <div
+                                    class="
+                    mb-3
+                    text-xs font-semibold
+                    text-gray-400 dark:text-gray-500
+                "
+                                >
+                                    اطلاعات تماس
                                 </div>
 
                                 <div class="flex flex-wrap gap-2">
 
                                     @if($branch->phone)
+
                                         <a
                                             href="tel:{{ $branch->phone }}"
                                             class="
                             inline-flex items-center gap-2
                             rounded-xl
-                            bg-white dark:bg-gray-800
+                            border border-gray-200
+                            bg-white
                             px-3 py-2
                             text-sm font-medium
-                            text-gray-700 dark:text-gray-200
+                            text-gray-700
                             shadow-sm
                             transition-all duration-200
                             hover:-translate-y-0.5
                             hover:shadow-md
+                            dark:border-gray-700
+                            dark:bg-gray-800
+                            dark:text-gray-200
                         "
                                         >
+
                         <span
                             class="
-                                flex h-7 w-7 items-center justify-center
+                                flex h-7 w-7
+                                items-center justify-center
                                 rounded-lg
-                                bg-green-50 dark:bg-green-900/30
+                                bg-green-50
+                                dark:bg-green-900/20
                             "
                         >
                             ☎️
                         </span>
 
                                             {{ $branch->phone }}
+
                                         </a>
+
                                     @endif
 
+
                                     @if($branch->mobile)
+
                                         <a
                                             href="tel:{{ $branch->mobile }}"
                                             class="
                             inline-flex items-center gap-2
                             rounded-xl
-                            bg-white dark:bg-gray-800
+                            border border-gray-200
+                            bg-white
                             px-3 py-2
                             text-sm font-medium
-                            text-gray-700 dark:text-gray-200
+                            text-gray-700
                             shadow-sm
                             transition-all duration-200
                             hover:-translate-y-0.5
                             hover:shadow-md
+                            dark:border-gray-700
+                            dark:bg-gray-800
+                            dark:text-gray-200
                         "
                                         >
+
                         <span
                             class="
-                                flex h-7 w-7 items-center justify-center
+                                flex h-7 w-7
+                                items-center justify-center
                                 rounded-lg
-                                bg-green-50 dark:bg-green-900/30
+                                bg-blue-50
+                                dark:bg-blue-900/20
                             "
                         >
                             📱
                         </span>
 
                                             {{ $branch->mobile }}
+
                                         </a>
+
                                     @endif
 
                                 </div>
@@ -782,8 +814,118 @@
                         @endif
 
 
+                        {{-- Social Media --}}
+                        @if(!empty($branchSocialLinks[$branch->id]))
+
+                            <div
+                                class="
+                mx-5 mt-4
+                border-t
+                border-gray-100 dark:border-gray-700
+                pt-4
+            "
+                            >
+
+                                <div
+                                    class="
+                    mb-3
+                    text-xs font-semibold
+                    text-gray-400 dark:text-gray-500
+                "
+                                >
+                                    شبکه‌های اجتماعی
+                                </div>
+
+                                <div class="flex flex-wrap gap-2">
+
+                                    @foreach($branchSocialLinks[$branch->id] as $social)
+
+                                        @php
+
+                                            $socialConfig = [
+
+                                                'instagram' => [
+                                                    'title' => 'Instagram',
+                                                    'icon' => '📸',
+                                                    'hover' => 'hover:border-pink-300 hover:text-pink-600',
+                                                ],
+
+                                                'telegram' => [
+                                                    'title' => 'Telegram',
+                                                    'icon' => '✈️',
+                                                    'hover' => 'hover:border-sky-300 hover:text-sky-600',
+                                                ],
+
+                                                'whatsapp' => [
+                                                    'title' => 'WhatsApp',
+                                                    'icon' => '💬',
+                                                    'hover' => 'hover:border-green-300 hover:text-green-600',
+                                                ],
+
+                                                'eeta' => [
+                                                    'title' => 'Eitaa',
+                                                    'icon' => '📱',
+                                                    'hover' => 'hover:border-purple-300 hover:text-purple-600',
+                                                ],
+
+                                            ];
+
+                                            $socialItem = $socialConfig[$social['caption']]
+                                                ?? [
+                                                    'title' => $social['caption'],
+                                                    'icon' => '🔗',
+                                                    'hover' => 'hover:border-gray-300',
+                                                ];
+
+                                        @endphp
+
+
+                                        <a
+                                            href="{{ $social['link'] }}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="
+                            inline-flex items-center gap-2
+                            rounded-xl
+                            border border-gray-200
+                            bg-white
+                            px-3 py-2
+                            text-sm font-medium
+                            text-gray-700
+                            shadow-sm
+                            transition-all duration-200
+                            hover:-translate-y-0.5
+                            hover:shadow-md
+
+                            dark:border-gray-700
+                            dark:bg-gray-800
+                            dark:text-gray-200
+
+                            {{ $socialItem['hover'] }}
+                        "
+                                        >
+
+                        <span class="text-base">
+                            {{ $socialItem['icon'] }}
+                        </span>
+
+                                            <span>
+                            {{ $socialItem['title'] }}
+                        </span>
+
+                                        </a>
+
+                                    @endforeach
+
+                                </div>
+
+                            </div>
+
+                        @endif
+
+
                         {{-- Action --}}
-                        <div class="p-5 pt-4">
+                        <div class="p-5 pt-5">
 
                             <button
                                 type="button"
@@ -791,12 +933,10 @@
                                 wire:loading.attr="disabled"
                                 class="
                 group/button
-                flex w-full items-center justify-center gap-2
+                flex w-full
+                items-center justify-center gap-2
                 rounded-2xl
 
-                px-5 py-3
-                text-sm font-bold
-                shadow-sm
                 transition-all duration-200
 
                 hover:shadow-lg

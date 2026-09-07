@@ -24,6 +24,7 @@ use App\Livewire\Elementor\Aboutus\Index as aboutus_index;
 use App\Livewire\Elementor\PanelPortofolios\Index as panel_portofolios;
 use App\Livewire\Charts\PanelCharts\Index as panel_charts;
 use App\Livewire\Admins\PanelAdmins\Index as panel_admins;
+use App\Livewire\SocialMediaLinks\Index as social_media_links;
 
 
 
@@ -100,6 +101,7 @@ Route::view(uri: 'sample', view: 'sample')
         Route::get('opt_aboutus' ,aboutus_index::class)->name('opt_aboutus.index');
         Route::get('panel_portofolios' ,panel_portofolios::class)->name('panel_portofolios.index');
         Route::get('panel_charts' ,panel_charts::class)->name('panel_charts.index');
+        Route::get('social_media_links' ,social_media_links::class)->name('social_media_links.index');
 
         Route::get('admins' ,panel_admins::class)->name('admins.index');
 
