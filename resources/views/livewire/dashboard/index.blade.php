@@ -125,7 +125,7 @@
                         @if($panel)
 
                             <a
-                                href="https://{{ $panel->website }}.wayy.ir/12"
+                                href="https://{{ $panel->website }}.wayy.ir/welcome"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 class="
