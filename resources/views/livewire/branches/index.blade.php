@@ -59,13 +59,13 @@
 />
 
 {{-- فیلد location --}}
-<flux:input
-    label="موقعیت مکانی (لینک گوگل مپ)"
-    placeholder=""
-    type="text" {{-- یا type="text" --}}
-    wire:model="location"
-    :error="$errors->first('location')"
-/>
+{{--<flux:input--}}
+{{--    label="موقعیت مکانی (لینک گوگل مپ)"--}}
+{{--    placeholder=""--}}
+{{--    type="text" --}}{{-- یا type="text" --}}
+{{--    wire:model="location"--}}
+{{--    :error="$errors->first('location')"--}}
+{{--/>--}}
 
 {{-- فیلد working_times --}}
 {{-- برای زمان‌های کاری، بسته به پیچیدگی، ممکن است نیاز به یک کامپوننت سفارشی‌تر یا textarea باشد --}}
@@ -137,14 +137,14 @@
                 موبایل : {{$branch->mobile}}
             </span>
         </div>
-                <div>
-            <span class="text-gray-600 dark:text-gray-400">
-                موقعیت مکانی : {{$branch->location}}
-            </span>
-        </div>
+{{--                <div>--}}
+{{--            <span class="text-gray-600 dark:text-gray-400">--}}
+{{--                موقعیت مکانی : {{$branch->location}}--}}
+{{--            </span>--}}
+{{--        </div>--}}
 <div>
             <span class="text-gray-600 dark:text-gray-400">
-                درگاه بانکی : {{$branch->bank_key ?? 'xxxx'}}
+                درگاه بانکی : {{$branch->bank_key ? 'ثبت شده' : ''}}
             </span>
         </div>
                 <div class="text-left mt-2">

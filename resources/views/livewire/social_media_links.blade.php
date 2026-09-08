@@ -3,11 +3,11 @@
     {{-- Header --}}
     <div>
         <h2 class="text-xl font-bold text-zinc-900 dark:text-white">
-            شبکه‌های اجتماعی
+            لینک ها
         </h2>
 
         <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-            لینک شبکه‌های اجتماعی هر شعبه را مدیریت کنید.
+            لینک های  هر شعبه را مدیریت کنید.
         </p>
     </div>
 
@@ -35,7 +35,7 @@
             </h3>
 
             <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                شعبه و شبکه اجتماعی را انتخاب کرده و لینک را وارد کنید.
+                شعبه و برنامه  را انتخاب کرده و لینک را وارد کنید.
             </p>
         </div>
 
@@ -63,8 +63,8 @@
 
             {{-- شبکه اجتماعی --}}
             <flux:select
-                label="شبکه اجتماعی"
-                placeholder="انتخاب شبکه اجتماعی"
+                label="انتخاب برنامه "
+                placeholder="انتخاب  "
                 wire:model="caption"
                 :error="$errors->first('caption')"
             >
@@ -138,11 +138,11 @@
             <div class="mb-5">
 
                 <h3 class="font-semibold text-zinc-900 dark:text-white">
-                    لینک‌های ثبت شده
+                    لینک ‌های ثبت شده
                 </h3>
 
                 <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                    لینک‌های شبکه اجتماعی شعبه انتخاب شده
+                    لینک‌ های   شعبه انتخاب شده
                 </p>
 
             </div>
@@ -203,7 +203,7 @@
         >
 
             <div class="text-zinc-500 dark:text-zinc-400">
-                برای این شعبه هنوز لینک شبکه اجتماعی ثبت نشده است.
+                برای این شعبه هنوز لینک  ثبت نشده است.
             </div>
 
         </div>

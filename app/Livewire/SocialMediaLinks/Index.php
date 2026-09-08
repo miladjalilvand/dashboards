@@ -22,6 +22,8 @@ class Index extends Component
         'whatsapp',
         'eeta',
         'instagram',
+        'google map',
+
     ];
 
     public array $savedLinks = [];
@@ -115,7 +117,7 @@ class Index extends Component
 
             'caption' => [
                 'required',
-                'in:telegram,whatsapp,eeta,instagram',
+                'in:telegram,whatsapp,eeta,instagram,google map',
             ],
 
             'link' => [

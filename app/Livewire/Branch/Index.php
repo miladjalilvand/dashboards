@@ -56,7 +56,7 @@ class Index extends Component
     }
 
     public function reload_need_func(){
-      if( in_array($this->branches->count() ,[0 , 1 ])){
+      if( in_array($this->branches->count() ,[0])){
           return redirect()->route('dashboards');
 
 
