@@ -29,6 +29,12 @@ $menus_seed = [
         "visible" => 1,
         "menu_type_id" => 1,
         "slug" => "reserves_dashboard",
+    ], [
+        "caption" => "گزارش نوبت‌ها",
+        "icon" => "chart-bar",
+        "visible" => 1,
+        "menu_type_id" => 1,
+        "slug" => "panel_charts",
     ],
     [
         "caption" => "شعبه‌ها",

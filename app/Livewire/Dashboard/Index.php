@@ -461,7 +461,8 @@ class Index extends Component
             |--------------------------------------------------------------------------
             */
 
-            for ($optionId = 1; $optionId <= 4; $optionId++) {
+            $count_options = Option::count();
+            for ($optionId = 1; $optionId <= $count_options; $optionId++) {
 
                 PanelOption::firstOrCreate(
                     [
