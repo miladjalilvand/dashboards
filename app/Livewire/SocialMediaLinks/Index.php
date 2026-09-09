@@ -64,7 +64,7 @@ class Index extends Component
             ->firstOrFail();
 
         return $panel->options()
-            ->where('option_id', 5)
+            ->where('option_id', 4)
             ->first();
     }
 
@@ -144,12 +144,12 @@ class Index extends Component
 
         /*
         |--------------------------------------------------------------------------
-        | Option شماره 5
+        | Option شماره 4
         |--------------------------------------------------------------------------
         */
 
         $option = $panel->options()
-            ->where('option_id', 5)
+            ->where('option_id', 4)
             ->first();
 
         /*
@@ -160,7 +160,7 @@ class Index extends Component
 
         if (!$option) {
             $option = $panel->options()->create([
-                'option_id' => 5,
+                'option_id' => 4,
                 'data' => json_encode([], JSON_UNESCAPED_UNICODE),
             ]);
         }

@@ -150,15 +150,17 @@
 
             <div class="grid gap-3 sm:grid-cols-2">
 
+
                 @foreach($savedLinks as $item)
 
                     <div
-                        class="flex items-center justify-between gap-4 rounded-xl
-                               border border-zinc-200 p-4
-                               dark:border-zinc-700"
+                        class="flex min-w-0 flex-col gap-3 rounded-xl
+               border border-zinc-200 p-4
+               dark:border-zinc-700
+               sm:flex-row sm:items-center sm:justify-between"
                     >
 
-                        <div class="min-w-0">
+                        <div class="min-w-0 flex-1">
 
                             <div class="font-semibold text-zinc-900 dark:text-white">
                                 {{ ucfirst($item['caption']) }}
@@ -169,8 +171,9 @@
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 dir="ltr"
-                                class="mt-1 block truncate text-sm text-blue-600 hover:underline
-                                       dark:text-blue-400"
+                                class="mt-1 block max-w-full break-all text-sm
+                       text-blue-600 hover:underline
+                       dark:text-blue-400"
                             >
                                 {{ $item['link'] }}
                             </a>
@@ -178,14 +181,18 @@
                         </div>
 
 
-                        <flux:button
-                            variant="danger"
-                            size="sm"
-                            wire:click="deleteLink('{{ $item['caption'] }}')"
-                            wire:confirm="آیا از حذف این لینک مطمئن هستید؟"
-                        >
-                            حذف
-                        </flux:button>
+                        <div class="shrink-0 sm:self-center">
+
+                            <flux:button
+                                variant="danger"
+                                size="sm"
+                                wire:click="deleteLink('{{ $item['caption'] }}')"
+                                wire:confirm="آیا از حذف این لینک مطمئن هستید؟"
+                            >
+                                حذف
+                            </flux:button>
+
+                        </div>
 
                     </div>
 

@@ -28,7 +28,12 @@ class Index extends Component
     public $current_branch ;
 
 
+    public function openGatewayModal()
+    {
 
+
+        $this->modal('gateway-settings')->show();
+    }
 
     // #[On('branch-created')]
     public function refresh(){

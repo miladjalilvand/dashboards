@@ -790,7 +790,7 @@ class Index extends Component
                 $this->current_customer_id = null;
             }
         }
-        $this->loadBranchSocialLinks($this->panel->options()->where('option_id' , 5)->first()->data);
+        $this->loadBranchSocialLinks($this->panel->options()->where('option_id' , 4)->first()->data);
     }
     private function loadCustomerReserves(): void
     {

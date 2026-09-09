@@ -84,6 +84,71 @@
     :error="$errors->first('bank_key')"
 />
 
+                       <button
+                           type="button"
+                           wire:click="openGatewayModal"
+                           wire:loading.attr="disabled"
+                           wire:target="openGatewayModal"
+                           class="
+        flex
+        w-full
+        cursor-pointer
+        items-center
+        gap-3
+        rounded-lg
+        border
+        border-blue-200
+        bg-blue-50
+        px-4
+        py-3
+        text-right
+        transition
+        hover:bg-blue-100
+        disabled:cursor-not-allowed
+        disabled:opacity-50
+        dark:border-blue-900/50
+        dark:bg-blue-950/30
+        dark:hover:bg-blue-950/50
+    "
+                       >
+    <span
+        class="
+            flex
+            h-6
+            w-6
+            shrink-0
+            items-center
+            justify-center
+            rounded-full
+            bg-blue-600
+            text-xs
+            font-bold
+            text-white
+        "
+    >
+        !
+    </span>
+
+                           <span class="flex flex-col gap-0.5">
+        <span
+            wire:loading.remove
+            wire:target="openGatewayModal"
+            class="text-sm font-semibold text-blue-900 dark:text-blue-200"
+        >
+             راهنمای تنظیم درگاه
+        </span>
+
+        <span
+            wire:loading
+            wire:target="openGatewayModal"
+            class="text-sm font-semibold text-blue-900 dark:text-blue-200"
+        >
+            در حال آماده‌سازی...
+        </span>
+
+    </span>
+                       </button>
+
 {{-- دکمه ارسال --}}
 
 
@@ -143,6 +208,7 @@
 {{--            </span>--}}
 {{--        </div>--}}
 <div>
+
             <span class="text-gray-600 dark:text-gray-400">
                 درگاه بانکی : {{$branch->bank_key ? 'ثبت شده' : ''}}
             </span>
@@ -169,5 +235,182 @@
     </div>
 </div>
 @endforeach
+    <flux:modal
+        name="gateway-settings"
+        class="w-full max-w-md"
+    >
+        <div class="space-y-6">
 
+            {{-- Header --}}
+            <div>
+                <h2 class="text-lg font-semibold text-zinc-900">
+                    راهنمای دریافت کد درگاه
+                </h2>
+
+                <p class="mt-1 text-sm leading-6 text-zinc-500">
+                    راهنمای دریافت و ثبت اطلاعات درگاه پرداخت
+                </p>
+            </div>
+
+
+            {{-- Guide --}}
+            <div class="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+
+                <div class="space-y-5">
+
+                    {{-- Step 1 --}}
+                    <div class="flex gap-3">
+
+                        <div
+                            class="
+                            flex size-7 shrink-0 items-center justify-center
+                            rounded-full
+                            bg-zinc-900
+                            text-xs font-bold text-white
+                        "
+                        >
+                            ۱
+                        </div>
+
+                        <p class="text-sm leading-7 text-zinc-600">
+                            ابتدا شعبه موردنظر خود را در سیستم ایجاد کنید.
+                        </p>
+
+                    </div>
+
+
+                    {{-- Step 2 --}}
+                    <div class="flex gap-3">
+
+                        <div
+                            class="
+                            flex size-7 shrink-0 items-center justify-center
+                            rounded-full
+                            bg-zinc-900
+                            text-xs font-bold text-white
+                        "
+                        >
+                            ۲
+                        </div>
+
+                        <p class="text-sm leading-7 text-zinc-600">
+                            پس از ایجاد شعبه، برای دریافت کد درگاه پرداخت
+                            از طریق زرین‌پال اقدام کنید.
+                        </p>
+
+                    </div>
+
+
+                    {{-- Step 3 --}}
+                    <div class="flex gap-3">
+
+                        <div
+                            class="
+                            flex size-7 shrink-0 items-center justify-center
+                            rounded-full
+                            bg-zinc-900
+                            text-xs font-bold text-white
+                        "
+                        >
+                            ۳
+                        </div>
+
+                        <p class="text-sm leading-7 text-zinc-600">
+                            کد دریافت‌شده از زرین‌پال را در قسمت
+                            <span class="font-semibold text-zinc-900">
+                            ایجاد / ویرایش شعبه
+                        </span>
+                            وارد کنید.
+                        </p>
+
+                    </div>
+
+
+                    {{-- Step 4 --}}
+                    <div class="flex gap-3">
+
+                        <div
+                            class="
+                            flex size-7 shrink-0 items-center justify-center
+                            rounded-full
+                            bg-zinc-900
+                            text-xs font-bold text-white
+                        "
+                        >
+                            ۴
+                        </div>
+
+                        <p class="text-sm leading-7 text-zinc-600">
+                            پس از ثبت کد، درگاه پرداخت شعبه فعال شده و
+                            امکان دریافت هزینه نوبت‌ها به صورت آنلاین فراهم می‌شود.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {{-- Important Notice --}}
+            <div
+                class="
+                rounded-xl
+                border border-amber-200
+                bg-amber-50
+                p-4
+            "
+            >
+                <div class="flex gap-3">
+
+                    <div class="mt-0.5 shrink-0">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            class="size-5 text-amber-600"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 9v4m0 4h.01M10.29 3.86 2.82 17a2 2 0 0 0 1.74 3h14.88a2 2 0 0 0 1.74-3L13.71 3.86a2 2 0 0 0-3.42 0Z"
+                            />
+                        </svg>
+                    </div>
+
+                    <p class="text-xs leading-6 text-amber-700">
+                        کد درگاه هر شعبه اختصاصی است. هنگام ثبت کد،
+                        اطمینان حاصل کنید که کد مربوط به همان شعبه را وارد می‌کنید.
+                    </p>
+
+                </div>
+            </div>
+
+
+            {{-- Close --}}
+            <flux:modal.close class="w-full">
+
+                <button
+                    type="button"
+                    class="
+                    w-full
+                    cursor-pointer
+                    rounded-lg
+                    bg-zinc-900
+                    py-2.5
+                    text-sm font-semibold
+                    text-white
+                    transition
+                    hover:bg-zinc-800
+                "
+                >
+                    متوجه شدم
+                </button>
+
+            </flux:modal.close>
+
+        </div>
+    </flux:modal>
 </div>
